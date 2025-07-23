@@ -18,6 +18,14 @@ let currentUser = null;
 auth.onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
+
+    // --- ส่วนที่เพิ่มเข้ามา ---
+    const photoURL = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
+    if (profilePicGame) {
+      profilePicGame.src = photoURL;
+    }
+    // --- จบส่วนที่เพิ่มเข้ามา ---
+
     console.log("Game page: User is logged in.", currentUser.uid);
   } else {
     console.log("Game page: No user logged in. Redirecting...");
@@ -42,6 +50,7 @@ const lessonPage = document.getElementById('lesson-page');
 const lessonGrid = document.getElementById('lesson-grid');
 const closeLessonBtn = document.getElementById('close-lesson-btn');
 const livesDisplay = document.getElementById('livesDisplay'); // <--- เพิ่มตัวแปร Lives Display
+const profilePicGame = document.getElementById('profilePic-game');
 
 // Sound elements
 const hoverSound = document.getElementById("hoverSound");

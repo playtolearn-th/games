@@ -336,3 +336,14 @@ body {
     border-radius: 0;
     transition: width 0.5s linear, background-color 0.5s ease;
 }
+
+/* --- Profile Picture Styles --- */
+.profile-pic-game {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-right: 10px;
+    object-fit: cover;
+}

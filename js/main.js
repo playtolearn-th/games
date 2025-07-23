@@ -47,22 +47,22 @@ auth.onAuthStateChanged(user => {
 async function displayUserData(user) {
     const userInfoDiv = document.getElementById('userInfo');
     const scoreSpan = document.querySelector('#scoreDisplay span');
+    const profilePic = document.getElementById('profilePic'); // <-- เพิ่มตัวแปรรูปโปรไฟล์
 
-    // แสดงชื่อผู้ใช้
+    // --- ส่วนที่เพิ่มเข้ามา ---
+    const photoURL = user.photoURL || 'https://i.imgur.com/sC22S2A.png'; // ใช้รูปเริ่มต้นถ้าไม่มี
+    profilePic.src = photoURL;
+    // --- จบส่วนที่เพิ่มเข้ามา ---
+
     userInfoDiv.textContent = `สวัสดี, ${user.displayName || 'ผู้เล่น'}`;
 
-    // ดึงคะแนนจาก Firestore
     const userScoreRef = db.collection('userScores').doc(user.uid);
     try {
         const doc = await userScoreRef.get();
-
         if (doc.exists) {
-            // ถ้ามีข้อมูลคะแนนอยู่แล้ว ให้นำมาแสดง
-            // เราจะแสดง bestScore เป็นคะแนนรวมในหน้าล็อบบี้
             const bestScore = doc.data().bestScore || 0;
             scoreSpan.textContent = bestScore;
         } else {
-            // ถ้าเป็นผู้เล่นใหม่ที่ยังไม่มีข้อมูลคะแนน ให้แสดงเป็น 0
             scoreSpan.textContent = '0';
         }
     } catch (error) {

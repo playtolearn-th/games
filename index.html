@@ -49,12 +49,23 @@
                 font-size: 2em;
                 margin-bottom: 20px;
             }
+
+            .profile-pic-lobby {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                border: 3px solid #007bff;
+                margin-bottom: 15px;
+                object-fit: cover;
+                /* ทำให้รูปภาพพอดีกับกรอบ */
+            }
         </style>
     </head>
 
     <body>
 
         <div class="lobby-container">
+            <img id="profilePic" src="" alt="Profile Picture" class="profile-pic-lobby">
             <h1>ยินดีต้อนรับ</h1>
 
             <div id="userInfo">กำลังโหลดข้อมูลผู้ใช้...</div>
