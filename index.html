@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>เกมพยัญชนะไทย</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --base-font-size: 16px;
+        }
+
+        /* --- General Styles --- */
+        html, body {
+            margin: 0; padding: 0; height: 100%; min-height: 100vh;
+            box-sizing: border-box; overflow: hidden; font-size: var(--base-font-size);
+        }
+        #main-wrapper {
+            width: 100vw; height: calc(var(--vh, 1vh) * 100); transition: padding 0.3s ease;
+        }
+        #gameArea, #topBar, #sidebar, #lesson-page, #level2Area {
+            font-family: 'TH Sarabun New', sans-serif;
+        }
+        body { background: #e0f7fa; }
+
+        /* --- Preloader --- */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #333; color: white; 
+            display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 2000; font-family: 'TH Sarabun New', sans-serif;
+        }
+        .loading-text { font-size: 3em; margin-bottom: 20px; }
+        #progress-bar-container {
+            width: 60%; max-width: 400px; height: 30px;
+            background-color: #555; border-radius: 15px; overflow: hidden;
+        }
+        #progress-bar {
+            width: 0%; height: 100%; background-color: #4CAF50;
+            transition: width 0.3s ease-in-out;
+        }
+        #progress-text { margin-top: 15px; font-size: 2em; }
+        
+        /* --- Top Bar & Progress --- */
+        #topBar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            background: #ffffff; z-index: 990; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: none; align-items: center; justify-content: space-between;
+            padding: 0 15px; box-sizing: border-box;
+        }
+        #profileSection { display: flex; align-items: center; gap: 8px; flex: 1; }
+        #progressSection { flex: 2; display: flex; justify-content: center; align-items: center; font-size: 2.2em; }
+        #statusSection { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end; font-size: 1.8em; font-weight: bold; }
+        .trophy-icon { opacity: 0; transform: scale(0); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .trophy-icon.earned { opacity: 1; transform: scale(1.1); filter: grayscale(0); }
+        .trophy-icon.trophy-levelup { animation: levelup 0.5s ease-in-out; }
+        @keyframes levelup {
+            0% { transform: scale(1.1); }
+            50% { transform: scale(1.5); filter: drop-shadow(0 0 10px gold); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* --- Score, Lives, Timer --- */
+        #scoreDisplay, #livesDisplay { display: flex; align-items: center; gap: 8px; }
+        #timerContainer { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background-color: #e9ecef; border-radius: 0; border: none; overflow: hidden; }
+        #timerFill { height: 100%; width: 100%; background-color: #28a745; border-radius: 0; transition: width 0.5s linear, background-color 0.5s ease; }
+
+        /* --- Coins & Flying Animations --- */
+        #roundCoinContainer { display: flex; align-items: center; margin-right: 15px; }
+        .round-coin-img { width: 35px; height: 35px; margin-left: -18px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3)); transform: scale(0); opacity: 0; }
+        .round-coin-img.collected { transform: scale(1); opacity: 1; }
+        .round-coin-img.bonus { filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3)) drop-shadow(0 0 5px #ffeb3b); }
+        .round-coin-img.is-flying { position: fixed; z-index: 1003; transform: scale(1); opacity: 1; transition: transform 0.6s ease-in, opacity 0.6s ease-in; }
+        .flying-coin { position: fixed; z-index: 1002; width: 50px; height: 50px; object-fit: contain; pointer-events: none; transition: transform 0.7s cubic-bezier(0.5, -0.8, 0.8, 1), opacity 0.7s ease-out; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5)); }
+        .flying-trophy { position: fixed; z-index: 1005; font-size: 2.2em; pointer-events: none; transition: transform 0.8s cubic-bezier(0.5, -0.5, 0.5, 1.5), opacity 0.8s ease-out; filter: drop-shadow(0 0 8px gold); color: #FFD700; margin: 0; padding: 0; }
+        #finalRewardsContainer { display: flex; align-items: center; gap: 5px; }
+        .final-reward-item { transform: scale(0); opacity: 0; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; }
+        .final-reward-item.show { transform: scale(1); opacity: 1; }
+        .final-reward-item.diamond { width: 32px; height: 32px; filter: drop-shadow(0 0 8px #00e5ff); }
+
+        /* --- Sidebar & Auth --- */
+        #profileIconContainer { position: relative; cursor: pointer; display: none; }
+        #profileIconImg { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        #sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 280px; background: #ffffff; z-index: 1001; box-shadow: 4px 0 10px rgba(0,0,0,0.1); transform: translateX(-100%); transition: transform 0.3s ease-in-out; display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; }
+        #sidebar.open { transform: translateX(0); }
+        #sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; }
+        #sidebarProfileImg { width: 100px; height: 100px; border-radius: 50%; margin-top: 20px; margin-bottom: 15px; }
+        #sidebarUserName { font-size: 1.8em; font-weight: bold; color: #333; margin: 5px 0; }
+        #sidebarUserEmail { font-size: 1.2em; color: #666; margin-bottom: 30px; word-break: break-all; }
+        #sidebarCloseBtn { position: absolute; top: 10px; right: 15px; font-size: 2em; cursor: pointer; color: #999; }
+        #sidebarLogoutBtn { padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; background: #f44336; color: white; width: 100%; }
+        #authContainer { width: 100%; height: 100%; display: none; font-family: 'Roboto', Arial, sans-serif; background-color: #f8f9fa; }
+        .login-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.25rem; height: 100%; }
+        .login-form { width: 100%; max-width: 400px; background: white; padding: 1.875rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .form-control-lg { font-size: 1rem; padding: 0.9375rem; height: 3.125rem; border: 1px solid #dadce0; border-radius: 4px; }
+        .action-btn { border: none; width: 100%; padding: 0.75rem; border-radius: 4px; font-weight: 500; font-size: 1rem; }
+        .google-btn { background-color: white; color: #333; border: 1px solid #dadce0; display: flex; align-items: center; justify-content: center; gap: 0.625rem; }
+        .google-btn:hover { background-color: #f8f9fa; }
+        .google-icon { width: 1.25rem; height: 1.25rem; }
+        .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
+        .nav-tabs .nav-link.active { color: var(--primary-color); border-color: var(--primary-color) var(--primary-color) #fff; border-bottom-width: 2px; }
+        @media (orientation: portrait) {
+            html { font-size: calc(var(--base-font-size) * 2.5); }
+            .login-form { max-width: 90%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 2rem; border-radius: 0; box-shadow: none; }
+            .login-content { padding: 0; }
+        }
+        @media (orientation: landscape) { .login-form { max-width: 400px; } }
+
+        /* --- Game Grid & Cards (Level 1) --- */
+        #gameArea { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; padding: 80px 15px 15px 15px; box-sizing: border-box; }
+        
+        .title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px; 
+        }
+        .main-title { 
+            font-size: 2.5em; 
+            color: #00796b; 
+            margin: 0; 
+        }
+        
+        #gameArea .controls { 
+            margin: 0; 
+            display: flex;
+            gap: 15px;
+        }
+        
+        #gameArea .controls button {
+            padding: 10px 25px;
+            font-size: 1.8em;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            line-height: 1.3;
+        }
+        
+        #gameArea .controls button:hover {
+            transform: scale(1.05);
+        }
+        
+        #lessonBtn { background-color: #ffc107; }
+        #startBtn { background-color: #007bff; }
+        #restartBtn { background-color: #28a745; }
+        
+        #game { display: grid; justify-content: center; align-content: center; flex-grow: 1; width: 100%; gap: 10px; }
+        .card { background: #ffffff; border-radius: 8px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; font-size: 2em; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.4s ease, opacity 0.4s ease; cursor: pointer; }
+        .card.matched { transform: scale(0); opacity: 0; cursor: default; }
+        .card:hover { transform: scale(1.05); }
+        .card.selected { background-color: #ffccbc !important; transform: scale(1.05); pointer-events: none; opacity: 0.6; }
+        .card img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
+
+        /* --- Popup --- */
+        #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        #popupBox { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); text-align: center; font-size: 1.5em; }
+        #popupBox button { margin: 10px; padding: 10px 20px; font-size: 1em; cursor: pointer; color: white; border: none; border-radius: 5px; }
+        #popupBox .popup-controls { display: flex; justify-content: center; margin-top: 20px; }
+        #popupBox h2 { font-size: 1.5em; margin-bottom: 15px; color: #00796b; }
+        #popupBox p { margin: 5px 0; font-size: 1.1em;}
+
+        /* --- Lesson Page Styles --- */
+        #lesson-page {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #e0f7fa; z-index: 1500; display: none;
+            flex-direction: column; align-items: center;
+            padding: 3vh 3vw;
+            box-sizing: border-box; overflow-y: auto;
+        }
+        #close-lesson-btn {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 1.5em; font-weight: bold; padding: 8px 15px;
+            cursor: pointer; background-color: #f44336; color: white;
+            border: none; border-radius: 8px; z-index: 1501;
+        }
+        #lesson-page h2 { font-size: 3em; color: #00796b; margin-bottom: 20px; }
+        #lesson-grid {
+            display: grid; 
+            justify-content: center; 
+            align-content: center;
+            gap: 15px; 
+            width: 100%; 
+            padding-bottom: 20px;
+            flex-grow: 1;
+        }
+        .lesson-card {
+            aspect-ratio: 1 / 1; background: white; border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-5px); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .lesson-card img { width: 60%; height: 60%; object-fit: contain; pointer-events: none; }
+        .lesson-card span { font-size: 2.5em; margin-top: 5px; font-weight: bold; color: #333; }
+        
+        /* --- Level 2 Styles --- */
+        #level2Area {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: flex-start;
+            width: 100%; height: 100%; padding: 80px 15px 15px 15px;
+            box-sizing: border-box;
+        }
+        #target-sequence-container, #source-consonants-container {
+            display: grid;
+            justify-content: center;
+            align-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        #target-sequence-container { margin-bottom: 20px; }
+        .target-slot, .source-char {
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .target-slot {
+            background-color: #b2dfdb;
+            border: 2px dashed #00796b;
+            color: #004d40;
+        }
+        .target-slot.correct {
+            background-color: #a5d6a7;
+            border-style: solid;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .source-char {
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .source-char:hover { transform: scale(1.1); background-color: #e0f2f1; }
+        .source-char.used { opacity: 0.3; pointer-events: none; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Responsive and Scrollbar */
+        @media (orientation: landscape) and (max-height: 450px) {
+            html, body { overflow: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loading-text">กำลังโหลดข้อมูลเกม...</div>
+        <div id="progress-bar-container"><div id="progress-bar"></div></div>
+        <div id="progress-text">0%</div>
+    </div>
+    
+    <div id="topBar">
+        <div id="profileSection">
+            <div id="profileIconContainer"><img id="profileIconImg" src="" alt="Profile"></div>
+            <div id="finalRewardsContainer"></div>
+        </div>
+        <div id="progressSection"></div>
+        <div id="statusSection">
+            <div id="roundCoinContainer"></div>
+            <div id="scoreDisplay">💰 <span id="scoreValue">0</span></div>
+            <div id="livesDisplay"></div>
+            <div id="timerContainer"><div id="timerFill"></div></div>
+        </div>
+    </div>
+    <div id="sidebar-overlay"></div>
+    <div id="sidebar">
+        <span id="sidebarCloseBtn">&times;</span>
+        <img id="sidebarProfileImg" src="" alt="Profile">
+        <h2 id="sidebarUserName"></h2>
+        <p id="sidebarUserEmail"></p>
+        <button id="sidebarLogoutBtn">ออกจากระบบ</button>
+    </div>
+
+    <div id="main-wrapper">
+        <div id="authContainer">
+             <div class="login-content">
+                  <div class="login-form">
+                          <ul class="nav nav-tabs nav-fill mb-4" id="authTab" role="tablist">
+                                  <li class="nav-item" role="presentation"><button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">เข้าสู่ระบบ</button></li>
+                                  <li class="nav-item" role="presentation"><button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">ลงทะเบียน</button></li>
+                          </ul>
+                          <div class="tab-content" id="authTabContent">
+                                  <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
+                                      <form onsubmit="event.preventDefault(); login();">
+                                          <div class="mb-3"><input type="email" class="form-control form-control-lg" id="login-email" placeholder="อีเมล" required></div>
+                                          <div class="mb-4"><input type="password" class="form-control form-control-lg" id="login-password" placeholder="รหัสผ่าน" required></div>
+                                          <div class="d-grid gap-2"><button type="submit" class="btn btn-primary action-btn">เข้าสู่ระบบ</button></div>
+                                          <div class="text-center my-3 text-muted">&mdash; หรือ &mdash;</div>
+                                          <button type="button" onclick="loginWithGoogle()" class="btn google-btn action-btn"><img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google icon" class="google-icon" /> เข้าสู่ระบบด้วย Google</button>
+                                      </form>
+                                  </div>
+                                  <div class="tab-pane fade" id="register-pane" role="tabpanel">
+                                      <form onsubmit="event.preventDefault(); register();">
+                                          <div class="mb-3"><input type="text" class="form-control form-control-lg" id="register-name" placeholder="ชื่อ" required></div>
+                                          <div class="mb-3"><input type="email" class="form-control form-control-lg" id="register-email" placeholder="อีเมล" required></div>
+                                          <div class="mb-3"><input type="password" class="form-control form-control-lg" id="register-password" placeholder="รหัสผ่าน" required></div>
+                                          <div class="mb-4"><input type="password" class="form-control form-control-lg" id="register-confirm-password" placeholder="ยืนยันรหัสผ่าน" required></div>
+                                          <div class="d-grid"><button type="submit" class="btn btn-primary action-btn">สร้างบัญชี</button></div>
+                                      </form>
+                                  </div>
+                          </div>
+                  </div>
+             </div>
+        </div>
+        <div id="gameArea">
+            <div class="title-container">
+                <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
+                <div class="controls">
+                    <button id="lessonBtn" onclick="showLessonPage()">บทเรียน</button>
+                    <button id="startBtn" onclick="startGame()">เริ่มเกม</button>
+                    <button id="restartBtn" onclick="restartGame()" style="display:none;">เริ่มใหม่</button>
+                </div>
+            </div>
+            <div id="game"></div>
+        </div>
+
+        <div id="level2Area">
+            <div class="title-container">
+                <h1 id="level2-title" class="main-title">ด่านที่ 2: เรียงลำดับพยัญชนะ</h1>
+            </div>
+            <div id="target-sequence-container"></div>
+            <div id="source-consonants-container"></div>
+        </div>
+
+        <div id="popup">
+            <div id="popupBox">
+                <div id="popupText"></div>
+                <div id="popupControls" class="popup-controls">
+                    <button id="popupBtn">ตกลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lesson-page">
+        <button id="close-lesson-btn">&times; ปิด</button>
+        <h2>บทเรียนพยัญชนะไทย</h2>
+        <div id="lesson-grid"></div>
+    </div>
+
+    <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; pointer-events: none;"></canvas>
+    
+    <audio id="hoverSound" src="https://phairater.github.io/thai-sounds/hover.mp3"></audio>
+    <audio id="clickSound" src="https://phairater.github.io/thai-sounds/click.mp3"></audio>
+    <audio id="wrongSound" src="https://phairater.github.io/thai-sounds/wrong.mp3"></audio>
+    <audio id="gameoverSound" src="https://phairater.github.io/thai-sounds/game-over.mp3"></audio>
+    <audio id="winSound" src="https://phairater.github.io/thai-sounds/winning.mp3"></audio>
+    <audio id="coinSound" src="https://phairater.github.io/thai-sounds/coin.mp3"></audio>
+    <audio id="levelUpSound" src="https://phairater.github.io/thai-sounds/level-up.mp3"></audio>
+    <audio id="coinSwooshSound" src="https://phairater.github.io/thai-sounds/swoosh.mp3"></audio>
+    <audio id="loseLifeSound" src="https://phairater.github.io/thai-sounds/error.mp3"></audio>
+    <audio id="roundEndCoinSound" src="https://phairater.github.io/thai-sounds/coin-upaif.mp3"></audio>
+    <audio id="goodResultSound" src="https://phairater.github.io/thai-sounds/goodresult.mp3"></audio>
+    <audio id="diamondSound" src="https://phairater.github.io/thai-sounds/gem-level-up.mp3"></audio>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1DVvalDuthN0-pUwECByT7-Ur5uTlsEE",
+            authDomain: "thai-phairater.firebaseapp.com",
+            projectId: "thai-phairater",
+            storageBucket: "thai-phairater.appspot.com",
+            messagingSenderId: "995255977727",
+            appId: "1:995255977727:web:c0c1170665a19ab5136eca"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        let currentUser = null;
+
+        // --- DOM Elements ---
+        const mainWrapper = document.getElementById('main-wrapper'), authContainer = document.getElementById('authContainer'), gameArea = document.getElementById('gameArea'), gameGrid = document.getElementById('game'), topBar = document.getElementById('topBar'), restartBtn = document.getElementById('restartBtn'), popup = document.getElementById('popup'), popupBox = document.getElementById('popupBox'), popupText = document.getElementById('popupText'), popupControls = document.getElementById('popupControls'), popupBtn = document.getElementById('popupBtn'), profileIconContainer = document.getElementById('profileIconContainer'), profileIconImg = document.getElementById('profileIconImg'), sidebar = document.getElementById('sidebar'), sidebarOverlay = document.getElementById('sidebar-overlay'), sidebarCloseBtn = document.getElementById('sidebarCloseBtn'), sidebarProfileImg = document.getElementById('sidebarProfileImg'), sidebarUserName = document.getElementById('sidebarUserName'), sidebarUserEmail = document.getElementById('sidebarUserEmail'), sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn'), scoreValue = document.getElementById('scoreValue'), scoreDisplay = document.getElementById('scoreDisplay'), livesDisplay = document.getElementById('livesDisplay'), timerFill = document.getElementById('timerFill'), progressSection = document.getElementById('progressSection'), roundCoinContainer = document.getElementById('roundCoinContainer'), finalRewardsContainer = document.getElementById('finalRewardsContainer');
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const lessonPage = document.getElementById('lesson-page');
+        const lessonGrid = document.getElementById('lesson-grid');
+        const closeLessonBtn = document.getElementById('close-lesson-btn');
+        const lessonBtn = document.getElementById('lessonBtn');
+        const startBtn = document.getElementById('startBtn');
+        const level2Area = document.getElementById('level2Area');
+        const level2Title = document.getElementById('level2-title');
+        const targetSequenceContainer = document.getElementById('target-sequence-container');
+        const sourceConsonantsContainer = document.getElementById('source-consonants-container');
+
+        // --- Game Logic Variables ---
+        let countdownInterval, selected = [], gameChars = [];
+        const TOTAL_TIME = 60, LIVES = 3;
+        let baseScore = 0, bonusScore = 0, totalScore = 0;
+        let scoreFromPreviousLevels = 0;
+        let lives = LIVES, timeLeft = TOTAL_TIME, completedLessons = 0;
+        let level1Diamonds = 0;
+        const CHARS_PER_ROUND = 12; 
+        const LEVEL2_CHARS_PER_ROUND = 11;
+        let currentLevel = 1; 
+        let level2CurrentRound = 0;
+        let level2Chars = [];
+        let expectedCharIndex = 0; 
+        const hoverSound = document.getElementById("hoverSound"), clickSound = document.getElementById("clickSound"), wrongSound = document.getElementById("wrongSound"), gameoverSound = document.getElementById("gameoverSound"), winSound = document.getElementById("winSound"), coinSound = document.getElementById("coinSound"), levelUpSound = document.getElementById("levelUpSound"), coinSwooshSound = document.getElementById("coinSwooshSound"), loseLifeSound = document.getElementById("loseLifeSound"), roundEndCoinSound = document.getElementById("roundEndCoinSound"), goodResultSound = document.getElementById("goodResultSound"), diamondSound = document.getElementById("diamondSound");
+        const baseUrl = "https://phairater.github.io/thai-sounds/";
+        const allCharIds = [ "ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
+        const allChars = allCharIds.map(id => ({ id: id, img: `${baseUrl}${id}.png`, sound: `${baseUrl}${id}.mp3` }));
+        let matchedPairsInRound = 0;
+        let pairsInCurrentRound = 0;
+
+        // --- Helper Functions ---
+        function playAudio(audio) {
+            audio.currentTime = 0;
+            audio.play().catch(e => console.error("Audio play failed:", e));
+        }
+        function playEndRoundSoundSequence() {
+            playAudio(roundEndCoinSound);
+            setTimeout(() => playAudio(goodResultSound), 1000);
+        }
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- Layout Functions ---
+        function calculateAndApplyLayout() {
+            if (!gameGrid || gameGrid.children.length === 0) return;
+            const numCards = Array.from(gameGrid.children).filter(c => !c.classList.contains('matched')).length;
+            if (numCards === 0) return;
+            const gap = 10;
+            const gameAreaStyle = window.getComputedStyle(gameArea);
+            const availableWidth = gameArea.clientWidth - (parseInt(gameAreaStyle.paddingLeft) + parseInt(gameAreaStyle.paddingRight));
+            const titleContainer = gameArea.querySelector('.title-container');
+            const titleContainerHeight = titleContainer ? titleContainer.offsetHeight : 0;
+            const availableHeight = gameArea.clientHeight - (titleContainerHeight + 20);
+            let bestLayout = { cols: 0, cardSize: 0 };
+            for (let cols = 3; cols <= numCards / 2; cols++) {
+                if (numCards % cols !== 0 && cols > numCards / 2) continue;
+                const rows = Math.ceil(numCards / cols);
+                const sizeW = (availableWidth - (cols - 1) * gap) / cols;
+                const sizeH = (availableHeight - (rows - 1) * gap) / rows;
+                const cardSize = Math.floor(Math.min(sizeW, sizeH));
+                if (cardSize > bestLayout.cardSize) { bestLayout = { cols, cardSize }; }
+            }
+            if (bestLayout.cols === 0) {
+                bestLayout.cols = Math.ceil(Math.sqrt(numCards));
+                const rows = Math.ceil(numCards / bestLayout.cols);
+                const sizeW = (availableWidth - (bestLayout.cols - 1) * gap) / bestLayout.cols;
+                const sizeH = (availableHeight - (rows - 1) * gap) / rows;
+                bestLayout.cardSize = Math.floor(Math.min(sizeW, sizeH));
+            }
+            gameGrid.style.gridTemplateColumns = `repeat(${bestLayout.cols}, ${bestLayout.cardSize}px)`;
+            const cards = gameGrid.querySelectorAll('.card');
+            cards.forEach(card => card.style.fontSize = `${bestLayout.cardSize * 0.5}px`);
+        }
+
+        function calculateLessonLayout() {
+            if (!lessonGrid || lessonGrid.children.length === 0) return;
+            const numCards = lessonGrid.children.length;
+            const gap = 15;
+            const availableWidth = lessonGrid.clientWidth;
+            const availableHeight = lessonGrid.clientHeight;
+
+            let bestLayout = { cols: 0, cardSize: 0 };
+            for (let cols = 3; cols <= 10; cols++) {
+                const rows = Math.ceil(numCards / cols);
+                const sizeW = (availableWidth - (cols - 1) * gap) / cols;
+                const sizeH = (availableHeight - (rows - 1) * gap) / rows;
+                const cardSize = Math.floor(Math.min(sizeW, sizeH));
+                if (cardSize > bestLayout.cardSize) {
+                    bestLayout = { cols, cardSize };
+                }
+            }
+             if (bestLayout.cols === 0) {
+                 bestLayout.cols = Math.ceil(Math.sqrt(numCards));
+                 const rows = Math.ceil(numCards / bestLayout.cols);
+                 const sizeW = (availableWidth - (bestLayout.cols - 1) * gap) / bestLayout.cols;
+                 const sizeH = (availableHeight - (rows - 1) * gap) / rows;
+                 bestLayout.cardSize = Math.floor(Math.min(sizeW, sizeH));
+             }
+            lessonGrid.style.gridTemplateColumns = `repeat(${bestLayout.cols}, ${bestLayout.cardSize}px)`;
+            const cards = lessonGrid.querySelectorAll('.lesson-card span');
+            cards.forEach(span => span.style.fontSize = `${bestLayout.cardSize * 0.25}px`);
+        }
+        
+        function calculateLevel2Layout() {
+            const numItems = level2Chars.length;
+            if (numItems === 0) return;
+            const gap = 10;
+            const containerStyle = window.getComputedStyle(level2Area);
+            const availableWidth = level2Area.clientWidth - (parseInt(containerStyle.paddingLeft) + parseInt(containerStyle.paddingRight));
+            const titleContainer = level2Area.querySelector('.title-container');
+            const titleHeight = titleContainer ? titleContainer.offsetHeight : 0;
+            const availableHeight = level2Area.clientHeight - titleHeight - 40; 
+
+            const totalGridHeight = availableHeight / 2;
+            const rows = 2; 
+            const cols = Math.ceil(numItems / rows);
+
+            const sizeW = (availableWidth - (cols - 1) * gap) / cols;
+            const sizeH = (totalGridHeight - (rows - 1) * gap) / rows;
+            const itemSize = Math.floor(Math.min(sizeW, sizeH, 100));
+
+            targetSequenceContainer.style.gridTemplateColumns = `repeat(${numItems}, ${itemSize}px)`;
+            sourceConsonantsContainer.style.gridTemplateColumns = `repeat(${cols}, ${itemSize}px)`;
+
+            document.querySelectorAll('.target-slot, .source-char').forEach(el => {
+                el.style.fontSize = `${itemSize * 0.5}px`;
+            });
+        }
+        
+        function showPopup(msg, controls) {
+            popupText.innerHTML = msg;
+            popupControls.innerHTML = ''; // Clear previous buttons
+            if (controls) {
+                popupControls.appendChild(controls);
+            }
+            popup.style.display = "flex";
+        }
+        function closePopup() { popup.style.display = "none"; }
+        
+        function preloadAllAssets(callback, text = "กำลังโหลดข้อมูลเกม...") {
+            loadingScreen.querySelector('.loading-text').textContent = text;
+            progressBar.style.width = '0%';
+            progressText.innerText = '0%';
+            let assetUrls = [];
+            allChars.forEach(char => {
+                assetUrls.push(char.img);
+                assetUrls.push(char.sound);
+            });
+            document.querySelectorAll('audio').forEach(audioTag => { if (audioTag.src) assetUrls.push(audioTag.src); });
+            assetUrls.push(`${baseUrl}Coin.png`, `${baseUrl}diamond.png`, 'https://i.imgur.com/sC22S2A.png', 'https://img.icons8.com/color/48/000000/google-logo.png');
+            assetUrls = [...new Set(assetUrls)];
+            let assetsLoaded = 0;
+            const totalAssets = assetUrls.length;
+            if (totalAssets === 0) return loadingComplete();
+            function assetLoadedCallback() {
+                assetsLoaded++;
+                const percentage = Math.round((assetsLoaded / totalAssets) * 100);
+                progressBar.style.width = percentage + '%';
+                progressText.innerText = percentage + '%';
+                if (assetsLoaded === totalAssets) setTimeout(loadingComplete, 500);
+            }
+            function loadingComplete() { if (callback) callback(); }
+            assetUrls.forEach(url => {
+                const ext = url.split('.').pop().toLowerCase().split('?')[0];
+                if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(ext)) {
+                    const img = new Image();
+                    img.src = url;
+                    img.onload = assetLoadedCallback;
+                    img.onerror = assetLoadedCallback;
+                } else { fetch(url).then(assetLoadedCallback).catch(assetLoadedCallback); }
+            });
+        }
+        
+        function updateScoreDisplay() {
+            totalScore = scoreFromPreviousLevels + baseScore + bonusScore;
+            scoreValue.textContent = totalScore;
+        }
+        function updateLivesDisplay() { livesDisplay.innerHTML = '❤️'.repeat(lives) + '💔'.repeat(LIVES - lives); }
+        function updateTrophyDisplay() {
+            progressSection.innerHTML = '';
+            for (let i = 1; i <= completedLessons; i++) {
+                const trophy = document.createElement('span');
+                trophy.className = 'trophy-icon earned';
+                trophy.textContent = '🏆';
+                progressSection.appendChild(trophy);
+            }
+        }
+        function updateTimerBar() {
+            const percentage = (timeLeft / TOTAL_TIME) * 100;
+            timerFill.style.width = `${percentage}%`;
+            if (percentage <= 25) timerFill.style.backgroundColor = '#dc3545';
+            else if (percentage <= 50) timerFill.style.backgroundColor = '#ffc107';
+            else timerFill.style.backgroundColor = '#28a745';
+        }
+        function initializeGameUI() {
+            updateScoreDisplay();
+            timeLeft = TOTAL_TIME;
+            updateLivesDisplay();
+            updateTrophyDisplay();
+            updateTimerBar();
+            finalRewardsContainer.innerHTML = '';
+        }
+        function initializeGameState() {
+            clearInterval(countdownInterval);
+            currentLevel = 1;
+            scoreFromPreviousLevels = 0;
+            baseScore = 0; bonusScore = 0; totalScore = 0;
+            lives = LIVES; completedLessons = 0;
+            level1Diamonds = 0;
+            gameGrid.innerHTML = "";
+            initializeGameUI();
+        }
+        function resetGame() {
+            clearInterval(countdownInterval);
+            currentLevel = 1;
+            scoreFromPreviousLevels = 0;
+            baseScore = 0; bonusScore = 0; totalScore = 0;
+            lives = LIVES; completedLessons = 0;
+            level1Diamonds = 0;
+            gameGrid.innerHTML = "";
+            level2Area.style.display = 'none';
+            gameArea.style.display = 'flex';
+            startBtn.style.display = "inline-block";
+            lessonBtn.style.display = "inline-block";
+            restartBtn.style.display = "none";
+            initializeGameUI();
+        }
+
+        function animateTrophiesToDiamonds(finalCallback) {
+            const trophies = progressSection.querySelectorAll('.trophy-icon.earned');
+            const targetContainer = finalRewardsContainer;
+            if (trophies.length === 0) {
+                if (finalCallback) finalCallback();
+                return;
+            }
+
+            const flightDuration = 800;
+            const allTrophiesFlying = [];
+
+            trophies.forEach((trophy) => {
+                const startRect = trophy.getBoundingClientRect();
+                const flyingTrophy = document.createElement('span');
+                flyingTrophy.textContent = '🏆';
+                flyingTrophy.className = 'flying-trophy';
+                document.body.appendChild(flyingTrophy);
+                flyingTrophy.style.left = `${startRect.left}px`;
+                flyingTrophy.style.top = `${startRect.top}px`;
+                trophy.style.opacity = '0';
+                allTrophiesFlying.push(flyingTrophy);
+            });
+
+            setTimeout(() => {
+                 const targetRect = profileIconImg.getBoundingClientRect();
+                 const targetCenterX = targetRect.left + targetRect.width;
+                 const targetCenterY = targetRect.top + targetRect.height / 2;
+
+                 playAudio(coinSwooshSound);
+                 allTrophiesFlying.forEach(flyingTrophy => {
+                    const startRect = flyingTrophy.getBoundingClientRect();
+                    const deltaX = targetCenterX - (startRect.left + startRect.width / 2);
+                    const deltaY = targetCenterY - (startRect.top + startRect.height / 2);
+                    flyingTrophy.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0)`;
+                    flyingTrophy.style.opacity = '0';
+                 });
+
+                 setTimeout(() => {
+                    allTrophiesFlying.forEach(t => t.remove());
+                    level1Diamonds++;
+                    const diamondEl = document.createElement('img');
+                    diamondEl.src = `${baseUrl}diamond.png`;
+                    diamondEl.className = 'final-reward-item diamond';
+                    targetContainer.appendChild(diamondEl);
+                    playAudio(diamondSound);
+                    setTimeout(() => diamondEl.classList.add('show'), 50);
+                    if (finalCallback) finalCallback();
+                 }, flightDuration);
+            }, 200);
+        }
+
+        function triggerFinalWinSequence() {
+            clearInterval(countdownInterval);
+            const popupContent = `<h2>ภารกิจสำเร็จ! ✨</h2><p>คะแนนด่านนี้: ${baseScore}</p><p>โบนัสเวลา: ${bonusScore}</p><hr style="margin: 10px 0;"><p><strong>คะแนนรวม: ${totalScore}</strong></p>`;
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1001 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+            
+            completedLessons++;
+            
+            const controls = document.createElement('div');
+            const newGameBtn = document.createElement('button');
+            newGameBtn.textContent = "เริ่มเกมใหม่";
+            newGameBtn.style.backgroundColor = '#28a745';
+            newGameBtn.onclick = () => { closePopup(); resetGame(); };
+            controls.appendChild(newGameBtn);
+            
+            showPopup(popupContent, controls);
+            
+            const lvl2Controls = level2Area.querySelector('.controls button');
+            if (lvl2Controls) lvl2Controls.style.display = 'none';
+            if(restartBtn) restartBtn.style.display = 'none';
+        }
+        
+        function triggerRoundCompleteSequence() {
+            playEndRoundSoundSequence();
+            let bonusCoins = 0;
+            if (timeLeft >= 45) bonusCoins = 3;
+            else if (timeLeft >= 30) bonusCoins = 2;
+            else if (timeLeft >= 15) bonusCoins = 1;
+            bonusScore += bonusCoins * 5;
+            updateScoreDisplay();
+            for (let i = 0; i < bonusCoins; i++) {
+                setTimeout(() => addCollectedCoin(true), i * 150);
+            }
+            const bonusAnimDelay = bonusCoins * 150;
+
+            setTimeout(() => {
+                const allCoinsInBar = roundCoinContainer.querySelectorAll('.round-coin-img');
+                let isDummyTarget = false;
+                let targetTrophy = progressSection.children[completedLessons];
+
+                const proceedToNextStepAfterAnimation = () => {
+                    if (isDummyTarget && targetTrophy) {
+                        targetTrophy.remove();
+                    }
+                    completedLessons++;
+                    updateTrophyDisplay();
+                    
+                    const newTrophy = progressSection.children[completedLessons - 1];
+                    if (newTrophy) {
+                        newTrophy.classList.add('trophy-levelup');
+                        playAudio(levelUpSound);
+                    }
+
+                    if (gameChars.length > 0) {
+                        setTimeout(startRound, 500);
+                    } else {
+                        animateTrophiesToDiamonds(() => {
+                            scoreFromPreviousLevels = baseScore + bonusScore;
+                            baseScore = 0;
+                            bonusScore = 0;
+                            
+                            const controls = document.createElement('div');
+                            const nextLevelBtn = document.createElement('button');
+                            nextLevelBtn.textContent = "เล่นด่านที่ 2";
+                            nextLevelBtn.style.backgroundColor = '#007bff';
+                            nextLevelBtn.onclick = () => { closePopup(); startLevel2(); };
+                            
+                            const exitBtn = document.createElement('button');
+                            exitBtn.textContent = "ออกจากเกม";
+                            exitBtn.style.backgroundColor = '#6c757d';
+                            exitBtn.onclick = () => { closePopup(); resetGame(); };
+                            
+                            controls.appendChild(nextLevelBtn);
+                            controls.appendChild(exitBtn);
+
+                            showPopup("<h2>ผ่านด่านที่ 1! 🎉</h2><p>เก่งมาก! ไปต่อด่านต่อไปกันเลย</p>", controls);
+                        });
+                    }
+                };
+
+                if (!targetTrophy) {
+                    targetTrophy = document.createElement('span');
+                    targetTrophy.className = 'trophy-icon';
+                    targetTrophy.style.opacity = '0';
+                    progressSection.appendChild(targetTrophy);
+                    isDummyTarget = true;
+                }
+                
+                if (allCoinsInBar.length === 0) {
+                    proceedToNextStepAfterAnimation();
+                    return;
+                }
+
+                const targetRect = targetTrophy.getBoundingClientRect();
+                playAudio(coinSwooshSound);
+                allCoinsInBar.forEach((coin, index) => {
+                    const startRect = coin.getBoundingClientRect();
+                    coin.classList.add('is-flying');
+                    coin.style.left = `${startRect.left}px`;
+                    coin.style.top = `${startRect.top}px`;
+                    coin.style.margin = '0';
+                    const deltaX = (targetRect.left + targetRect.width / 2) - (startRect.left + startRect.width / 2);
+                    const deltaY = (targetRect.top + targetRect.height / 2) - (startRect.top + startRect.height / 2);
+                    setTimeout(() => {
+                        coin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0)`;
+                        coin.style.opacity = '0';
+                    }, 50 * index);
+                });
+                
+                setTimeout(proceedToNextStepAfterAnimation, 800 + 50 * allCoinsInBar.length);
+
+            }, bonusAnimDelay);
+        }
+
+        function addCollectedCoin(isBonus = false) {
+            const collectedCoin = document.createElement("img");
+            collectedCoin.src = `${baseUrl}Coin.png`;
+            collectedCoin.className = 'round-coin-img';
+            if (isBonus) { collectedCoin.classList.add('bonus'); }
+            roundCoinContainer.appendChild(collectedCoin);
+            setTimeout(() => { collectedCoin.classList.add('collected'); }, 10);
+        }
+
+        function removeCollectedCoin() {
+            const lastCoin = roundCoinContainer.querySelector('.round-coin-img.collected:last-child');
+            if (lastCoin) {
+                lastCoin.classList.remove('collected');
+                setTimeout(() => {
+                    if (lastCoin.parentNode) {
+                        lastCoin.remove();
+                    }
+                }, 400);
+            }
+        }
+
+        function startGame() {
+            startBtn.style.display = "none";
+            lessonBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+            restartBtn.textContent = "เริ่มใหม่";
+            
+            currentLevel = 1;
+            scoreFromPreviousLevels = 0;
+            baseScore = 0;
+            bonusScore = 0;
+            lives = LIVES;
+            completedLessons = 0;
+
+            initializeGameUI();
+            gameChars = shuffle([...allChars]);
+            startRound();
+        }
+
+        function restartGame() {
+            closePopup();
+            resetGame();
+        }
+        
+        function startRound() {
+    clearInterval(countdownInterval);
+    timeLeft = TOTAL_TIME;
+    updateTimerBar();
+    matchedPairsInRound = 0;
+    roundCoinContainer.innerHTML = '';
+    
+    countdownInterval = setInterval(() => {
+        if (--timeLeft <= 0) { // ไม่ต้องเช็ค lives <= 0 ที่นี่ เพราะการผิดพลาดจะจัดการทันที
+            timeLeft = 0; // ป้องกันค่าติดลบ
+            updateTimerBar();
+            handleGameOver("หมดเวลา!");
+        }
+        updateTimerBar();
+    }, 1000);
+    
+    gameGrid.innerHTML = "";
+    selected = [];
+    const roundChars = gameChars.splice(0, CHARS_PER_ROUND);
+    pairsInCurrentRound = roundChars.length;
+    
+    if (pairsInCurrentRound === 0) {
+        // ไม่มีพยัญชนะเหลือแล้ว = จบด่าน 1
+        triggerRoundCompleteSequence(); 
+        return;
+    }
+    
+    let cardsData = [];
+    roundChars.forEach(char => {
+        cardsData.push({ type: 'char', id: char.id, sound: char.sound });
+        cardsData.push({ type: 'img', id: char.id, img: char.img, sound: char.sound });
+    });
+    
+    shuffle(cardsData).forEach(cardData => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("card");
+        cardDiv.dataset.id = cardData.id;
+        
+        if (cardData.type === 'char') {
+            cardDiv.textContent = cardData.id;
+        } else {
+            const img = document.createElement("img");
+            img.src = cardData.img;
+            img.alt = cardData.id;
+            cardDiv.appendChild(img);
+        }
+        
+        cardDiv.onclick = () => selectCard(cardDiv, cardData);
+        cardDiv.onmouseenter = () => playAudio(hoverSound);
+        gameGrid.appendChild(cardDiv);
+    });
+    
+    // คำนวณ Layout หลังสร้างการ์ดเสร็จ
+    requestAnimationFrame(calculateAndApplyLayout);
+}
+        function selectCard(div, card) {
+            if (selected.length >= 2 || div.classList.contains("selected") || div.classList.contains("matched") || timeLeft <= 0 || lives <= 0) return;
+            div.classList.add("selected");
+            playAudio(clickSound);
+            selected.push({ div, id: card.id, soundUrl: card.sound });
+            if (selected.length === 2) {
+                const [first, second] = selected;
+                if (first.id === second.id) {
+                    playAudio(coinSound);
+                    new Audio(first.soundUrl).play();
+                    baseScore += 10;
+                    updateScoreDisplay();
+                    matchedPairsInRound++;
+                    addCollectedCoin();
+                    first.div.classList.add("matched");
+                    second.div.classList.add("matched");
+                    selected = [];
+                    setTimeout(() => {
+                        first.div.remove();
+                        second.div.remove();
+                        if (matchedPairsInRound === pairsInCurrentRound) {
+                            clearInterval(countdownInterval);
+                            triggerRoundCompleteSequence(); 
+                        }
+                    }, 400);
+                } else {
+                    playAudio(wrongSound);
+                    baseScore -= 10;
+                    updateScoreDisplay();
+                    removeCollectedCoin();
+
+                    if (totalScore < 0) {
+                        setTimeout(handleScoreGameOver, 500);
+                    } else {
+                        setTimeout(() => {
+                            first.div.classList.remove("selected");
+                            second.div.classList.remove("selected");
+                            selected = [];
+                        }, 1000);
+                    }
+                }
+            }
+        }
+        
+        function startLevel2() {
+            currentLevel = 2;
+            gameArea.style.display = 'none';
+            level2Area.style.display = 'flex';
+            restartBtn.style.display = 'inline-block';
+            level2CurrentRound = 0;
+            startLevel2Round();
+        }
+
+        function startLevel2Round() {
+            const startIndex = level2CurrentRound * LEVEL2_CHARS_PER_ROUND;
+            const endIndex = startIndex + LEVEL2_CHARS_PER_ROUND;
+            level2Chars = allChars.slice(startIndex, endIndex);
+
+            if (level2Chars.length === 0) {
+                triggerFinalWinSequence();
+                return;
+            }
+
+            level2Title.textContent = `ด่านที่ 2: เรียงลำดับ (รอบที่ ${level2CurrentRound + 1}/${Math.ceil(allChars.length/LEVEL2_CHARS_PER_ROUND)})`;
+            
+            let shuffledChars = shuffle([...level2Chars]);
+            expectedCharIndex = 0;
+
+            targetSequenceContainer.innerHTML = '';
+            sourceConsonantsContainer.innerHTML = '';
+
+            level2Chars.forEach(() => {
+                const slot = document.createElement('div');
+                slot.className = 'target-slot';
+                targetSequenceContainer.appendChild(slot);
+            });
+
+            shuffledChars.forEach(char => {
+                const charDiv = document.createElement('div');
+                charDiv.className = 'source-char';
+                charDiv.textContent = char.id;
+                charDiv.dataset.id = char.id;
+                charDiv.onclick = () => selectSequenceChar(charDiv, char);
+                sourceConsonantsContainer.appendChild(charDiv);
+            });
+            
+            requestAnimationFrame(calculateLevel2Layout);
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                if (--timeLeft <= 0 || lives <= 0) {
+                    handleGameOver();
+                }
+                updateTimerBar();
+            }, 1000);
+        }
+
+        function selectSequenceChar(charDiv, char) {
+            if (lives <= 0 || timeLeft <= 0) return;
+            const expectedChar = level2Chars[expectedCharIndex];
+            if (char.id === expectedChar.id) {
+                playAudio(coinSound);
+                new Audio(char.sound).play();
+                baseScore += 10;
+                updateScoreDisplay();
+                
+                charDiv.classList.add('used');
+                const targetSlot = targetSequenceContainer.children[expectedCharIndex];
+                targetSlot.textContent = char.id;
+                targetSlot.classList.add('correct');
+                
+                expectedCharIndex++;
+
+                if (expectedCharIndex === level2Chars.length) {
+                    level2CurrentRound++;
+                    if ( (level2CurrentRound * LEVEL2_CHARS_PER_ROUND) >= allChars.length ) {
+                        triggerFinalWinSequence();
+                    } else {
+                        playAudio(goodResultSound);
+                        showPopup(`<h2>ผ่านรอบ!</h2><p>เตรียมตัวสำหรับรอบต่อไป...</p>`, createSingleButtonPopup("ไปต่อ", () => { closePopup(); startLevel2Round(); }));
+                    }
+                }
+            } else {
+                playAudio(wrongSound);
+                baseScore -= 10;
+                updateScoreDisplay();
+
+                if (totalScore < 0) {
+                    setTimeout(handleScoreGameOver, 500);
+                } else {
+                    charDiv.style.animation = 'shake 0.5s';
+                    setTimeout(() => charDiv.style.animation = '', 500);
+                }
+            }
+        }
+        
+        function createSingleButtonPopup(text, onClickAction) {
+            const controls = document.createElement('div');
+            const btn = document.createElement('button');
+            btn.textContent = text;
+            btn.style.backgroundColor = '#28a745';
+            btn.onclick = onClickAction;
+            controls.appendChild(btn);
+            return controls;
+        }
+
+        function handleGameOver() {
+            clearInterval(countdownInterval);
+            playAudio(gameoverSound);
+            showPopup("💔 พลาดแล้ว! ลองอีกครั้งนะ", createSingleButtonPopup("เล่นด่านนี้ใหม่", () => {
+                closePopup();
+                restartCurrentLevel();
+            }));
+            restartBtn.style.display = 'none';
+            lessonBtn.style.display = "inline-block";
+        }
+        function handleScoreGameOver() {
+            clearInterval(countdownInterval);
+            playAudio(gameoverSound);
+            
+            showPopup("<h2>คะแนนหมด!</h2><p>คะแนนของคุณติดลบ เกมจะเริ่มต้นใหม่ทั้งหมด</p>", createSingleButtonPopup("เริ่มเกมใหม่", () => {
+                closePopup();
+                resetGame();
+            }));
+            
+            restartBtn.style.display = 'none';
+        }
+        
+        function restartCurrentLevel() {
+            closePopup();
+            lives = LIVES;
+            baseScore = 0;
+            bonusScore = 0;
+            updateLivesDisplay();
+            updateScoreDisplay(); 
+            if (currentLevel === 1) {
+                gameChars = shuffle([...allChars]);
+                startRound();
+            } else if (currentLevel === 2) {
+                startLevel2();
+            }
+        }
+
+        // --- Auth and Init ---
+        function updateAuthUI() {
+            if (currentUser) {
+                loadingScreen.style.display = 'none';
+                authContainer.style.display = 'none';
+                gameArea.style.display = 'flex';
+                topBar.style.display = 'flex';
+                profileIconContainer.style.display = 'block';
+                const photoURL = currentUser.photoURL || 'https://i.imgur.com/sC22S2A.png';
+                const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+                profileIconImg.src = photoURL;
+                sidebarProfileImg.src = photoURL;
+                sidebarUserName.textContent = displayName;
+                sidebarUserEmail.textContent = currentUser.email;
+                resetGame();
+            } else {
+                loadingScreen.style.display = 'none';
+                authContainer.style.display = 'flex';
+                gameArea.style.display = 'none';
+                level2Area.style.display = 'none';
+                topBar.style.display = 'none';
+                profileIconContainer.style.display = 'none';
+                closeSidebar();
+            }
+        }
+        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.style.display = 'block'; }
+        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.style.display = 'none'; }
+        
+async function register() {
+    // ดึงข้อมูลจากฟอร์มลงทะเบียน
+    const name = document.getElementById('register-name').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+
+    // ตรวจสอบว่ารหัสผ่านตรงกันหรือไม่
+    if (password !== confirmPassword) {
+        alert("รหัสผ่านไม่ตรงกัน กรุณาลองใหม่อีกครั้ง");
+        return;
+    }
+
+    try {
+        // สร้างผู้ใช้ใหม่ใน Firebase Authentication
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // อัปเดตชื่อผู้ใช้ (Display Name)
+        await userCredential.user.updateProfile({
+            displayName: name
+        });
+        
+        // onAuthStateChanged จะจัดการอัปเดต UI ให้เองเมื่อลงทะเบียนสำเร็จ
+        console.log("Registered and logged in successfully:", userCredential.user);
+
+    } catch (error) {
+        console.error("Error registering:", error);
+        alert("เกิดข้อผิดพลาดในการลงทะเบียน: " + error.message);
+    }
+}
+
+async function login() {
+    // ดึงข้อมูลจากฟอร์มล็อกอิน
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    try {
+        // สั่งให้ Firebase ล็อกอินด้วยอีเมลและรหัสผ่าน
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        
+        // onAuthStateChanged จะจัดการอัปเดต UI ให้เองเมื่อล็อกอินสำเร็จ
+        console.log("Logged in successfully:", userCredential.user);
+
+    } catch (error) {
+        console.error("Error logging in:", error);
+        alert("อีเมลหรือรหัสผ่านไม่ถูกต้อง: " + error.message);
+    }
+}
+
+async function loginWithGoogle() {
+    try {
+        // สร้างตัวจัดการสำหรับล็อกอินด้วย Google
+        const provider = new firebase.auth.GoogleAuthProvider();
+        
+        // แสดงหน้าต่าง Popup ของ Google เพื่อให้ผู้ใช้ล็อกอิน
+        const result = await auth.signInWithPopup(provider);
+
+        // onAuthStateChanged จะจัดการอัปเดต UI ให้เองเมื่อล็อกอินสำเร็จ
+        console.log("Logged in with Google successfully:", result.user);
+
+    } catch (error) {
+        console.error("Error with Google login:", error);
+        alert("เกิดข้อผิดพลาดในการล็อกอินด้วย Google: " + error.message);
+    }
+}
+async function logout() {
+    try {
+        // สั่งให้ Firebase ทำการ Sign Out
+        await auth.signOut();
+        
+        // เมื่อ Sign Out สำเร็จ ไม่ต้องทำอะไรเพิ่ม
+        // เพราะ onAuthStateChanged จะตรวจจับการเปลี่ยนแปลงและอัปเดตหน้าเว็บให้เอง
+        console.log("User logged out successfully.");
+
+    } catch (error) {
+        // หากเกิดข้อผิดพลาดขึ้น
+        console.error("Error logging out:", error);
+        alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message);
+    }
+}        
+        function showLessonPage() {
+            lessonGrid.innerHTML = ''; 
+            allChars.forEach(char => {
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                const img = document.createElement('img');
+                img.src = char.img;
+                img.alt = char.id;
+                const text = document.createElement('span');
+                text.textContent = char.id;
+                card.appendChild(img);
+                card.appendChild(text);
+                card.onclick = () => { new Audio(char.sound).play(); };
+                lessonGrid.appendChild(card);
+            });
+            lessonPage.style.display = 'flex';
+            requestAnimationFrame(calculateLessonLayout);
+        }
+
+        function hideLessonPage() { lessonPage.style.display = 'none'; }
+
+        // --- Event Listeners ---
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            if (user) {
+                preloadAllAssets(updateAuthUI, "กำลังโหลดไฟล์เกม...");
+            } else {
+                updateAuthUI();
+            }
+        });
+
+        profileIconContainer.onclick = openSidebar;
+        sidebarOverlay.onclick = closeSidebar;
+        sidebarCloseBtn.onclick = closeSidebar;
+        sidebarLogoutBtn.onclick = logout;
+        closeLessonBtn.onclick = hideLessonPage;
+        
+        let resizeTimeout;
+        function handleScreenChange() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                setFullHeight();
+                if (lessonPage.style.display === 'flex') {
+                    calculateLessonLayout();
+                } else if (gameArea.style.display === 'flex' && currentLevel === 1) {
+                    calculateAndApplyLayout();
+                } else if (level2Area.style.display === 'flex') {
+                    calculateLevel2Layout();
+                }
+            }, 100);
+        }
+
+        window.addEventListener('resize', handleScreenChange);
+        window.addEventListener('orientationchange', handleScreenChange);
+        
+        function setFullHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        window.addEventListener('load', () => { setFullHeight(); });
+    </script>
+</body>
+</html>
