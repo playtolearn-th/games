@@ -86,7 +86,7 @@ function playAudio(audio) {
 
 function startGame() {
   startBtn.style.display = "none";
-  lessonBtn.style.display = "none";
+  // lessonBtn.style.display = "none";
   restartBtn.style.display = "inline-block";
 
   baseScore = 0; bonusScore = 0; completedLessons = 0;
