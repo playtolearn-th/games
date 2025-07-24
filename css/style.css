@@ -441,3 +441,34 @@ body {
     background: #f44336;
     color: white;
 }
+
+
+/* --- Mobile Responsive Styles --- */
+
+@media (max-width: 768px) {
+    /* ลดขนาดปุ่มในหน้าเกม */
+    #gameArea .controls button {
+        font-size: 1.2em;
+        padding: 8px 15px;
+    }
+    /* ลดขนาดตัวอักษรหัวข้อหลักในหน้าเกม */
+    .main-title {
+        font-size: 2em;
+    }
+    /* ปรับขนาดกล่อง Popup ให้เล็กลง */
+    #popupBox {
+        font-size: 1.2em;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* ลดขนาดปุ่มเพิ่มเติมสำหรับจอมือถือที่เล็กมากๆ */
+    #gameArea .controls button {
+        font-size: 1em;
+        padding: 6px 12px;
+    }
+    .main-title {
+        font-size: 1.8em;
+    }
+}
