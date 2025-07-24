@@ -606,3 +606,19 @@ body {
         font-size: 1.1em;
     }
 }
+
+
+/* --- Fix Money Bag Icon Size --- */
+
+#statusSection {
+    display: flex;
+    align-items: center;
+    /* จัดให้ไอคอนและตัวเลขอยู่ตรงกลางแนวตั้ง */
+}
+
+.money-bag-icon {
+    font-size: 1.1em;
+    /* กำหนดขนาดไอคอนให้เล็กลง */
+    margin-right: 5px;
+    /* เพิ่มระยะห่างจากตัวเลขเล็กน้อย */
+}
