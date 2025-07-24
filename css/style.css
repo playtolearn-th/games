@@ -1,0 +1,321 @@
+/* --- General Styles --- */
+body {
+    font-family: 'TH Sarabun New', sans-serif;
+    margin: 0;
+}
+
+/* --- Lobby Page Styles --- */
+.lobby-body {
+    background-color: #f0f8ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+.lobby-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.game-selection a {
+    display: inline-block;
+    padding: 15px 30px;
+    margin: 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.5em;
+    transition: background-color 0.3s;
+}
+.game-selection a:hover {
+    background-color: #0056b3;
+}
+#userInfo, #scoreDisplay {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+.profile-pic-lobby {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+/* --- Login Page Styles --- */
+.login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    font-family: 'Roboto', 'TH Sarabun New', sans-serif;
+}
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+}
+
+/* --- Top Bar & Progress --- */
+#topBar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+    background: #ffffff; z-index: 990; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 15px; box-sizing: border-box;
+}
+#profileSection { display: flex; align-items: center; gap: 10px; flex: 1; }
+#progressSection { flex: 2; display: flex; justify-content: center; align-items: center; font-size: 2.2em; }
+#statusSection { display: flex; align-items: center; justify-content: flex-end; gap: 15px; flex: 1; font-size: 1.8em; font-weight: bold; }
+.back-to-lobby-btn {
+    padding: 5px 15px;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+.back-to-lobby-btn:hover {
+    background-color: #5a6268;
+    color: white;
+}
+.profile-pic-game {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    object-fit: cover;
+}
+#scoreDisplay {
+    display: flex;
+    align-items: center;
+}
+.money-bag-icon {
+    font-size: 1.1em;
+    margin-right: 5px;
+}
+
+/* --- Game Area --- */
+#main-wrapper { width: 100vw; height: 100vh; }
+#gameArea { 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+    width: 100%; height: 100%; padding: 80px 15px 30px 15px; box-sizing: border-box; 
+}
+.title-container {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; margin-bottom: 15px; 
+}
+.main-title { font-size: 2.5em; color: #00796b; margin: 0; }
+#gameArea .controls button {
+    padding: 10px 25px; font-size: 1.8em; font-weight: 700;
+    border: none; border-radius: 8px; color: white; cursor: pointer;
+    transition: transform 0.2s ease;
+}
+#lessonBtn { background-color: #ffc107; }
+#startBtn { background-color: #007bff; }
+#restartBtn { background-color: #28a745; }
+
+/* --- Game Grid & Cards --- */
+#game { display: grid; justify-content: center; align-content: center; flex-grow: 1; width: 100%; gap: 10px; }
+.card { 
+    background: #ffffff; border-radius: 8px; aspect-ratio: 1 / 1; 
+    display: flex; align-items: center; justify-content: center; font-size: 2em; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.4s ease, opacity 0.4s ease; cursor: pointer; 
+}
+.card.matched { transform: scale(0); opacity: 0; cursor: default; }
+.card:hover { transform: scale(1.05); }
+.card.selected { background-color: #ffccbc !important; transform: scale(1.05); pointer-events: none; opacity: 0.6; }
+.card img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
+
+/* --- Popup --- */
+#popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+#popupBox { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); text-align: center; font-size: 1.5em; }
+#popupBox button { margin: 10px; padding: 10px 20px; font-size: 1em; cursor: pointer; color: white; border: none; border-radius: 5px; }
+#popupControls { display: flex; justify-content: center; margin-top: 20px; }
+#popupBox h2 { font-size: 1.5em; margin-bottom: 15px; color: #00796b; }
+#popupBox p { margin: 5px 0; font-size: 1.1em;}
+
+/* --- Lesson Page Styles --- */
+#lesson-page {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #e0f7fa; z-index: 1500; display: none;
+    flex-direction: column; align-items: center; padding: 3vh 3vw;
+    box-sizing: border-box; overflow-y: auto;
+}
+#close-lesson-btn {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 1.5em; font-weight: bold; padding: 8px 15px;
+    cursor: pointer; background-color: #f44336; color: white;
+    border: none; border-radius: 8px; z-index: 1501;
+}
+#lesson-page h2 { font-size: 3em; color: #00796b; margin-bottom: 20px; }
+#lesson-grid {
+    display: grid; justify-content: center; align-content: center;
+    gap: 15px; width: 100%; padding-bottom: 20px; flex-grow: 1;
+}
+.lesson-card {
+    aspect-ratio: 1 / 1; background: white; border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lesson-card:hover { transform: translateY(-5px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.lesson-card img { width: 60%; height: 60%; object-fit: contain; pointer-events: none; }
+.lesson-card span { font-size: 2.5em; margin-top: 5px; font-weight: bold; color: #333; }
+
+/* --- Sidebar & Auth --- */
+#sidebar { 
+    position: fixed; top: 0; left: 0; height: 100%; width: 280px; 
+    background: #ffffff; z-index: 1001; box-shadow: 4px 0 10px rgba(0,0,0,0.1); 
+    transform: translateX(-100%); transition: transform 0.3s ease-in-out; 
+    display: flex; flex-direction: column; align-items: center; 
+    padding: 20px; box-sizing: border-box; 
+}
+#sidebar.open { transform: translateX(0); }
+#sidebar-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.5); z-index: 1000; display: none; 
+}
+#sidebarProfileImg { width: 100px; height: 100px; border-radius: 50%; margin-top: 20px; margin-bottom: 15px; }
+#sidebarUserName { font-size: 1.8em; font-weight: bold; color: #333; margin: 5px 0; }
+#sidebarUserEmail { font-size: 1.2em; color: #666; margin-bottom: 30px; word-break: break-all; }
+#sidebarCloseBtn { position: absolute; top: 10px; right: 15px; font-size: 2em; cursor: pointer; color: #999; }
+#sidebar button {
+    padding: 12px 25px; border: none; border-radius: 5px;
+    cursor: pointer; font-size: 1.1em; background: #f44336; color: white;
+}
+
+/* --- Timer Bar Styles --- */
+#timerContainer { 
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; 
+    background-color: #e9ecef; border-radius: 0; border: none; overflow: hidden; 
+}
+#timerFill { 
+    height: 100%; width: 100%; background-color: #28a745; 
+    border-radius: 0; transition: width 0.5s linear, background-color 0.5s ease; 
+}
+
+/* --- Coins Styles --- */
+#roundCoinContainer { display: flex; align-items: center; margin-right: 15px; }
+.round-coin-img { 
+    width: 35px; height: 35px; margin-left: -18px; 
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out; 
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3)); 
+    transform: scale(0); opacity: 0; 
+}
+.round-coin-img.collected { transform: scale(1); opacity: 1; }
+.round-coin-img.bonus { filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3)) drop-shadow(0 0 5px #ffeb3b); }
+
+/*
+==============================================
+--- Mobile Responsive Styles ---
+==============================================
+*/
+@media (max-width: 768px) {
+    /* --- Lobby --- */
+    .lobby-container {
+        padding: 20px;
+        width: 90%;
+    }
+    #userInfo, #scoreDisplay {
+        font-size: 1.8em;
+    }
+    .profile-pic-lobby {
+        width: 80px;
+        height: 80px;
+    }
+    .game-selection a {
+        font-size: 1.2em;
+        padding: 12px 20px;
+    }
+
+    /* --- Login --- */
+    .login-form {
+        padding: 1.5rem;
+        box-shadow: none;
+        border: none;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* --- Game Page Top Bar (ส่วนที่แก้ไข) --- */
+    #topBar {
+        height: 60px; /* ลดความสูงของบาร์ */
+        padding: 0 10px;
+    }
+    .profile-pic-game {
+        width: 40px;
+        height: 40px;
+    }
+    .back-to-lobby-btn {
+        font-size: 1em;
+        padding: 4px 10px;
+    }
+    #statusSection {
+        font-size: 1.4em;
+        gap: 8px;
+    }
+    .money-bag-icon {
+        font-size: 1em;
+    }
+    #livesDisplay {
+        font-size: 0.9em;
+    }
+    #progressSection {
+        font-size: 1.8em;
+    }
+    .round-coin-img {
+        width: 30px;
+        height: 30px;
+        margin-left: -15px;
+    }
+
+    /* --- Game Page Main Area --- */
+    #gameArea {
+        padding: 70px 10px 20px 10px;
+    }
+    #gameArea .controls button {
+        font-size: 1.1em;
+        padding: 8px 12px;
+    }
+    .main-title {
+        font-size: 1.8em;
+        white-space: nowrap;
+    }
+    #popupBox {
+        font-size: 1.2em;
+        padding: 20px;
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    #topBar {
+        height: 55px; /* ลดความสูงลงอีก */
+    }
+    #gameArea .controls button {
+        font-size: 0.9em;
+        padding: 5px 10px;
+    }
+    .main-title {
+        font-size: 1.5em;
+    }
+    #sidebar {
+        width: 240px;
+    }
+    #statusSection {
+        font-size: 1.2em;
+    }
+}
