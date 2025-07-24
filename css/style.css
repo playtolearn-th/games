@@ -519,6 +519,13 @@ body {
 ==============================================
 */
 
+
+/*
+==============================================
+--- Mobile Responsive Styles ---
+==============================================
+*/
+
 @media (max-width: 768px) {
     /* --- Lobby --- */
     .lobby-container {
@@ -549,12 +556,20 @@ body {
         justify-content: center;
     }
     /* --- Game Page --- */
+    #gameArea {
+        padding: 75px 10px 20px 10px;
+        /* ปรับ Padding ให้มีพื้นที่มากขึ้น */
+    }
     #gameArea .controls button {
-        font-size: 1.2em;
-        padding: 8px 15px;
+        font-size: 1.1em;
+        /* ลดขนาดปุ่ม */
+        padding: 8px 12px;
     }
     .main-title {
-        font-size: 2em;
+        font-size: 1.8em;
+        /* <<--- ลดขนาดตัวอักษรลง */
+        white-space: nowrap;
+        /* ป้องกันการตกบรรทัด */
     }
     #popupBox {
         font-size: 1.2em;
@@ -562,7 +577,9 @@ body {
         width: 90%;
     }
     #statusSection {
-        font-size: 1.4em;
+        font-size: 1.3em;
+        /* ลดขนาดตัวเลขคะแนน */
+        gap: 8px;
     }
     .profile-pic-game {
         width: 40px;
@@ -575,14 +592,17 @@ body {
 
 @media (max-width: 480px) {
     #gameArea .controls button {
-        font-size: 1em;
-        padding: 6px 12px;
+        font-size: 0.9em;
+        padding: 5px 10px;
     }
     .main-title {
-        font-size: 1.8em;
+        font-size: 1.5em;
+        /* <<--- ลดขนาดลงอีกสำหรับจอมือถือเล็กๆ */
     }
     #sidebar {
         width: 240px;
-        /* ลดขนาด Sidebar สำหรับจอมือถือเล็กๆ */
+    }
+    #statusSection {
+        font-size: 1.1em;
     }
 }
