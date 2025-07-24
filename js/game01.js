@@ -14,6 +14,22 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 let currentUser = null;
 
+// --- 2. ตรวจสอบการล็อกอิน และ Setup UI ---
+auth.onAuthStateChanged(user => {
+    if (user) {
+        currentUser = user;
+        const photoURL = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
+        const displayName = user.displayName || user.email.split('@')[0];
+        if (profilePicGame) profilePicGame.src = photoURL;
+        if (sidebarProfileImg) sidebarProfileImg.src = photoURL;
+        if (sidebarUserName) sidebarUserName.textContent = displayName;
+        if (sidebarUserEmail) sidebarUserEmail.textContent = user.email;
+        displayBestRank();
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
 // --- 3. DOM Elements และ Game Variables ---
 const gameArea = document.getElementById('gameArea');
 const gameGrid = document.getElementById('game');
@@ -59,23 +75,6 @@ let matchedPairsInRound = 0;
 let pairsInCurrentRound = 0;
 const MAX_SCORE = 180440;
 
-// --- 2. ตรวจสอบการล็อกอิน และ Setup UI ---
-auth.onAuthStateChanged(user => {
-    if (user) {
-        currentUser = user;
-        const photoURL = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
-        const displayName = user.displayName || user.email.split('@')[0];
-        if (profilePicGame) profilePicGame.src = photoURL;
-        if (sidebarProfileImg) sidebarProfileImg.src = photoURL;
-        if (sidebarUserName) sidebarUserName.textContent = displayName;
-        if (sidebarUserEmail) sidebarUserEmail.textContent = user.email;
-        displayBestRank();
-    } else {
-        window.location.href = 'login.html';
-    }
-});
-
-
 // --- Event Listeners ---
 closeLessonBtn.onclick = () => lessonPage.style.display = 'none';
 window.addEventListener('resize', () => requestAnimationFrame(() => {
@@ -101,7 +100,8 @@ function preloadAllGameAudio(callback) {
         'hover': 'hover.mp3', 'click': 'mouse-click.mp3', 'wrong': 'wrong.mp3',
         'coin': 'coin.mp3', 'gameover': 'game-over.mp3', 'roundEnd': 'round-clear.mp3',
         'goodResult': 'goodresult.mp3', 'loseLife': 'error.mp3',
-        'roundEndCoin': 'coin-upaif.mp3', 'levelUp': 'game-level-up.mp3', 'win': 'winning.mp3'
+        'roundEndCoin': 'coin-upaif.mp3', 'levelUp': 'game-level-up.mp3', 'win': 'winning.mp3',
+        'swoosh': 'swoosh.mp3' // <<<--- เพิ่มเสียง swoosh เข้ามา
     };
     allCharIds.forEach(id => audioFiles[id] = `${id}.mp3`);
     const audioKeys = Object.keys(audioFiles);
@@ -248,7 +248,6 @@ function selectCard(div, card) {
     }
 }
 
-// --- ฟังก์ชันที่แก้ไขใหม่ทั้งหมด ---
 function triggerRoundCompleteSequence() {
     const newTrophy = document.createElement('span');
     newTrophy.className = 'trophy-icon';
@@ -320,6 +319,12 @@ async function triggerFinalWinSequence() {
     const trophies = progressSection.querySelectorAll('.trophy-icon.earned');
     const targetRect = bestRankDisplay.getBoundingClientRect();
 
+    // <<<--- เล่นเสียง swoosh ที่นี่ ---
+    if (trophies.length > 0) {
+        playSound('swoosh');
+    }
+    // ---------------------------------
+
     trophies.forEach((trophy, index) => {
         const startRect = trophy.getBoundingClientRect();
         const flyingTrophy = document.createElement('span');
@@ -340,8 +345,8 @@ async function triggerFinalWinSequence() {
     });
 
     setTimeout(() => {
-        finalMedal.style.left = `${targetRect.left}px`;
-        finalMedal.style.top = `${targetRect.top}px`;
+        finalMedal.style.left = `${targetRect.left + (targetRect.width / 2) - 75}px`; // จัดให้อยู่กลาง
+        finalMedal.style.top = `${targetRect.top + (targetRect.height / 2) - 75}px`;
         finalMedal.classList.add('show');
         playSound('win');
         
@@ -374,6 +379,8 @@ async function displayBestRank() {
             const bestScore = doc.data().scores.game01;
             const rank = getRankForScore(bestScore);
             bestRankDisplay.innerHTML = `<img src="${rank.image}" title="Rank สูงสุด: ${rank.rank}">`;
+        } else {
+            bestRankDisplay.innerHTML = ''; // ไม่มี Rank ให้แสดง
         }
     } catch (e) { console.error("Could not display best rank:", e); }
 }
