@@ -14,16 +14,18 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 let currentUser = null;
 
-// --- 2. ตรวจสอบการล็อกอินก่อนเริ่ม ---
+// --- 2. ตรวจสอบการล็อกอิน และ Setup UI ---
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
+
+        // --- ส่วนที่เพิ่มเข้ามา ---
         const photoURL = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
-        const displayName = user.displayName || user.email.split('@')[0];
-        if (profilePicGame) profilePicGame.src = photoURL;
-        if (sidebarProfileImg) sidebarProfileImg.src = photoURL;
-        if (sidebarUserName) sidebarUserName.textContent = displayName;
-        if (sidebarUserEmail) sidebarUserEmail.textContent = user.email;
+        if (profilePicGame) {
+            profilePicGame.src = photoURL;
+        }
+        // --- จบส่วนที่เพิ่มเข้ามา ---
+
         console.log("Game page: User is logged in.", currentUser.uid);
     } else {
         console.log("Game page: No user logged in. Redirecting...");
@@ -31,7 +33,7 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-// --- 3. DOM Elements และ Game Variables ---
+// --- 3. DOM Elements ---
 const gameArea = document.getElementById('gameArea');
 const gameGrid = document.getElementById('game');
 const restartBtn = document.getElementById('restartBtn');
@@ -49,14 +51,8 @@ const lessonGrid = document.getElementById('lesson-grid');
 const closeLessonBtn = document.getElementById('close-lesson-btn');
 const livesDisplay = document.getElementById('livesDisplay');
 const profilePicGame = document.getElementById('profilePic-game');
-const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebar-overlay');
-const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
-const sidebarProfileImg = document.getElementById('sidebarProfileImg');
-const sidebarUserName = document.getElementById('sidebarUserName');
-const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-const logoutBtn = document.getElementById('logoutBtn');
 
+// Sound elements
 const hoverSound = document.getElementById("hoverSound");
 const clickSound = document.getElementById("clickSound");
 const wrongSound = document.getElementById("wrongSound");
@@ -64,13 +60,13 @@ const coinSound = document.getElementById("coinSound");
 const gameoverSound = document.getElementById("gameoverSound");
 const roundEndCoinSound = document.getElementById("roundEndCoinSound");
 const goodResultSound = document.getElementById("goodResultSound");
-const loseLifeSound = document.getElementById("loseLifeSound");
+const loseLifeSound = document.getElementById("loseLifeSound"); // เพิ่มเสียงเสียชีวิต
 
 let countdownInterval, selected = [],
     gameChars = [];
 const TOTAL_TIME = 132;
-const LIVES = 3;
-let lives = LIVES;
+const LIVES = 3; // <--- เพิ่มค่าคงที่สำหรับชีวิต
+let lives = LIVES; // <--- เพิ่มตัวแปรชีวิต
 let baseScore = 0,
     bonusScore = 0,
     totalScore = 0;
@@ -79,7 +75,7 @@ let timeLeft = TOTAL_TIME,
 const CHARS_PER_ROUND = 12;
 const baseUrl = "./";
 const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-const allChars = allCharIds.map(id => ({ id: id, img: `${baseUrl}${id}.png`, sound: `${baseUrl}${id}.mp3` }));
+const allChars = allCharIds.map(id => ({ id: id, img: `${baseUrl}${id}.png` })); // Cleaned up: No .sound property needed
 let matchedPairsInRound = 0;
 let pairsInCurrentRound = 0;
 
@@ -91,23 +87,6 @@ window.addEventListener('resize', () => {
         calculateLessonLayout();
     });
 });
-profilePicGame.onclick = openSidebar;
-sidebarOverlay.onclick = closeSidebar;
-sidebarCloseBtn.onclick = closeSidebar;
-logoutBtn.onclick = () => {
-    auth.signOut();
-};
-
-// --- Sidebar Functions ---
-function openSidebar() {
-    if (sidebar) sidebar.classList.add('open');
-    if (sidebarOverlay) sidebarOverlay.style.display = 'block';
-}
-
-function closeSidebar() {
-    if (sidebar) sidebar.classList.remove('open');
-    if (sidebarOverlay) sidebarOverlay.style.display = 'none';
-}
 
 // --- Game Functions ---
 function playAudio(audio) {
@@ -117,16 +96,20 @@ function playAudio(audio) {
     }
 }
 
+// --- Game Functions ---
 function startGame() {
     startBtn.style.display = "none";
+    // lessonBtn.style.display = "none";
     restartBtn.style.display = "inline-block";
+
     baseScore = 0;
     bonusScore = 0;
     completedLessons = 0;
-    lives = LIVES;
+    lives = LIVES; // <--- รีเซ็ตชีวิตเมื่อเริ่มเกม
     updateScoreDisplay();
     updateTrophyDisplay();
-    updateLivesDisplay();
+    updateLivesDisplay(); // <--- อัปเดตการแสดงผลชีวิต
+
     gameChars = [...allChars];
     startRound();
 }
@@ -142,22 +125,31 @@ function startRound() {
     updateTimerBar();
     matchedPairsInRound = 0;
     roundCoinContainer.innerHTML = '';
+
     countdownInterval = setInterval(() => {
         timeLeft--;
-        const timePerLife = TOTAL_TIME / LIVES;
-        const expectedLives = Math.ceil(timeLeft / timePerLife);
+        const timePerLife = TOTAL_TIME / LIVES; // คำนวณเวลาต่อชีวิต (60 / 3 = 20)
+        const expectedLives = Math.ceil(timeLeft / timePerLife); // คำนวณชีวิตที่ควรจะเหลือ
+
         if (expectedLives < lives && timeLeft > 0) {
-            lives = expectedLives;
-            updateLivesDisplay();
-            playAudio(loseLifeSound);
+            lives = expectedLives; // อัปเดตชีวิตให้ตรงกับเวลา
+            updateLivesDisplay(); // อัปเดตการแสดงผลหัวใจ
+            playAudio(loseLifeSound); // เล่นเสียงเสียชีวิต
         }
-        updateTimerBar();
+        // --- จบส่วนที่เพิ่มเข้ามา ---
+
+        updateTimerBar(); // อัปเดตแถบเวลา (ตอนนี้จะเปลี่ยนสีตามชีวิตด้วย)
+
         if (timeLeft <= 0) {
             handleGameOver("หมดเวลา!");
         }
     }, 1000);
+
+
+
     gameGrid.innerHTML = "";
     selected = [];
+
     const roundChars = [];
     for (let i = 0; i < CHARS_PER_ROUND; i++) {
         if (gameChars.length === 0) break;
@@ -165,12 +157,16 @@ function startRound() {
         const selectedChar = gameChars.splice(randomIndex, 1)[0];
         roundChars.push(selectedChar);
     }
+
     pairsInCurrentRound = roundChars.length;
+
     if (pairsInCurrentRound === 0) {
         triggerFinalWinSequence();
         return;
     }
+
     let cardsData = shuffle([...roundChars.map(c => ({...c, type: 'char' })), ...roundChars.map(c => ({...c, type: 'img' }))]);
+
     cardsData.forEach(cardData => {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("card");
@@ -186,6 +182,7 @@ function startRound() {
         cardDiv.onmouseenter = () => playAudio(hoverSound);
         gameGrid.appendChild(cardDiv);
     });
+
     requestAnimationFrame(calculateAndApplyLayout);
 }
 
@@ -199,9 +196,11 @@ function shuffle(array) {
 
 function selectCard(div, card) {
     if (selected.length >= 2 || div.classList.contains("selected") || timeLeft <= 0 || lives <= 0) return;
+
     playAudio(clickSound);
     div.classList.add("selected");
     selected.push({ div, id: card.id, soundUrl: card.sound });
+
     if (selected.length === 2) {
         const [first, second] = selected;
         if (first.id === second.id) {
@@ -209,35 +208,44 @@ function selectCard(div, card) {
             new Audio(first.soundUrl).play();
             baseScore += 10;
             addCollectedCoin();
+
             first.div.classList.add("matched");
             second.div.classList.add("matched");
+
             const tempSelected = selected;
             selected = [];
             matchedPairsInRound++;
+
             setTimeout(() => {
                 tempSelected[0].div.remove();
                 tempSelected[1].div.remove();
+
                 if (matchedPairsInRound === pairsInCurrentRound) {
                     clearInterval(countdownInterval);
                     triggerRoundCompleteSequence();
                 }
             }, 500);
+
         } else {
+            // --- เมื่อจับคู่ผิด (เพิ่มตรรกะชีวิต) ---
             playAudio(wrongSound);
-            playAudio(loseLifeSound);
-            lives--;
-            updateLivesDisplay();
+            playAudio(loseLifeSound); // เล่นเสียงเสียชีวิต
+            lives--; // <--- ลดชีวิต
+            updateLivesDisplay(); // <--- อัปเดตการแสดงผล
             baseScore -= 10;
             removeCollectedCoin();
+
             setTimeout(() => {
                 first.div.classList.remove("selected");
                 second.div.classList.remove("selected");
                 selected = [];
             }, 1000);
-            if (lives <= 0) {
+
+            if (lives <= 0) { // <--- เช็คว่าชีวิตหมดหรือไม่
                 handleGameOver("ชีวิตหมด!");
                 return;
             }
+
             if ((baseScore + bonusScore) < 0) {
                 handleScoreGameOver();
             }
@@ -249,25 +257,21 @@ function selectCard(div, card) {
 // --- ฟังก์ชันที่แก้ไข ---
 function triggerRoundCompleteSequence() {
     playAudio(roundEndCoinSound);
-
-    // คิดคะแนนโบนัสจากเวลาที่เหลือ (1 วินาที = 1000 คะแนน)
-    const timeBonusInMillis = timeLeft * 1000;
-    bonusScore += timeBonusInMillis;
-    updateScoreDisplay(); // อัปเดตคะแนนให้ผู้เล่นเห็นทันที
-
+    let timeBonus = 0;
+    if (timeLeft >= 45) timeBonus = 3;
+    else if (timeLeft >= 30) timeBonus = 2;
+    else if (timeLeft >= 15) timeBonus = 1;
+    for (let i = 0; i < timeBonus; i++) {
+        setTimeout(() => addCollectedCoin(true), i * 150);
+    }
+    bonusScore += timeBonus * 5;
+    updateScoreDisplay();
     setTimeout(() => {
         playAudio(goodResultSound);
         completedLessons++;
         updateTrophyDisplay();
-
-        // แสดง Popup สรุปผลของรอบ เพื่อให้ผู้เล่นเห็นคะแนนโบนัส
-        const roundPopupContent = `<h2>ผ่านรอบ!</h2><p>คะแนนโบนัสเวลา: ${timeBonusInMillis.toLocaleString()}</p>`;
-        showPopup(roundPopupContent, createSingleButtonPopup("รอบต่อไป", () => {
-            closePopup();
-            startRound();
-        }));
-
-    }, 1000);
+        setTimeout(startRound, 2000);
+    }, 1500);
 }
 
 async function triggerFinalWinSequence() {
@@ -297,14 +301,7 @@ async function triggerFinalWinSequence() {
         const particleCount = 50 * (timeLeft / duration);
         confetti({...defaults, particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } });
     }, 250);
-
-    // --- ข้อความ Popup ที่แก้ไข ---
-    const popupContent = `<h2>ภารกิจสำเร็จ!</h2>
-                          <p>คะแนนจากการจับคู่: ${baseScore.toLocaleString()}</p>
-                          <p>คะแนนโบนัสเวลาสะสม: ${bonusScore.toLocaleString()}</p>
-                          <hr style="margin: 10px 0;">
-                          <p><strong>คะแนนรวมทั้งหมด: ${totalScore.toLocaleString()}</strong></p>
-                          <p style="font-size:0.9em; color:#666;">คะแนนของคุณถูกเพิ่มในคะแนนรวมแล้ว</p>`;
+    const popupContent = `<h2>ภารกิจสำเร็จ!</h2><p>คะแนนที่ได้รับ: ${totalScore}</p><p>คะแนนของคุณถูกเพิ่มในคะแนนรวมแล้ว</p>`;
     const controls = createLobbyButton();
     showPopup(popupContent, controls);
 }
@@ -322,13 +319,16 @@ function handleScoreGameOver() {
     showPopup(popupContent, createSingleButtonPopup("เริ่มเกมใหม่", restartGame));
 }
 
+// --- Helper & UI Functions ---
+
+// <--- เพิ่มฟังก์ชัน updateLivesDisplay ---
 function updateLivesDisplay() {
     livesDisplay.innerHTML = '❤️'.repeat(lives) + '💔'.repeat(LIVES - lives);
 }
 
 function updateScoreDisplay() {
     totalScore = baseScore + bonusScore;
-    scoreValue.textContent = totalScore.toLocaleString(); // <-- เพิ่ม .toLocaleString()
+    scoreValue.textContent = totalScore;
 }
 
 function updateTrophyDisplay() {
@@ -338,12 +338,14 @@ function updateTrophyDisplay() {
 function updateTimerBar() {
     const percentage = (timeLeft / TOTAL_TIME) * 100;
     timerFill.style.width = `${percentage}%`;
+
+    // เปลี่ยนสีตามจำนวนชีวิตที่เหลือ
     if (lives === 3) {
-        timerFill.style.backgroundColor = '#28a745';
+        timerFill.style.backgroundColor = '#28a745'; // สีเขียว
     } else if (lives === 2) {
-        timerFill.style.backgroundColor = '#ffc107';
+        timerFill.style.backgroundColor = '#ffc107'; // สีเหลือง
     } else {
-        timerFill.style.backgroundColor = '#dc3545';
+        timerFill.style.backgroundColor = '#dc3545'; // สีแดง
     }
 }
 
