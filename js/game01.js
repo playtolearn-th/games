@@ -70,7 +70,7 @@ let timeLeft = TOTAL_TIME, completedLessons = 0;
 const CHARS_PER_ROUND = 12;
 const baseUrl = "./";
 const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-const allChars = allCharIds.map(id => ({ id: id, img: `${baseUrl}${id}.png`}));
+const allChars = allCharIds.map(id => ({ id: id, img: `${baseUrl}${id}.png` }));
 let matchedPairsInRound = 0;
 let pairsInCurrentRound = 0;
 const MAX_SCORE = 180440;
@@ -101,7 +101,7 @@ function preloadAllGameAudio(callback) {
         'coin': 'coin.mp3', 'gameover': 'game-over.mp3', 'roundEnd': 'round-clear.mp3',
         'goodResult': 'goodresult.mp3', 'loseLife': 'error.mp3',
         'roundEndCoin': 'coin-upaif.mp3', 'levelUp': 'game-level-up.mp3', 'win': 'winning.mp3',
-        'swoosh': 'swoosh.mp3' // <<<--- เพิ่มเสียง swoosh เข้ามา
+        'swoosh': 'swoosh.mp3'
     };
     allCharIds.forEach(id => audioFiles[id] = `${id}.mp3`);
     const audioKeys = Object.keys(audioFiles);
@@ -131,7 +131,7 @@ function preloadAllGameAudio(callback) {
 function playSound(soundKey) {
     if (audioCache[soundKey]) {
         audioCache[soundKey].currentTime = 0;
-        audioCache[soundKey].play().catch(e => {});
+        audioCache[soundKey].play().catch(e => { });
     }
 }
 
@@ -145,15 +145,22 @@ function startGame() {
         lives = LIVES;
         timeLeft = TOTAL_TIME;
         updateScoreDisplay();
-        updateTrophyDisplay();
+        progressSection.innerHTML = '';
         updateLivesDisplay();
         clearInterval(countdownInterval);
         countdownInterval = setInterval(() => {
             if (timeLeft > 0) timeLeft--;
+            const timePerLife = TOTAL_TIME / LIVES;
+            const expectedLives = Math.ceil(timeLeft / timePerLife);
+            if (expectedLives < lives && timeLeft > 0) {
+                lives = expectedLives;
+                updateLivesDisplay();
+                playSound('loseLife');
+            }
             updateTimerBar();
             if (timeLeft <= 0) handleGameOver("หมดเวลา!");
         }, 1000);
-        gameChars = [...allChars]; 
+        gameChars = [...allChars];
         startRound();
     });
 }
@@ -204,6 +211,7 @@ function shuffle(array) {
     return array;
 }
 
+// --- ฟังก์ชันที่แก้ไข ---
 function selectCard(div, card) {
     if (selected.length >= 2 || div.classList.contains("selected") || timeLeft <= 0 || lives <= 0) return;
     playSound('click');
@@ -230,8 +238,6 @@ function selectCard(div, card) {
             }, 500);
         } else {
             playSound('wrong');
-            lives--;
-            updateLivesDisplay();
             baseScore -= 10;
             removeCollectedCoin();
             setTimeout(() => {
@@ -239,10 +245,12 @@ function selectCard(div, card) {
                 second.div.classList.remove("selected");
                 selected = [];
             }, 1000);
-            if (lives <= 0) {
-                handleGameOver("ชีวิตหมด!");
-                return;
+
+            // --- เพิ่มการตรวจสอบคะแนนติดลบ ---
+            if ((baseScore + bonusScore) < 0) {
+                handleScoreGameOver();
             }
+            // ------------------------------------
         }
         updateScoreDisplay();
     }
@@ -256,7 +264,7 @@ function triggerRoundCompleteSequence() {
 
     const coins = roundCoinContainer.querySelectorAll('.round-coin-img');
     const targetRect = newTrophy.getBoundingClientRect();
-    
+
     playSound('roundEndCoin');
 
     coins.forEach((coin, index) => {
@@ -268,17 +276,17 @@ function triggerRoundCompleteSequence() {
 
         flyingCoin.style.left = `${startRect.left}px`;
         flyingCoin.style.top = `${startRect.top}px`;
-        
+
         setTimeout(() => {
             const deltaX = (targetRect.left + targetRect.width / 2) - (startRect.left + startRect.width / 2);
             const deltaY = (targetRect.top + targetRect.height / 2) - (startRect.top + startRect.height / 2);
             flyingCoin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0)`;
             flyingCoin.style.opacity = '0';
         }, index * 50);
-        
+
         coin.style.opacity = '0';
     });
-    
+
     setTimeout(() => {
         document.querySelectorAll('.flying-coin').forEach(fc => fc.remove());
         newTrophy.classList.add('earned', 'trophy-levelup');
@@ -305,25 +313,23 @@ async function triggerFinalWinSequence() {
             }
         } catch (e) { console.error("Score saving failed: ", e); }
     }
-    
+
     const rank = getRankForScore(totalScore);
     const animationContainer = document.createElement('div');
     animationContainer.className = 'end-game-animation-container';
-    
+
     const finalMedal = document.createElement('img');
     finalMedal.src = rank.image;
     finalMedal.className = 'final-rank-medal';
     animationContainer.appendChild(finalMedal);
     document.body.appendChild(animationContainer);
 
-    const trophies = progressSection.querySelectorAll('.trophy-icon.earned');
+    const trophies = progressSection.querySelectorAll('.trophy-icon');
     const targetRect = bestRankDisplay.getBoundingClientRect();
 
-    // <<<--- เล่นเสียง swoosh ที่นี่ ---
     if (trophies.length > 0) {
         playSound('swoosh');
     }
-    // ---------------------------------
 
     trophies.forEach((trophy, index) => {
         const startRect = trophy.getBoundingClientRect();
@@ -331,10 +337,10 @@ async function triggerFinalWinSequence() {
         flyingTrophy.textContent = '🏆';
         flyingTrophy.className = 'flying-trophy-endgame';
         animationContainer.appendChild(flyingTrophy);
-        
+
         flyingTrophy.style.left = `${startRect.left}px`;
         flyingTrophy.style.top = `${startRect.top}px`;
-        
+
         setTimeout(() => {
             const deltaX = (targetRect.left + targetRect.width / 2) - (startRect.left + startRect.width / 2);
             const deltaY = (targetRect.top + targetRect.height / 2) - (startRect.top + startRect.height / 2);
@@ -345,11 +351,11 @@ async function triggerFinalWinSequence() {
     });
 
     setTimeout(() => {
-        finalMedal.style.left = `${targetRect.left + (targetRect.width / 2) - 75}px`; // จัดให้อยู่กลาง
+        finalMedal.style.left = `${targetRect.left + (targetRect.width / 2) - 75}px`;
         finalMedal.style.top = `${targetRect.top + (targetRect.height / 2) - 75}px`;
         finalMedal.classList.add('show');
         playSound('win');
-        
+
         setTimeout(() => {
             const popupContent = `<h2>ภารกิจสำเร็จ!</h2>
                                   <div class="final-rank-display"><img src="${rank.image}" alt="${rank.rank}"><h3>คุณได้รับ Rank: ${rank.rank}</h3></div>
@@ -363,10 +369,10 @@ async function triggerFinalWinSequence() {
 
 function getRankForScore(score) {
     const percentage = (score / MAX_SCORE) * 100;
-    if (percentage >= 90) return { rank: 'เพชร', image: 'diamond.png' };
-    if (percentage >= 75) return { rank: 'ทอง', image: 'gold-medal.png' };
-    if (percentage >= 50) return { rank: 'เงิน', image: 'silver-Coin.png' };
-    if (percentage >= 25) return { rank: 'ทองแดง', image: 'bronze-Medal.png' };
+    if (percentage >= 60) return { rank: 'เพชร', image: 'diamond.png' };
+    if (percentage >= 50) return { rank: 'ทอง', image: 'gold-medal.png' };
+    if (percentage >= 40) return { rank: 'เงิน', image: 'silver-Coin.png' };
+    if (percentage >= 30) return { rank: 'ทองแดง', image: 'bronze-Medal.png' };
     return { rank: 'เข้าร่วม', image: 'neutral.png' };
 }
 
@@ -378,9 +384,9 @@ async function displayBestRank() {
         if (doc.exists && doc.data().scores?.game01) {
             const bestScore = doc.data().scores.game01;
             const rank = getRankForScore(bestScore);
-            bestRankDisplay.innerHTML = `<img src="${rank.image}" title="Rank สูงสุด: ${rank.rank}">`;
+            bestRankDisplay.innerHTML = `<img src="${baseUrl}${rank.image}" title="Rank สูงสุด: ${rank.rank}">`;
         } else {
-            bestRankDisplay.innerHTML = ''; // ไม่มี Rank ให้แสดง
+            bestRankDisplay.innerHTML = '';
         }
     } catch (e) { console.error("Could not display best rank:", e); }
 }
@@ -398,11 +404,11 @@ function handleScoreGameOver() {
     showPopup(popupContent, createGameOverControls());
 }
 
-function updateLivesDisplay() { if(livesDisplay) livesDisplay.innerHTML = '❤️'.repeat(lives) + '💔'.repeat(LIVES - lives); }
-function updateScoreDisplay() { let totalScore = (baseScore || 0) + (bonusScore || 0); if(scoreValue) scoreValue.textContent = totalScore.toLocaleString(); }
+function updateLivesDisplay() { if (livesDisplay) livesDisplay.innerHTML = '❤️'.repeat(lives) + '💔'.repeat(LIVES - lives); }
+function updateScoreDisplay() { let totalScore = (baseScore || 0) + (bonusScore || 0); if (scoreValue) scoreValue.textContent = totalScore.toLocaleString(); }
 function updateTrophyDisplay() { /* ไม่ใช้แล้ว */ }
 function updateTimerBar() {
-    if(timerFill) {
+    if (timerFill) {
         const percentage = (timeLeft / TOTAL_TIME) * 100;
         timerFill.style.width = `${percentage}%`;
         if (lives === 3) timerFill.style.backgroundColor = '#28a745';
@@ -427,14 +433,14 @@ function removeCollectedCoin() {
     }
 }
 function showPopup(msg, controls) {
-    if(popupText && popupControls && popup) {
+    if (popupText && popupControls && popup) {
         popupText.innerHTML = msg;
         popupControls.innerHTML = '';
         if (controls) popupControls.appendChild(controls);
         popup.style.display = "flex";
     }
 }
-function closePopup() { if(popup) popup.style.display = "none"; }
+function closePopup() { if (popup) popup.style.display = "none"; }
 function createSingleButtonPopup(text, onClickAction) {
     const controls = document.createElement('div');
     const btn = document.createElement('button');
