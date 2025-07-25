@@ -214,7 +214,7 @@ body {
 
 /* ... (โค้ดส่วนที่เหลือเหมือนเดิม) ... */
 #game { display: grid; justify-content: center; align-content: center; flex-grow: 1; width: 100%; gap: 10px; }
-.card { background: #ffffff; border-radius: 8px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; font-size: 2em; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.4s ease, opacity 0.4s ease; cursor: pointer; }
+.card { background: #ffffff; border-radius: 4px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; font-size: 2em; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.4s ease, opacity 0.4s ease; cursor: pointer; }
 .card.matched { transform: scale(0); opacity: 0; cursor: default; }
 .card:hover { transform: scale(1.05); }
 .card.selected { background-color: #94f7c8 !important; transform: scale(1.05); pointer-events: none; opacity: 0.6; }
