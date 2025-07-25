@@ -138,9 +138,11 @@ body {
 }
 
 .back-to-lobby-btn img {
-    width: 60%;
-    /* ขนาดของรูปภาพข้างใน */
-    height: auto;
+    width: 70%;
+    /* ลองปรับลดขนาดลง /
+height: auto;
+max-width: 30px; / กำหนดขนาดสูงสุด */
+    max-height: 30px;
 }
 
 .profile-pic-game {
