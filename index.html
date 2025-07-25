@@ -1,138 +1,53 @@
 <!DOCTYPE html>
 <html lang="th">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ล็อบบี้เกม - เลือกเกมของคุณ</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ล็อบบี้เกม - เลือกเกมของคุณ</title>
 
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+    </head>
 
-    <style>
-        body {
-            font-family: 'TH Sarabun New', sans-serif;
-            background-color: #f0f8ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            margin: 0;
-        }
-        
-        .lobby-container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .game-selection a {
-            display: inline-block;
-            padding: 15px 30px;
-            margin: 10px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1.5em;
-            transition: background-color 0.3s;
-        }
-        
-        .game-selection a:hover {
-            background-color: #0056b3;
-        }
-        
-        #userInfo,
-        #scoreDisplay {
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        
-        .profile-pic-lobby {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid #007bff;
-            margin-bottom: 15px;
-            object-fit: cover;
-        }
-        
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
-            font-size: 1.5em;
-            flex-direction: column;
-        }
-        
-        .loading-box {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .progress-bar-container {
-            width: 300px;
-            height: 20px;
-            background-color: #555;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-        
-        #progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background-color: #4CAF50;
-            transition: width 0.3s ease-in-out;
-        }
-    </style>
-</head>
+    <body class="lobby-body">
 
-<body>
-
-    <div id="loading-overlay">
-        <div class="loading-box">
-            <p>กำลังเตรียมไฟล์เกมให้พร้อมเล่น...</p>
-            <div class="progress-bar-container">
-                <div id="progress-bar-fill"></div>
+        <div id="loading-overlay">
+            <div class="loading-box">
+                <p>กำลังเตรียมไฟล์เกมให้พร้อมเล่น...</p>
+                <div class="progress-bar-container">
+                    <div id="progress-bar-fill"></div>
+                </div>
+                <p id="progress-text">0%</p>
             </div>
-            <p id="progress-text">0%</p>
-        </div>
-    </div>
-
-    <div class="lobby-container" style="display: none;">
-        <img id="profilePic" src="" alt="Profile Picture" class="profile-pic-lobby">
-        <h1>ยินดีต้อนรับ</h1>
-
-        <div id="userInfo">กำลังโหลดข้อมูลผู้ใช้...</div>
-        <div id="scoreDisplay">🏆 คะแนนรวม: <span>...</span></div>
-
-        <hr>
-
-        <h2>เลือกเกมที่จะเล่น</h2>
-        <div class="game-selection">
-            <a href="game01.html">เล่นเกมจับคู่พยัญชนะ</a>
         </div>
 
-        <button id="logoutBtn" style="margin-top: 20px;">ออกจากระบบ</button>
-    </div>
+        <div class="lobby-container" style="display: none;">
+            <img id="profilePic" src="" alt="Profile Picture" class="profile-pic-lobby">
+            <h1>ยินดีต้อนรับ</h1>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+            <div id="userInfo">กำลังโหลดข้อมูลผู้ใช้...</div>
+            <div id="scoreDisplay">🏆 คะแนนรวม: <span>...</span></div>
 
-    <script src="js/main.js"></script>
+            <hr>
 
-</body>
+            <h2>เลือกเกมที่จะเล่น</h2>
+            <div class="game-selection">
+                <a href="game01.html">
+                    <div id="game01-rank-display"></div>
+                    <span>เล่นเกมจับคู่พยัญชนะ</span>
+                </a>
+            </div>
+
+            <button id="logoutBtn" style="margin-top: 20px;">ออกจากระบบ</button>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+        <script src="js/main.js"></script>
+
+    </body>
 
 </html>

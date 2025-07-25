@@ -19,6 +19,9 @@ const progressBarFill = document.getElementById('progress-bar-fill');
 const progressText = document.getElementById('progress-text');
 const lobbyContainer = document.querySelector('.lobby-container');
 
+// --- ค่าคงที่สำหรับคำนวณ Rank ---
+const MAX_SCORE_GAME01 = 180440;
+
 // --- 2. ตรวจสอบสถานะการล็อกอินของผู้ใช้ ---
 auth.onAuthStateChanged(user => {
     if (user) {
@@ -47,11 +50,13 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-// --- 3. ฟังก์ชันสำหรับดึงและแสดงข้อมูลผู้ใช้ ---
+
+// --- 3. ฟังก์ชันสำหรับดึงและแสดงข้อมูลผู้ใช้ (แก้ไขใหม่) ---
 async function displayUserData(user) {
     const userInfoDiv = document.getElementById('userInfo');
     const scoreSpan = document.querySelector('#scoreDisplay span');
     const profilePic = document.getElementById('profilePic');
+    const game01RankDisplay = document.getElementById('game01-rank-display');
 
     if (profilePic) profilePic.src = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
     if (userInfoDiv) userInfoDiv.textContent = `สวัสดี, ${user.displayName || 'ผู้เล่น'}`;
@@ -59,15 +64,42 @@ async function displayUserData(user) {
     const userScoreRef = db.collection('userScores').doc(user.uid);
     try {
         const doc = await userScoreRef.get();
-        const bestScore = doc.exists ? (doc.data().bestScore || 0) : 0;
-        if (scoreSpan) scoreSpan.textContent = bestScore.toLocaleString();
+        let totalBestScore = 0;
+
+        if (doc.exists && doc.data().scores) {
+            const scores = doc.data().scores;
+
+            // --- ส่วนที่แก้ไข: คำนวณคะแนนรวมจากทุกเกม ---
+            // นำค่าคะแนนทั้งหมดใน object scores มาบวกรวมกัน
+            totalBestScore = Object.values(scores).reduce((sum, currentScore) => sum + currentScore, 0);
+            // ---------------------------------------------
+
+            // แสดง Rank ของ Game 01 (เหมือนเดิม)
+            if (scores.game01 && game01RankDisplay) {
+                const rank = getRankForScore(scores.game01, MAX_SCORE_GAME01);
+                game01RankDisplay.innerHTML = `<img src="${rank.image}" title="Rank สูงสุด: ${rank.rank}">`;
+            }
+        }
+
+        if (scoreSpan) scoreSpan.textContent = totalBestScore.toLocaleString();
+
     } catch (error) {
         console.error("Error fetching score:", error);
         if (scoreSpan) scoreSpan.textContent = 'N/A';
     }
 }
 
-// --- 4. ฟังก์ชัน Preloading (เวอร์ชันป้องกันการค้าง) ---
+// --- 4. ฟังก์ชันคำนวณ Rank ---
+function getRankForScore(score, maxScore) {
+    const percentage = (score / maxScore) * 100;
+    if (percentage >= 60) return { rank: 'เพชร', image: 'diamond.png' };
+    if (percentage >= 50) return { rank: 'ทอง', image: 'gold-medal.png' };
+    if (percentage >= 40) return { rank: 'เงิน', image: 'silver-Coin.png' };
+    if (percentage >= 30) return { rank: 'ทองแดง', image: 'bronze-Medal.png' };
+    return { rank: 'เข้าร่วม', image: 'neutral.png' };
+}
+
+// --- 5. ฟังก์ชัน Preloading ---
 function preloadGameAssets(onComplete) {
     const baseUrl = "./";
     const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
@@ -75,13 +107,11 @@ function preloadGameAssets(onComplete) {
     allCharIds.forEach(id => assetsToLoad.push({ type: 'image', url: `${baseUrl}${id}.png` }));
     allCharIds.forEach(id => assetsToLoad.push({ type: 'audio', url: `${baseUrl}${id}.mp3` }));
 
-    // --- รายการไฟล์ที่มีอยู่จริงในโปรเจกต์ ---
     const otherAssets = [
         "Coin.png", "diamond.png", "coin.mp3", "coin-upaif.mp3", "error.mp3",
         "game-over.mp3", "goodresult.mp3", "hover.mp3", "mouse-click.mp3",
-        "round-clear.mp3"
+        "round-clear.mp3", "winning.mp3", "game-level-up.mp3"
     ];
-    // --- จบรายการไฟล์ ---
 
     otherAssets.forEach(asset => assetsToLoad.push({ type: asset.endsWith('.png') ? 'image' : 'audio', url: `${baseUrl}${asset}` }));
 
