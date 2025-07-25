@@ -21,9 +21,18 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* --- ส่วนที่แก้ไข --- */
 .game-selection a {
-    display: inline-block;
-    padding: 15px 30px;
+    display: inline-flex;
+    /* เปลี่ยนเป็น inline-flex */
+    align-items: center;
+    /* จัดให้อยู่กลางแนวตั้ง */
+    justify-content: center;
+    /* จัดให้อยู่กลางแนวนอน */
+    gap: 10px;
+    /* ระยะห่างระหว่างเหรียญกับข้อความ */
+    padding: 10px 20px;
+    /* ปรับ padding ให้เหมาะสม */
     margin: 10px;
     background-color: #007bff;
     color: white;
@@ -37,11 +46,19 @@ body {
     background-color: #0056b3;
 }
 
+#game01-rank-display img {
+    width: 40px;
+    /* ขนาดเหรียญในปุ่ม */
+    height: 40px;
+}
+
 #userInfo,
 .lobby-container #scoreDisplay {
     font-size: 2em;
     margin-bottom: 20px;
 }
+
+/* --- จบส่วนที่แก้ไข --- */
 
 .profile-pic-lobby {
     width: 100px;
@@ -50,6 +67,43 @@ body {
     border: 3px solid #007bff;
     margin-bottom: 15px;
     object-fit: cover;
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: white;
+    font-size: 1.5em;
+    flex-direction: column;
+}
+
+.loading-box {
+    text-align: center;
+    padding: 20px;
+}
+
+.progress-bar-container {
+    width: 300px;
+    height: 20px;
+    background-color: #555;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+#progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease-in-out;
 }
 
 /* --- Login Page Styles --- */
@@ -119,16 +173,12 @@ body {
 
 .back-to-lobby-btn {
     display: flex;
-    /* เพิ่มเพื่อให้รูปอยู่ตรงกลาง */
     align-items: center;
     justify-content: center;
     padding: 5px;
-    /* ปรับ padding ให้พอดีกับรูป */
-    background-color: #ffffff;
+    background-color: #6c757d;
     border-radius: 50%;
-    /* ทำให้เป็นวงกลม */
     width: 40px;
-    /* กำหนดขนาด */
     height: 40px;
     transition: background-color 0.2s ease;
 }
@@ -139,9 +189,8 @@ body {
 
 .back-to-lobby-btn img {
     width: 70%;
-    /* ลองปรับลดขนาดลง /
-height: auto;
-max-width: 30px; / กำหนดขนาดสูงสุด */
+    height: auto;
+    max-width: 30px;
     max-height: 30px;
 }
 
@@ -166,12 +215,6 @@ max-width: 30px; / กำหนดขนาดสูงสุด */
     line-height: 1;
 }
 
-/* --- ส่วนที่แก้ไข --- */
-#best-rank-display {
-    display: flex;
-    align-items: center;
-}
-
 #best-rank-display img {
     width: 45px;
     height: 45px;
@@ -180,97 +223,6 @@ max-width: 30px; / กำหนดขนาดสูงสุด */
 
 #best-rank-display img:hover {
     transform: scale(1.1);
-}
-
-.end-game-animation-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10000;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.flying-trophy-endgame {
-    position: absolute;
-    font-size: 2.2em;
-    color: gold;
-    filter: drop-shadow(0 0 10px gold);
-    transition: all 1s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-}
-
-.final-rank-medal {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.5s ease;
-}
-
-.final-rank-medal.show {
-    animation: sparkle-scale 1.5s ease-in-out forwards;
-}
-
-@keyframes sparkle-scale {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-
-    50% {
-        transform: scale(1.5);
-        opacity: 1;
-        filter: drop-shadow(0 0 20px white) drop-shadow(0 0 10px gold);
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-        filter: none;
-    }
-}
-
-.trophy-icon {
-    opacity: 0;
-    transform: scale(0);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.trophy-icon.earned {
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-.trophy-icon.trophy-levelup {
-    animation: levelup 0.7s ease-in-out;
-}
-
-@keyframes levelup {
-    0% {
-        transform: scale(1.1);
-    }
-
-    50% {
-        transform: scale(1.6);
-        filter: drop-shadow(0 0 15px gold) drop-shadow(0 0 5px white);
-    }
-
-    100% {
-        transform: scale(1.1);
-    }
-}
-
-.flying-coin {
-    position: fixed;
-    z-index: 1002;
-    width: 35px;
-    height: 35px;
-    pointer-events: none;
-    transition: transform 0.6s cubic-bezier(0.5, -0.5, 0.8, 1), opacity 0.6s ease-out;
-    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 /* --- Game Area --- */
