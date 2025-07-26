@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>บทเรียนพยัญชนะไทย</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'TH Sarabun New', sans-serif;
+                background: #ffffff; /* พื้นหลังสีขาว */
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 20px;
+                box-sizing: border-box;
+                height: 100vh; /* Ensure body takes full viewport height */
+                margin: 0;
+            }
+
+            #lesson-page {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                max-width: 900px;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                position: relative;
+                margin-top: 20px;
+                flex-grow: 1; /* Allow lesson-page to take available height */
+                justify-content: space-between; /* Distribute content and controls */
+            }
+
+            #close-lesson-btn {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: none;
+                border: none;
+                font-size: 2em;
+                cursor: pointer;
+                color: #555;
+                z-index: 10; /* Ensure button is clickable */
+            }
+
+            h2 {
+                color: #00796b;
+                margin-bottom: 20px;
+                font-size: 2.5em;
+                text-align: center;
+            }
+
+            #lesson-display-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                flex-grow: 1; /* Allow content to fill space */
+                position: relative;
+                margin-bottom: 20px; /* Space for controls */
+            }
+
+            #lesson-grid {
+                display: flex; /* Changed to flex to hold one card */
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%; /* Make it fill parent */
+            }
+
+            .lesson-card {
+                background-color: #ffffff; /* พื้นหลังการ์ดสีขาว */
+                border: 2px solid #aed581;
+                border-radius: 10px;
+                display: flex;
+                flex-direction: row; /* จัดเรียงแนวนอน */
+                align-items: center; /* จัดให้อยู่กึ่งกลางตามแนวตั้ง */
+                justify-content: center; /* จัดให้อยู่กึ่งกลางตามแนวนอน */
+                gap: 20px; /* เพิ่มระยะห่างระหว่างองค์ประกอบ */
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                padding: 20px; /* Increased padding */
+                box-sizing: border-box;
+                width: 80%; /* Adjusted for single card view */
+                height: 80%; /* Adjusted for single card view */
+                max-width: 500px; /* Limit max size */
+                max-height: 500px; /* Limit max size */
+            }
+
+            .lesson-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .lesson-card img {
+                max-width: 50%; /* ปรับขนาดรูปภาพ */
+                max-height: 90%; /* ปรับขนาดรูปภาพ */
+                object-fit: contain;
+                /* margin-bottom: 15px; Removed margin-bottom due to flex-direction row */
+            }
+
+            .lesson-card span {
+                font-size: 4em; /* Larger font for single card */
+                font-weight: bold;
+                color: #333;
+                white-space: nowrap; /* Prevent text wrapping */
+                max-width: 50%; /* ปรับขนาดพยัญชนะ */
+                text-align: center;
+            }
+
+            #carousel-controls {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                padding: 0 10px;
+                margin-top: 20px;
+            }
+
+            .carousel-btn {
+                background-color: #00796b;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1.2em;
+                transition: background-color 0.3s ease;
+            }
+
+            .carousel-btn:hover {
+                background-color: #004d40;
+            }
+
+            .carousel-btn:disabled {
+                background-color: #cccccc;
+                cursor: not-allowed;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="lesson-page">
+            <button id="close-lesson-btn" onclick="window.location.href='game01.html'">&times; ปิด</button>
+            <h2>บทเรียนพยัญชนะไทย</h2>
+            
+            <div id="lesson-display-container">
+                <div id="lesson-grid">
+                    </div>
+            </div>
+
+            <div id="carousel-controls">
+                <button id="prevBtn" class="carousel-btn">ก่อนหน้า</button>
+                <button id="nextBtn" class="carousel-btn">ถัดไป</button>
+            </div>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+        <script src="js/lesson.js"></script>
+    </body>
+
+</html>
