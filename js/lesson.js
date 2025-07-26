@@ -10,17 +10,17 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const auth = firebase.auth(); // ยังคงประกาศ auth เผื่อโค้ดส่วนอื่นใช้ แต่จะไม่ได้ใช้ในการตรวจสอบสถานะล็อกอินอีก
 
 // --- DOM Elements ---
 const lessonPage = document.getElementById('lesson-page');
 const lessonGrid = document.getElementById('lesson-grid');
-const closeLessonBtn = document.getElementById('close-lesson-btn');
+// const closeLessonBtn = document.getElementById('close-lesson-btn'); // ลบการประกาศตัวแปรนี้ออก
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 
 // เพิ่มการตรวจสอบ DOM elements ที่จำเป็น
-if (!lessonPage || !lessonGrid || !closeLessonBtn || !prevBtn || !nextBtn) {
+if (!lessonPage || !lessonGrid || /* !closeLessonBtn || */ !prevBtn || !nextBtn) { // ลบ closeLessonBtn ออกจากการตรวจสอบ
     console.error("Essential DOM elements not found. Cannot initialize lesson page.");
     document.body.innerHTML = '<p style="text-align: center; color: red; font-size: 1.5em;">เกิดข้อผิดพลาดในการโหลดหน้าบทเรียน: ส่วนประกอบหน้าจอไม่สมบูรณ์</p>';
     throw new Error("Missing DOM elements");
@@ -38,9 +38,7 @@ const allChars = allCharIds.map(id => ({ id: id, img: `${baseUrl}${id}.png` }));
 let currentCardIndex = 0;
 
 // --- Event Listeners ---
-closeLessonBtn.onclick = () => {
-    window.location.href = 'game01.html';
-};
+// closeLessonBtn.onclick = () => { window.location.href = 'game01.html'; }; // ลบ Event Listener นี้ออก
 
 prevBtn.onclick = showPrevCard;
 nextBtn.onclick = showNextCard;
@@ -174,16 +172,23 @@ function updateNavigationButtons() {
     if (nextBtn) nextBtn.disabled = (currentCardIndex === allChars.length - 1);
 }
 
-// --- Initial setup on page load ---
-auth.onAuthStateChanged(user => {
-    if (user) {
-        console.log("User authenticated. Starting preloading.");
-        preloadAllGameAudio(() => {
-            console.log("Audio preloading complete. Showing first card.");
-            showCard(0); // Show the first card after preloading
-        });
-    } else {
-        console.log("User not authenticated. Redirecting to login.");
-        window.location.href = 'login.html';
-    }
+// --- Initial setup on page load (ไม่มีการตรวจสอบล็อกอินอีกต่อไป) ---
+// auth.onAuthStateChanged(user => { // ลบ block นี้ออก
+//     if (user) {
+//         console.log("User authenticated. Starting preloading.");
+//         preloadAllGameAudio(() => {
+//             console.log("Audio preloading complete. Showing first card.");
+//             showCard(0); // Show the first card after preloading
+//         });
+//     } else {
+//         console.log("User not authenticated. Redirecting to login.");
+//         window.location.href = 'login.html';
+//     }
+// });
+
+// เรียกใช้ preloadAllGameAudio โดยตรงเมื่อสคริปต์โหลด (ไม่ต้องล็อกอิน)
+console.log("Starting lesson page without authentication check.");
+preloadAllGameAudio(() => {
+    console.log("Audio preloading complete. Showing first card.");
+    showCard(0); // แสดงการ์ดใบแรกหลังจากโหลดเสียงเสร็จสิ้น
 });

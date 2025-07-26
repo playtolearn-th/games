@@ -11,48 +11,35 @@
             body {
                 font-family: 'TH Sarabun New', sans-serif;
                 background: #ffffff; /* พื้นหลังสีขาว */
-                overflow: hidden;
+                overflow: hidden; /* ไม่มี scrollbar ของ body */
+                height: 100vh; /* ให้ body สูงเต็ม viewport */
+                margin: 0; /* ลบ margin เริ่มต้นของ body */
+                padding: 0; /* ลบ padding เริ่มต้นของ body */
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-start;
-                padding: 20px;
-                box-sizing: border-box;
-                height: 100vh; /* Ensure body takes full viewport height */
-                margin: 0;
             }
 
             #lesson-page {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                width: 100%;
-                max-width: 900px;
-                background-color: #ffffff;
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                width: 100vw; /* กว้างเต็ม viewport */
+                height: 100vh; /* สูงเต็ม viewport */
+                background-color: #ffffff; /* พื้นหลังสีขาว */
+                padding: 0; /* ลบ padding ออกจาก lesson-page */
+                /* ลบ border-radius และ box-shadow เพื่อไม่ให้มีลักษณะเป็นกรอบ */
                 position: relative;
-                margin-top: 20px;
-                flex-grow: 1; /* Allow lesson-page to take available height */
-                justify-content: space-between; /* Distribute content and controls */
-            }
-
-            #close-lesson-btn {
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                background: none;
-                border: none;
-                font-size: 2em;
-                cursor: pointer;
-                color: #555;
-                z-index: 10; /* Ensure button is clickable */
+                /* margin-top: 20px; ลบ margin-top ออก */
+                flex-grow: 1; 
+                justify-content: space-between; 
             }
 
             h2 {
                 color: #00796b;
-                margin-bottom: 20px;
+                margin-top: 2vmin; /* ปรับ margin responsive */
+                margin-bottom: 2vmin; /* ปรับ margin responsive */
                 font-size: 2.5em;
                 text-align: center;
             }
@@ -62,57 +49,59 @@
                 justify-content: center;
                 align-items: center;
                 width: 100%;
-                flex-grow: 1; /* Allow content to fill space */
+                flex-grow: 1; /* ให้เนื้อหาขยายเต็มพื้นที่ */
                 position: relative;
-                margin-bottom: 20px; /* Space for controls */
+                margin-bottom: 2vmin; /* ปรับ margin responsive */
             }
 
             #lesson-grid {
-                display: flex; /* Changed to flex to hold one card */
+                display: flex; 
                 justify-content: center;
                 align-items: center;
                 width: 100%;
-                height: 100%; /* Make it fill parent */
+                height: 100%; 
             }
 
             .lesson-card {
                 background-color: #ffffff; /* พื้นหลังการ์ดสีขาว */
-                border: 2px solid #aed581;
-                border-radius: 10px;
+                /* ลบ border และ border-radius เพื่อไม่ให้มีลักษณะเป็นกรอบ */
                 display: flex;
                 flex-direction: row; /* จัดเรียงแนวนอน */
                 align-items: center; /* จัดให้อยู่กึ่งกลางตามแนวตั้ง */
                 justify-content: center; /* จัดให้อยู่กึ่งกลางตามแนวนอน */
-                gap: 20px; /* เพิ่มระยะห่างระหว่างองค์ประกอบ */
+                gap: 2vmin; /* ใช้ gap responsive */
                 cursor: pointer;
                 transition: transform 0.2s, box-shadow 0.2s;
-                padding: 20px; /* Increased padding */
+                padding: 2vmin; /* ใช้ padding responsive */
                 box-sizing: border-box;
-                width: 80%; /* Adjusted for single card view */
-                height: 80%; /* Adjusted for single card view */
-                max-width: 500px; /* Limit max size */
-                max-height: 500px; /* Limit max size */
+                width: 80vw; /* กว้าง 90% ของ viewport width */
+                height: 80vh; /* สูง 80% ของ viewport height */
+                /* ลบ max-width และ max-height เพื่อให้การ์ดปรับขนาดตามจอได้เต็มที่ */
             }
 
             .lesson-card:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* ยังคงเงาเมื่อ hover */
             }
 
             .lesson-card img {
-                max-width: 50%; /* ปรับขนาดรูปภาพ */
-                max-height: 90%; /* ปรับขนาดรูปภาพ */
-                object-fit: contain;
-                /* margin-bottom: 15px; Removed margin-bottom due to flex-direction row */
+                max-width: 50%; /* รูปภาพไม่เกินครึ่งหนึ่งของการ์ด */
+                max-height: 100%; /* รูปภาพปรับขนาดตามความสูงของการ์ด */
+                object-fit: contain; /* รักษาสัดส่วนรูปภาพ */
             }
 
             .lesson-card span {
-                font-size: 4em; /* Larger font for single card */
+                /* ใช้ clamp() เพื่อปรับขนาดตัวอักษรให้สมดุลและอยู่ในช่วงที่กำหนด */
+                font-size: clamp(30em, 10vmin, 120px); 
                 font-weight: bold;
                 color: #333;
-                white-space: nowrap; /* Prevent text wrapping */
-                max-width: 50%; /* ปรับขนาดพยัญชนะ */
+                white-space: nowrap; /* ป้องกันการขึ้นบรรทัดใหม่ */
+                max-width: 50%; /* พยัญชนะไม่เกินครึ่งหนึ่งของการ์ด */
                 text-align: center;
+                display: flex; 
+                align-items: center;
+                justify-content: center;
+                height: 100%; 
             }
 
             #carousel-controls {
@@ -120,7 +109,7 @@
                 display: flex;
                 justify-content: space-between;
                 padding: 0 10px;
-                margin-top: 20px;
+                margin-top: 2vmin; /* ปรับ margin responsive */
             }
 
             .carousel-btn {
@@ -147,7 +136,6 @@
 
     <body>
         <div id="lesson-page">
-            <button id="close-lesson-btn" onclick="window.location.href='game01.html'">&times; ปิด</button>
             <h2>บทเรียนพยัญชนะไทย</h2>
             
             <div id="lesson-display-container">
