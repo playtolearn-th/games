@@ -14,55 +14,43 @@
                 width: 100%;
                 height: 100%;
                 overflow: hidden;
-                /* ป้องกันการเลื่อนหน้าจอที่ไม่จำเป็น */
                 font-family: 'TH Sarabun New', sans-serif;
             }
 
-            /* --- คอนเทนเนอร์หลักของหน้า (Flexbox Centering) --- */
+            /* --- คอนเทนเนอร์หลักของหน้า --- */
             #lesson-page {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                /* จัดให้อยู่กึ่งกลางแนวตั้ง */
                 align-items: center;
-                /* จัดให้อยู่กึ่งกลางแนวนอน */
                 width: 100vw;
                 height: 100vh;
                 background-color: #d1f3ff;
                 box-sizing: border-box;
                 padding: 1vmin;
-                /* เพิ่ม padding รอบๆ เล็กน้อย */
             }
 
             /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
             #lesson-display-container {
                 display: flex;
                 flex-direction: row;
-                /* กำหนดให้เรียงแนวนอนเสมอ */
                 justify-content: center;
-                align-items: center;
-                /* จัดให้ปุ่มและการ์ดอยู่ตรงกลางแนวเดียวกัน */
+                align-items: center; /* <<< คำสั่งสำคัญที่ใช้จัดตำแหน่งให้อยู่กึ่งกลาง */
                 width: 100%;
                 height: 100%;
                 max-width: 1400px;
-                /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
             }
 
             /* --- ปุ่มลูกศรซ้าย-ขวา --- */
             .nav-img-btn {
                 flex-shrink: 0;
-                /* ป้องกันไม่ให้ปุ่มหดตัว */
                 height: auto;
                 width: 6vmin;
-                /* ใช้ vmin เพื่อให้ขนาดสัมพันธ์กับด้านที่เล็กกว่าของจอ */
                 max-width: 60px;
-                /* จำกัดขนาดสูงสุดของปุ่ม */
                 min-width: 30px;
-                /* กำหนดขนาดขั้นต่ำของปุ่ม */
                 cursor: pointer;
                 object-fit: contain;
                 margin: 0 2vmin;
-                /* เพิ่มระยะห่างระหว่างปุ่มกับการ์ด */
                 transition: opacity 0.3s ease, transform 0.2s ease;
                 user-select: none;
             }
@@ -79,16 +67,15 @@
                 transform: scale(1);
             }
 
-            /* --- พื้นที่แสดงการ์ด --- */
+            /* --- พื้นที่แสดงการ์ด (แก้ไข) --- */
             #lesson-grid {
                 flex-grow: 1;
                 display: flex;
                 justify-content: center;
-                align-items: start;
+                align-items: center; /* <<< แก้ไข: จัดให้การ์ดอยู่ตรงกลาง */
                 width: 100%;
-                height: 80%;
+                height: 100%;      /* <<< แก้ไข: ให้ความสูงเต็มพื้นที่ */
                 min-width: 0;
-                /* ป้องกันปัญหา flexbox item ล้น container */
             }
 
             /* --- การ์ดพยัญชนะ --- */
@@ -96,7 +83,6 @@
                 background-color: #ffffff;
                 display: flex;
                 flex-direction: row;
-                /* ค่าเริ่มต้นสำหรับแนวนอน */
                 align-items: center;
                 justify-content: center;
                 gap: 1vmin;
@@ -106,16 +92,10 @@
                 box-sizing: border-box;
                 border-radius: 20px;
                 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-
-                /* --- การปรับขนาดด้วย Aspect Ratio --- */
                 aspect-ratio: 4 / 3;
-                /* กำหนดอัตราส่วนการ์ดแนวนอน */
-                height: 100%;
-                /* ให้ความสูงยืดเต็มที่ใน container */
+                height: 85%; /* <<< ปรับความสูงของการ์ดที่นี่ */
                 width: auto;
-                /* ความกว้างปรับตามอัตราส่วน */
                 max-width: 100%;
-                /* แต่ไม่ให้กว้างเกินพื้นที่ที่มี */
             }
 
             .lesson-card:hover {
@@ -136,7 +116,6 @@
             .lesson-card span {
                 flex: 1;
                 font-size: clamp(30em, 35vmin, 350px);
-                /* ปรับขนาดฟอนต์ให้เหมาะสมขึ้น */
                 font-weight: bold;
                 color: #333;
                 white-space: nowrap;
@@ -150,32 +129,22 @@
 
             /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
             @media (orientation: portrait) {
-                /* ไม่ต้องเปลี่ยน flex-direction ของ container แล้ว */
-                /* ไม่ต้องหมุนปุ่มแล้ว */
-
                 .lesson-card {
-                    /* แต่ยังคงให้เนื้อหาในการ์ดเรียงแนวตั้ง */
                     flex-direction: column;
                     aspect-ratio: 3 / 4;
-                    /* กำหนดอัตราส่วนการ์ดแนวตั้ง */
                     width: auto;
-                    /* ความกว้างปรับตามอัตราส่วน */
                     height: 85%;
-                    /* ให้ความสูงเป็น % ของ container */
                     max-height: 85%;
-
                 }
 
                 .lesson-card img,
                 .lesson-card span {
                     width: 100%;
                     height: 50%;
-                    /* แบ่งพื้นที่กันคนละครึ่ง */
                 }
 
                 .lesson-card span {
                     font-size: clamp(10em, 35vmin, 250px);
-                    /* ปรับขนาดฟอนต์สำหรับแนวตั้ง */
                 }
             }
         </style>
@@ -187,8 +156,7 @@
                 <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
 
                 <div id="lesson-grid">
-                    <!-- เนื้อหาการ์ดจะถูกสร้างโดย JavaScript -->
-                </div>
+                    </div>
 
                 <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
             </div>
@@ -198,18 +166,6 @@
         <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
         <script>
-            // --- Firebase Initialization ---
-            const firebaseConfig = {
-                apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
-                authDomain: "playtolearn-e3356.firebaseapp.com",
-                projectId: "playtolearn-e3356",
-                storageBucket: "playtolearn-e3356.firebasestorage.app",
-                messagingSenderId: "233629701249",
-                appId: "1:233629701249:web:5ee775473bc00be1566980",
-                measurementId: "G-SXMFQT0TLG"
-            };
-            firebase.initializeApp(firebaseConfig);
-
             document.addEventListener('DOMContentLoaded', function () {
                 // --- DOM Elements ---
                 const lessonGrid = document.getElementById('lesson-grid');
@@ -268,8 +224,8 @@
                     const card = document.createElement('div');
                     card.className = 'lesson-card';
                     card.innerHTML = `
-                        <span>${char.id}</span>
                         <img src="${char.imgBlobUrl || char.imgSrc}" alt="${char.id}">
+                        <span>${char.id}</span>
                     `;
                     card.onclick = () => playSound(char.id);
                     lessonGrid.appendChild(card);
@@ -300,20 +256,16 @@
                 let touchendX = 0;
 
                 function handleSwipe() {
-                    const swipeThreshold = 50; // ระยะที่ต้องปัดเป็นอย่างน้อย (pixel)
+                    const swipeThreshold = 50;
                     const deltaX = touchendX - touchstartX;
 
                     if (Math.abs(deltaX) < swipeThreshold) {
-                        return; // ไม่ใช่การปัด
+                        return;
                     }
 
                     if (deltaX < 0) {
-                        // ปัดไปทางซ้าย (Next)
-                        console.log('swiped left!');
                         showNextCard();
                     } else {
-                        // ปัดไปทางขวา (Previous)
-                        console.log('swiped right!');
                         showPrevCard();
                     }
                 }
@@ -339,5 +291,4 @@
             });
         </script>
     </body>
-
 </html>
