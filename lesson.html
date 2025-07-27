@@ -7,51 +7,64 @@
         <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
         <style>
             /* --- การตั้งค่าพื้นฐาน --- */
-            html, body {
+            html,
+            body {
                 margin: 0;
                 padding: 0;
                 width: 100%;
                 height: 100%;
-                overflow: hidden; /* ป้องกันการเลื่อนหน้าจอที่ไม่จำเป็น */
+                overflow: hidden;
+                /* ป้องกันการเลื่อนหน้าจอที่ไม่จำเป็น */
                 font-family: 'TH Sarabun New', sans-serif;
             }
 
             /* --- คอนเทนเนอร์หลักของหน้า (Flexbox Centering) --- */
-           #lesson-page {
+            #lesson-page {
                 display: flex;
                 flex-direction: column;
-                justify-content: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
-                align-items: center;     /* จัดให้อยู่กึ่งกลางแนวนอน */
+                justify-content: center;
+                /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+                align-items: center;
+                /* จัดให้อยู่กึ่งกลางแนวนอน */
                 width: 100vw;
                 height: 100vh;
                 background-color: #d1f3ff;
                 box-sizing: border-box;
-                padding: 1vmin; /* เพิ่ม padding รอบๆ เล็กน้อย */
+                padding: 1vmin;
+                /* เพิ่ม padding รอบๆ เล็กน้อย */
             }
 
             /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
             #lesson-display-container {
                 display: flex;
-                flex-direction: row; /* กำหนดให้เรียงแนวนอนเสมอ */
+                flex-direction: row;
+                /* กำหนดให้เรียงแนวนอนเสมอ */
                 justify-content: center;
-                align-items: center; /* จัดให้ปุ่มและการ์ดอยู่ตรงกลางแนวเดียวกัน */
+                align-items: center;
+                /* จัดให้ปุ่มและการ์ดอยู่ตรงกลางแนวเดียวกัน */
                 width: 100%;
                 height: 100%;
-                max-width: 1400px; /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
+                max-width: 1400px;
+                /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
             }
 
             /* --- ปุ่มลูกศรซ้าย-ขวา --- */
             .nav-img-btn {
-                flex-shrink: 0; /* ป้องกันไม่ให้ปุ่มหดตัว */
+                flex-shrink: 0;
+                /* ป้องกันไม่ให้ปุ่มหดตัว */
                 height: auto;
-                width: 6vmin; /* ใช้ vmin เพื่อให้ขนาดสัมพันธ์กับด้านที่เล็กกว่าของจอ */
-                max-width: 60px;  /* จำกัดขนาดสูงสุดของปุ่ม */
-                min-width: 30px;  /* กำหนดขนาดขั้นต่ำของปุ่ม */
+                width: 6vmin;
+                /* ใช้ vmin เพื่อให้ขนาดสัมพันธ์กับด้านที่เล็กกว่าของจอ */
+                max-width: 60px;
+                /* จำกัดขนาดสูงสุดของปุ่ม */
+                min-width: 30px;
+                /* กำหนดขนาดขั้นต่ำของปุ่ม */
                 cursor: pointer;
                 object-fit: contain;
-                margin: 0 2vmin; /* เพิ่มระยะห่างระหว่างปุ่มกับการ์ด */
+                margin: 0 2vmin;
+                /* เพิ่มระยะห่างระหว่างปุ่มกับการ์ด */
                 transition: opacity 0.3s ease, transform 0.2s ease;
-                user-select: none; 
+                user-select: none;
             }
 
             .nav-img-btn:hover {
@@ -59,7 +72,7 @@
                 transform: scale(1.1);
             }
 
-            .nav-img-btn.disabled { 
+            .nav-img-btn.disabled {
                 opacity: 0.3;
                 cursor: not-allowed;
                 filter: grayscale(100%);
@@ -69,21 +82,23 @@
             /* --- พื้นที่แสดงการ์ด --- */
             #lesson-grid {
                 flex-grow: 1;
-                display: flex; 
+                display: flex;
                 justify-content: center;
                 align-items: center;
                 width: 100%;
                 height: 100%;
-                min-width: 0; /* ป้องกันปัญหา flexbox item ล้น container */
+                min-width: 0;
+                /* ป้องกันปัญหา flexbox item ล้น container */
             }
 
             /* --- การ์ดพยัญชนะ --- */
             .lesson-card {
-                background-color: #ffffff; 
+                background-color: #ffffff;
                 display: flex;
-                flex-direction: row; /* ค่าเริ่มต้นสำหรับแนวนอน */
-                align-items: center; 
-                justify-content: center; 
+                flex-direction: row;
+                /* ค่าเริ่มต้นสำหรับแนวนอน */
+                align-items: center;
+                justify-content: center;
                 gap: 1vmin;
                 cursor: pointer;
                 transition: transform 0.2s, box-shadow 0.2s;
@@ -91,17 +106,21 @@
                 box-sizing: border-box;
                 border-radius: 20px;
                 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                
+
                 /* --- การปรับขนาดด้วย Aspect Ratio --- */
-                aspect-ratio: 4 / 3; /* กำหนดอัตราส่วนการ์ดแนวนอน */
-                height: 100%;      /* ให้ความสูงยืดเต็มที่ใน container */
-                width: auto;       /* ความกว้างปรับตามอัตราส่วน */
-                max-width: 100%;   /* แต่ไม่ให้กว้างเกินพื้นที่ที่มี */
+                aspect-ratio: 4 / 3;
+                /* กำหนดอัตราส่วนการ์ดแนวนอน */
+                height: 100%;
+                /* ให้ความสูงยืดเต็มที่ใน container */
+                width: auto;
+                /* ความกว้างปรับตามอัตราส่วน */
+                max-width: 100%;
+                /* แต่ไม่ให้กว้างเกินพื้นที่ที่มี */
             }
 
             .lesson-card:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15); 
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
             }
 
             /* --- รูปภาพในการ์ด --- */
@@ -116,12 +135,13 @@
             /* --- ตัวอักษรในการ์ด --- */
             .lesson-card span {
                 flex: 1;
-                font-size: clamp(8em, 25vmin, 350px); /* ปรับขนาดฟอนต์ให้เหมาะสมขึ้น */
+                font-size: clamp(30em, 35vmin, 350px);
+                /* ปรับขนาดฟอนต์ให้เหมาะสมขึ้น */
                 font-weight: bold;
                 color: #333;
-                white-space: nowrap; 
+                white-space: nowrap;
                 text-align: center;
-                display: flex; 
+                display: flex;
                 align-items: center;
                 justify-content: center;
                 height: 100%;
@@ -136,19 +156,25 @@
                 .lesson-card {
                     /* แต่ยังคงให้เนื้อหาในการ์ดเรียงแนวตั้ง */
                     flex-direction: column;
-                    aspect-ratio: 3 / 4; /* กำหนดอัตราส่วนการ์ดแนวตั้ง */
-                    width: auto;         /* ความกว้างปรับตามอัตราส่วน */
-                    height: 85%;       /* ให้ความสูงเป็น % ของ container */
-                    max-height: 100%;  
+                    aspect-ratio: 3 / 4;
+                    /* กำหนดอัตราส่วนการ์ดแนวตั้ง */
+                    width: auto;
+                    /* ความกว้างปรับตามอัตราส่วน */
+                    height: 85%;
+                    /* ให้ความสูงเป็น % ของ container */
+                    max-height: 100%;
                 }
 
-                .lesson-card img, .lesson-card span {
+                .lesson-card img,
+                .lesson-card span {
                     width: 100%;
-                    height: 50%; /* แบ่งพื้นที่กันคนละครึ่ง */
+                    height: 50%;
+                    /* แบ่งพื้นที่กันคนละครึ่ง */
                 }
 
                 .lesson-card span {
-                    font-size: clamp(5em, 35vmin, 250px); /* ปรับขนาดฟอนต์สำหรับแนวตั้ง */
+                    font-size: clamp(5em, 35vmin, 250px);
+                    /* ปรับขนาดฟอนต์สำหรับแนวตั้ง */
                 }
             }
         </style>
@@ -158,7 +184,7 @@
         <div id="lesson-page">
             <div id="lesson-display-container">
                 <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
-                
+
                 <div id="lesson-grid">
                     <!-- เนื้อหาการ์ดจะถูกสร้างโดย JavaScript -->
                 </div>
@@ -169,7 +195,7 @@
 
         <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-        
+
         <script>
             // --- Firebase Initialization ---
             const firebaseConfig = {
@@ -183,7 +209,7 @@
             };
             firebase.initializeApp(firebaseConfig);
 
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // --- DOM Elements ---
                 const lessonGrid = document.getElementById('lesson-grid');
                 const prevImgBtn = document.getElementById('prevImgBtn');
@@ -237,7 +263,7 @@
                     currentCardIndex = index;
                     const char = allChars[currentCardIndex];
                     lessonGrid.innerHTML = ''; // Clear previous card
-                    
+
                     const card = document.createElement('div');
                     card.className = 'lesson-card';
                     card.innerHTML = `
@@ -246,7 +272,7 @@
                     `;
                     card.onclick = () => playSound(char.id);
                     lessonGrid.appendChild(card);
-                    
+
                     playSound(char.id);
                     updateNavigationButtons();
                 }
@@ -305,11 +331,12 @@
                 prevImgBtn.onclick = showPrevCard;
                 nextImgBtn.onclick = showNextCard;
                 window.addEventListener('resize', () => requestAnimationFrame(() => showCard(currentCardIndex)));
-                
+
                 preloadAllAssets(() => {
                     showCard(0);
                 });
             });
         </script>
     </body>
+
 </html>
