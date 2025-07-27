@@ -1,189 +1,120 @@
 <!DOCTYPE html>
 <html lang="th">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>บทเรียนพยัญชนะไทย</title>
-        <link rel="stylesheet" href="css/style.css">
-        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body {
-                font-family: 'TH Sarabun New', sans-serif;
-                background: #ffffff; /* พื้นหลังสีขาว */
-                overflow: hidden; /* ไม่มี scrollbar ของ body */
-                height: 100vh; /* ให้ body สูงเต็ม viewport */
-                margin: 0; /* ลบ margin เริ่มต้นของ body */
-                padding: 0; /* ลบ padding เริ่มต้นของ body */
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start; /* จัดเนื้อหาให้อยู่ชิดด้านบน */
-                
-            }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บทเรียนพยัญชนะไทย</title>
+  <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'TH Sarabun New', sans-serif;
+    }
 
-            
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
-            #lesson-page {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100vw; /* กว้างเต็ม viewport */
-                height: 100vh; /* สูงเต็ม viewport */
-                background-color: #ffffff; /* พื้นหลังสีขาว */
-                padding: 1vmin; /* เพิ่ม padding เล็กน้อยรอบๆ หน้าจอทั้งหมด */
-                position: relative;
-                flex-grow: 1; 
-                justify-content: flex-start; 
-            }
+    #lesson-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+    }
 
-            h2 {
-                color: #00796b;
-                margin-top: 0; /* ปรับ margin เป็น 0 เนื่องจาก lesson-page มี padding */
-                margin-bottom: 1.5vmin; /* ปรับ margin responsive */
-                font-size: 2.5em;
-                text-align: center;
-                 margin-top: 1vh;       /* ✅ ระยะห่างจากขอบบน */
-            }
+    #lesson-display-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      gap: 1vmin;
+    }
 
-            #lesson-display-container {
-                display: flex; /* ใช้ flexbox จัดเรียงปุ่มและ grid */
-                justify-content: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
-                align-items: stretch; /* ทำให้ปุ่มรูปภาพยืดเต็มความสูงของ container */
-                width: 100%;
-                flex-grow: 1; /* ให้เนื้อหาการ์ดยืดเต็มพื้นที่ที่เหลือ */
-                position: relative;
-                margin-bottom: 0; /* ลบ margin ด้านล่างเพื่อใช้พื้นที่ได้เต็มที่ */
-                gap: 0.5vmin; /* ระยะห่างระหว่างปุ่มและ card (แคบลง) */
-            }
+    .nav-img-btn {
+      max-width: 8vmin;
+      max-height: 90vh;
+      cursor: pointer;
+      object-fit: contain;
+      user-select: none;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
 
-            .nav-img-btn {
-                height: auto; /* ให้ความสูงปรับตามเนื้อหา แต่ถูกจำกัดด้วย max-height */
-                max-height: 85vh; /* จำกัดความสูงสูงสุดของปุ่มรูปภาพ (ประมาณความสูงการ์ด) */
-                width: auto; /* รักษาอัตราส่วนรูปภาพ */
-                max-width: 8vmin; /* จำกัดความกว้างของปุ่มให้แคบลง */
-                cursor: pointer;
-                object-fit: contain; /* รูปภาพพอดีกับขนาดโดยไม่บิดเบี้ยว */
-                padding: 0.5vmin; /* เพิ่ม padding รอบรูปภาพให้เล็กลง */
-                transition: opacity 0.3s ease, filter 0.3s ease;
-                user-select: none; 
-            }
+    .nav-img-btn:hover {
+      opacity: 0.8;
+    }
 
-            .nav-img-btn:hover {
-                opacity: 0.8;
-            }
+    .nav-img-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(100%);
+    }
 
-            .nav-img-btn.disabled { 
-                opacity: 0.4;
-                cursor: not-allowed;
-                filter: grayscale(100%);
-            }
+    #lesson-grid {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      overflow: hidden;
+    }
 
-            #lesson-grid {
-                flex-grow: 1; /* ให้ grid ขยายเต็มพื้นที่ที่เหลือ */
-                display: flex; 
-                justify-content: center;
-                align-items: center;
-                height: 100%; /* ให้ grid สูงเต็ม lesson-display-container */
-                width: auto; /* ให้ flex-grow กำหนดความกว้าง */
-            }
+    .lesson-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      padding: 2vmin;
+      gap: 1vmin;
+      width: 90vw;
+      height: 90vh;
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s;
+    }
 
-            .lesson-card {
-                background-color: #ffffff; 
-                display: flex;
-                flex-direction: row; /* จัดเรียงแนวนอน (ค่าเริ่มต้น/แนวนอน) */
-                align-items: center; 
-                justify-content: center; 
-                gap: 1vmin; /* ลดระยะห่างภายในของการ์ดลงอีกเล็กน้อย */
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-                padding: 2vmin; 
-                box-sizing: border-box;
-                width: 100%; /* ให้การ์ดพยายามเต็มพื้นที่ของ parent */
-                height: 100%; /* ให้การ์ดพยายามเต็มพื้นที่ของ parent */
-                max-width: 75vw; /* กำหนดความกว้างสูงสุดของการ์ดตาม viewport width */
-                max-height: 65vh; /* กำหนดความสูงสูงสุดของการ์ดตาม viewport height */
-            }
+    .lesson-card:hover {
+      transform: translateY(-5px);
+    }
 
-            .lesson-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
-            }
+    .lesson-card img {
+      max-height: 70%;
+      max-width: 100%;
+      object-fit: contain;
+    }
 
-            .lesson-card img {
-                flex: 1; /* ให้รูปภาพใช้พื้นที่ 1 ส่วนจาก flex container */
-                max-width: 100%; /* รูปภาพไม่เกินความกว้างของพื้นที่ที่ได้รับ */
-                max-height: 100%; /* รูปภาพปรับขนาดตามความสูงของพื้นที่ที่ได้รับ */
-                object-fit: contain; /* รักษาสัดส่วนรูปภาพ */
-            }
+    .lesson-card span {
+      font-size: clamp(3em, 10vmin, 100px);
+      font-weight: bold;
+      color: #333;
+      white-space: nowrap;
+      text-align: center;
+    }
+  </style>
+</head>
 
-            .lesson-card span {
-                flex: 1; /* ให้พยัญชนะใช้พื้นที่ 1 ส่วนจาก flex container */
-                font-size: clamp(30em, 35vmin, 450px); /* เพิ่มขนาดตัวอักษรให้ใหญ่ขึ้นและปรับการ scaling */
-                font-weight: bold;
-                color: #333;
-                white-space: nowrap; 
-                text-align: center;
-                display: flex; 
-                align-items: center;
-                justify-content: center;
-                height: 100%; 
-            }
+<body>
+  <div id="lesson-page">
+    <div id="lesson-display-container">
+      <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
+      <div id="lesson-grid"></div>
+      <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
+    </div>
+  </div>
 
-            /* Media Query สำหรับแนวตั้ง (Portrait Orientation) */
-            @media (orientation: portrait) {
-                #lesson-page {
-                    padding: 1vmin; 
-                }
-
-                #lesson-display-container {
-                    align-items: center; 
-                }
-
-                .nav-img-btn {
-                    max-height: 20vmin; 
-                    max-width: 10vmin; 
-                    padding: 0.5vmin;
-                }
-
-                .lesson-card {
-                    flex-direction: column; /* จัดเรียงองค์ประกอบในคอลัมน์ (ตัวอักษรบน, รูปภาพล่าง) */
-                    width: 90vw; 
-                    height: auto; 
-                    max-height: 80vh; 
-                    padding: 3vmin; 
-                    gap: 1.5vmin; 
-                }
-
-                .lesson-card img {
-                    max-width: 100%; 
-                    max-height: 50%; 
-                }
-
-                .lesson-card span {
-                    max-width: 100%; 
-                    height: auto; 
-                    font-size: clamp(10em, 30vmin, 350px); /* ขนาดตัวอักษรสำหรับแนวตั้ง */
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <div id="lesson-page">
-        <div id="lesson-display-container">
-                <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
-                
-                <div id="lesson-grid">
-                    </div>
-
-                <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
-            </div>
-        </div>
-
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-        <script src="js/lesson.js"></script>
-    </body>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="js/lesson.js"></script>
+</body>
 
 </html>
