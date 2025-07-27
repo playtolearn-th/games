@@ -39,7 +39,7 @@
                 height: auto; /* ให้ความสูงปรับตามเนื้อหา แต่ถูกจำกัดด้วย max-height */
                 max-height: 75vh; /* จำกัดความสูงสูงสุดของปุ่มรูปภาพให้เหมาะสมขึ้น */
                 width: auto; /* รักษาอัตราส่วนรูปภาพ */
-                max-width: 6vmin; /* จำกัดความกว้างของปุ่มให้แคบลงอีก */
+                max-width: 5vmin; /* จำกัดความกว้างของปุ่มให้แคบลงอีก */
                 cursor: pointer;
                 object-fit: contain; /* รูปภาพพอดีกับขนาดโดยไม่บิดเบี้ยว */
                 padding: 0.2vmin; /* ลด padding รอบรูปภาพให้เล็กลงอีก */
@@ -119,15 +119,15 @@
                 .nav-img-btn {
                     max-height: 20vmin; 
                     max-width: 10vmin; 
-                    padding: 0.5vmin;
+                   
                 }
 
                 .lesson-card {
                     flex-direction: column; /* จัดเรียงองค์ประกอบในคอลัมน์ (ตัวอักษรบน, รูปภาพล่าง) */
-                    width: 90vw; 
+                    width: 80vw; 
                     height: auto; 
                     max-height: 75vh; /* ลด max-height ของการ์ดในแนวตั้งลงเล็กน้อย */
-                    padding: 2vmin; /* ปรับ padding ในแนวตั้ง */
+                    padding: 1vmin; /* ปรับ padding ในแนวตั้ง */
                     gap: 1vmin; /* ปรับระยะห่างในแนวตั้ง */
                 }
 
@@ -137,9 +137,9 @@
                 }
 
                 .lesson-card span {
-                    max-width: 100%; 
+                    max-width: 90%; 
                     height: auto; 
-                    font-size: clamp(5em, 30vmin, 350px); /* ขนาดตัวอักษรสำหรับแนวตั้ง */
+                    font-size: clamp(10em, 30vmin, 350px); /* ขนาดตัวอักษรสำหรับแนวตั้ง */
                 }
             }
         </style>
