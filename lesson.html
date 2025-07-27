@@ -31,17 +31,17 @@
         /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
         #lesson-display-container {
             display: flex;
-            align-items: center; /* <<< คำสั่งสำคัญที่ใช้จัดตำแหน่งให้อยู่กึ่งกลาง */
+            align-items: center;
             justify-content: space-between;
             width: 100%;
             height: 100%;
-            max-width: 1200px; /* จำกัดความกว้างสูงสุด */
+            max-width: 1200px;
         }
 
         /* --- ปุ่มลูกศรซ้าย-ขวา --- */
         .nav-img-btn {
             flex-shrink: 0;
-            height: 8vmin; /* ขนาดสัมพันธ์กับหน้าจอ */
+            height: 8vmin;
             max-height: 60px;
             min-height: 40px;
             cursor: pointer;
@@ -72,7 +72,8 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 60%;
             height: auto;
-            aspect-ratio: 4 / 3; /* อัตราส่วนแนวนอน */
+            aspect-ratio: 4 / 3; /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
+            flex-direction: row; /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
         }
 
         .lesson-card:hover {
@@ -81,17 +82,17 @@
         }
 
         /* --- รูปภาพและตัวอักษรในการ์ด --- */
-        .lesson-card img, .lesson-card span {
+        .lesson-card span, .lesson-card img {
             flex: 1;
-            width: 50%;
-            height: 100%;
+            width: 50%;   /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
+            height: 100%; /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
             min-width: 0;
         }
         .lesson-card img {
             object-fit: contain;
         }
         .lesson-card span {
-            font-size: clamp(10em, 25vmin, 250px); /* ฟอนต์ยืดหยุ่น */
+            font-size: clamp(10em, 25vmin, 250px);
             font-weight: bold;
             color: #333;
             display: flex;
@@ -102,15 +103,15 @@
         /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
         @media (orientation: portrait) {
             .lesson-card {
-                flex-direction: column; /* เปลี่ยนการเรียงเป็นแนวตั้ง */
-                aspect-ratio: 3 / 4; /* เปลี่ยนอัตราส่วน */
+                flex-direction: column; /* <<--- เปลี่ยนการเรียงเป็นแนวตั้ง */
+                aspect-ratio: 3 / 4;   /* <<--- เปลี่ยนอัตราส่วน */
                 width: auto;
-                height: 70%; /* จำกัดความสูงของการ์ด */
+                height: 70%;
             }
 
-            .lesson-card img, .lesson-card span {
-                width: 100%;
-                height: 50%;
+            .lesson-card span, .lesson-card img {
+                width: 100%;  /* <<--- ทำให้เต็มความกว้าง */
+                height: 50%; /* <<--- แบ่งความสูงกันคนละครึ่ง */
             }
         }
     </style>
@@ -142,6 +143,7 @@
 
             function preloadAllAssets(callback) {
                 const tempMessage = document.createElement('h2');
+                tempMessage.style.color = '#00796b';
                 tempMessage.textContent = 'กำลังเตรียมข้อมูล...';
                 displayContainer.insertBefore(tempMessage, nextImgBtn);
 
@@ -169,20 +171,17 @@
                 currentCardIndex = index;
                 const char = allChars[currentCardIndex];
 
-                // ลบการ์ดเก่า (ถ้ามี)
                 const oldCard = document.querySelector('.lesson-card');
                 if (oldCard) oldCard.remove();
 
-                // สร้างการ์ดใหม่
                 const card = document.createElement('div');
                 card.className = 'lesson-card';
                 card.innerHTML = `
-                    <img src="${char.imgSrc}" alt="${char.id}">
                     <span>${char.id}</span>
+                    <img src="${char.imgSrc}" alt="${char.id}">
                 `;
                 card.onclick = () => playSound(char.id);
                 
-                // แทรกการ์ดให้อยู่ระหว่างปุ่ม
                 displayContainer.insertBefore(card, nextImgBtn);
 
                 playSound(char.id);
