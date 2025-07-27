@@ -16,16 +16,18 @@
             font-family: 'TH Sarabun New', sans-serif;
         }
 
-        /* --- คอนเทนเนอร์หลักของหน้า --- */
+        /* --- คอนเทนเนอร์หลักของหน้า (แก้ไข) --- */
         #lesson-page {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start; /* <<< จัดชิดขอบบน */
             align-items: center;
             width: 100vw;
             height: 100vh;
             background-color: #d1f3ff;
             box-sizing: border-box;
             padding: 2vmin;
+            padding-top: 5vh; /* <<< เพิ่มระยะห่างจากขอบบน */
         }
 
         /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
@@ -34,7 +36,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            height: 100%;
+            height: 80%; /* <<< กำหนดความสูง */
             max-width: 1200px;
         }
 
@@ -71,9 +73,9 @@
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 60%;
-            height: auto;
-            aspect-ratio: 4 / 3; /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
-            flex-direction: row; /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
+            height: 100%;
+            aspect-ratio: 4 / 3;
+            flex-direction: row;
         }
 
         .lesson-card:hover {
@@ -84,15 +86,15 @@
         /* --- รูปภาพและตัวอักษรในการ์ด --- */
         .lesson-card span, .lesson-card img {
             flex: 1;
-            width: 50%;   /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
-            height: 100%; /* <<--- ค่าเริ่มต้นสำหรับแนวนอน */
+            width: 50%;
+            height: 100%;
             min-width: 0;
         }
         .lesson-card img {
             object-fit: contain;
         }
         .lesson-card span {
-            font-size: clamp(20em, 25vmin, 250px);
+            font-size: clamp(10em, 25vmin, 250px);
             font-weight: bold;
             color: #333;
             display: flex;
@@ -102,116 +104,7 @@
         
         /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
         @media (orientation: portrait) {
-            .lesson-card {
-                flex-direction: column; /* <<--- เปลี่ยนการเรียงเป็นแนวตั้ง */
-                aspect-ratio: 3 / 4;   /* <<--- เปลี่ยนอัตราส่วน */
-                width: auto;
-                height: 70%;
+            #lesson-page {
+                padding-top: 10vh; /* เพิ่มระยะห่างขอบบนในแนวตั้ง */
             }
-
-            .lesson-card span, .lesson-card img {
-                width: 100%;  /* <<--- ทำให้เต็มความกว้าง */
-                height: 50%; /* <<--- แบ่งความสูงกันคนละครึ่ง */
-            }
-        }
-    </style>
-</head>
-<body>
-    <div id="lesson-page">
-        <div id="lesson-display-container">
-            <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
-
-            <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const displayContainer = document.getElementById('lesson-display-container');
-            const prevImgBtn = document.getElementById('prevImgBtn');
-            const nextImgBtn = document.getElementById('nextImgBtn');
-
-            let audioCache = {};
-            const baseUrl = "./";
-            const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-            const allChars = allCharIds.map(id => ({
-                id: id,
-                imgSrc: `${baseUrl}${id}.png`,
-                audioSrc: `${baseUrl}${id}.mp3`,
-            }));
-            let currentCardIndex = 0;
-
-            function preloadAllAssets(callback) {
-                const tempMessage = document.createElement('h2');
-                tempMessage.style.color = '#00796b';
-                tempMessage.textContent = 'กำลังเตรียมข้อมูล...';
-                displayContainer.insertBefore(tempMessage, nextImgBtn);
-
-                const assetPromises = allChars.map(char =>
-                    fetch(char.audioSrc).then(res => res.blob()).then(blob => {
-                        audioCache[char.id] = new Audio(URL.createObjectURL(blob));
-                    }).catch(err => console.warn(`Cannot load audio: ${char.id}`, err))
-                );
-                Promise.allSettled(assetPromises).then(() => {
-                    tempMessage.remove();
-                    console.log("All assets preloaded.");
-                    if (callback) callback();
-                });
-            }
-
-            function playSound(soundKey) {
-                if (audioCache[soundKey]) {
-                    audioCache[soundKey].currentTime = 0;
-                    audioCache[soundKey].play().catch(e => {});
-                }
-            }
-
-            function showCard(index) {
-                if (index < 0 || index >= allChars.length) return;
-                currentCardIndex = index;
-                const char = allChars[currentCardIndex];
-
-                const oldCard = document.querySelector('.lesson-card');
-                if (oldCard) oldCard.remove();
-
-                const card = document.createElement('div');
-                card.className = 'lesson-card';
-                card.innerHTML = `
-                    <span>${char.id}</span>
-                    <img src="${char.imgSrc}" alt="${char.id}">
-                `;
-                card.onclick = () => playSound(char.id);
-                
-                displayContainer.insertBefore(card, nextImgBtn);
-
-                playSound(char.id);
-                updateNavigationButtons();
-            }
-
-            function showNextCard() {
-                if (currentCardIndex < allChars.length - 1) {
-                    showCard(currentCardIndex + 1);
-                }
-            }
-
-            function showPrevCard() {
-                if (currentCardIndex > 0) {
-                    showCard(currentCardIndex - 1);
-                }
-            }
-
-            function updateNavigationButtons() {
-                prevImgBtn.classList.toggle('disabled', currentCardIndex === 0);
-                nextImgBtn.classList.toggle('disabled', currentCardIndex === allChars.length - 1);
-            }
-
-            prevImgBtn.onclick = showPrevCard;
-            nextImgBtn.onclick = showNextCard;
-
-            preloadAllAssets(() => {
-                showCard(0);
-            });
-        });
-    </script>
-</body>
-</html>
+            .
