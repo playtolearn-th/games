@@ -4,7 +4,6 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- ไม่จำเป็นต้องลิงก์ไฟล์ css/style.css ภายนอกแล้ว เพราะสไตล์ทั้งหมดอยู่ในนี้ -->
         <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
         <style>
             /* --- การตั้งค่าพื้นฐาน --- */
@@ -17,7 +16,7 @@
                 font-family: 'TH Sarabun New', sans-serif;
             }
 
-            /* --- คอนเทนเนอร์หลักของหน้า --- */
+            /* --- คอนเทนเนอร์หลักของหน้า (Flexbox Centering) --- */
            #lesson-page {
                 display: flex;
                 flex-direction: column;
@@ -27,6 +26,7 @@
                 height: 100vh;
                 background-color: #d1f3ff;
                 box-sizing: border-box;
+                padding: 1vmin; /* เพิ่ม padding รอบๆ เล็กน้อย */
             }
 
             /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
@@ -35,8 +35,8 @@
                 justify-content: center;
                 align-items: center; /* จัดให้ปุ่มและการ์ดอยู่ตรงกลางแนวเดียวกัน */
                 width: 100%;
-                max-width: 95vw; /* จำกัดความกว้างสูงสุด */
-                height: 95vh;    /* จำกัดความสูงสูงสุด */
+                height: 100%;
+                max-width: 1400px; /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
             }
 
             /* --- ปุ่มลูกศรซ้าย-ขวา --- */
@@ -44,10 +44,11 @@
                 flex-shrink: 0; /* ป้องกันไม่ให้ปุ่มหดตัว */
                 height: auto;
                 width: 6vmin; /* ใช้ vmin เพื่อให้ขนาดสัมพันธ์กับด้านที่เล็กกว่าของจอ */
-                max-width: 50px; /* จำกัดขนาดสูงสุดของปุ่ม */
+                max-width: 60px;  /* จำกัดขนาดสูงสุดของปุ่ม */
+                min-width: 30px;  /* กำหนดขนาดขั้นต่ำของปุ่ม */
                 cursor: pointer;
                 object-fit: contain;
-                margin: 0 1.5vmin; /* เพิ่มระยะห่างระหว่างปุ่มกับการ์ด */
+                margin: 0 2vmin; /* เพิ่มระยะห่างระหว่างปุ่มกับการ์ด */
                 transition: opacity 0.3s ease, transform 0.2s ease;
                 user-select: none; 
             }
@@ -66,12 +67,13 @@
 
             /* --- พื้นที่แสดงการ์ด --- */
             #lesson-grid {
-                flex-grow: 1; /* ให้ grid ขยายเต็มพื้นที่ที่เหลือ */
+                flex-grow: 1;
                 display: flex; 
                 justify-content: center;
                 align-items: center;
                 width: 100%;
                 height: 100%;
+                min-width: 0; /* ป้องกันปัญหา flexbox item ล้น container */
             }
 
             /* --- การ์ดพยัญชนะ --- */
@@ -86,12 +88,14 @@
                 transition: transform 0.2s, box-shadow 0.2s;
                 padding: 2vmin;
                 box-sizing: border-box;
-                border-radius: 20px; /* เพิ่มความโค้งมน */
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้ดูมีมิติ */
+                border-radius: 20px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
                 
-                /* กำหนดขนาดของการ์ดให้สัมพันธ์กับพื้นที่ของ lesson-grid */
-                width: 100%; 
-                height: 100%; 
+                /* --- การปรับขนาดด้วย Aspect Ratio --- */
+                aspect-ratio: 4 / 3; /* กำหนดอัตราส่วนการ์ดแนวนอน */
+                height: 100%;      /* ให้ความสูงยืดเต็มที่ใน container */
+                width: auto;       /* ความกว้างปรับตามอัตราส่วน */
+                max-width: 100%;   /* แต่ไม่ให้กว้างเกินพื้นที่ที่มี */
             }
 
             .lesson-card:hover {
@@ -101,18 +105,17 @@
 
             /* --- รูปภาพในการ์ด --- */
             .lesson-card img {
-                flex: 1; /* แบ่งพื้นที่กับตัวอักษร */
-                width: 50%; /* กำหนดความกว้างเริ่มต้น */
+                flex: 1;
+                width: 50%;
                 height: 100%;
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain; /* รักษาสัดส่วนรูปภาพ */
+                object-fit: contain;
+                min-width: 0;
             }
 
             /* --- ตัวอักษรในการ์ด --- */
             .lesson-card span {
-                flex: 1; /* แบ่งพื้นที่กับรูปภาพ */
-                font-size: clamp(10em, 30vmin, 400px); /* ปรับขนาดฟอนต์อัตโนมัติ */
+                flex: 1;
+                font-size: clamp(8em, 25vmin, 350px); /* ปรับขนาดฟอนต์ให้เหมาะสมขึ้น */
                 font-weight: bold;
                 color: #333;
                 white-space: nowrap; 
@@ -121,40 +124,45 @@
                 align-items: center;
                 justify-content: center;
                 height: 100%;
+                min-width: 0;
             }
 
             /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
             @media (orientation: portrait) {
                 #lesson-display-container {
-                    /* ในแนวตั้ง ให้ปุ่มอยู่บน-ล่างของการ์ด */
-                    flex-direction: column;
+                    flex-direction: column; /* เปลี่ยนการจัดเรียงเป็นแนวตั้ง */
                 }
 
                 .nav-img-btn {
+                    margin: 2vmin 0;
                     /* หมุนปุ่มลูกศรให้ชี้ขึ้น-ลง */
-                    margin: 1.5vmin 0;
+                    transform: rotate(90deg);
                 }
-                #prevImgBtn { transform: rotate(90deg); }
-                #prevImgBtn:hover { transform: rotate(90deg) scale(1.1); }
-                #nextImgBtn { transform: rotate(90deg); }
-                #nextImgBtn:hover { transform: rotate(90deg) scale(1.1); }
+                .nav-img-btn:hover {
+                    transform: rotate(90deg) scale(1.1);
+                }
+                 .nav-img-btn.disabled {
+                    transform: rotate(90deg) scale(1);
+                }
+                /* สลับลำดับให้ปุ่ม "ก่อนหน้า" อยู่ด้านบน */
+                #prevImgBtn { order: -1; }
 
 
                 .lesson-card {
-                    flex-direction: column; /* จัดเรียงเป็นแนวตั้ง (ตัวอักษรบน, รูปภาพล่าง) */
-                    width: 85vw; /* ปรับความกว้างให้พอดีกับจอแนวตั้ง */
-                    height: 70vh; /* ปรับความสูง */
+                    flex-direction: column;
+                    aspect-ratio: 3 / 4; /* กำหนดอัตราส่วนการ์ดแนวตั้ง */
+                    width: 85%;        /* ให้ความกว้างเป็น % ของ container */
+                    height: auto;      /* ความสูงปรับตามอัตราส่วน */
+                    max-height: 100%;  /* แต่ไม่ให้สูงเกินพื้นที่ที่มี */
                 }
 
-                .lesson-card img {
+                .lesson-card img, .lesson-card span {
                     width: 100%;
-                    height: 50%; /* แบ่งครึ่งความสูงกับตัวอักษร */
+                    height: 50%; /* แบ่งพื้นที่กันคนละครึ่ง */
                 }
 
                 .lesson-card span {
-                    width: 100%;
-                    height: 50%; /* แบ่งครึ่งความสูงกับรูปภาพ */
-                    font-size: clamp(5em, 35vmin, 300px);
+                    font-size: clamp(5em, 35vmin, 250px); /* ปรับขนาดฟอนต์สำหรับแนวตั้ง */
                 }
             }
         </style>
@@ -163,7 +171,6 @@
     <body>
         <div id="lesson-page">
             <div id="lesson-display-container">
-                <!-- ผมสลับปุ่มเพื่อให้เข้ากับการหมุนในแนวตั้ง -->
                 <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
                 
                 <div id="lesson-grid">
@@ -176,11 +183,7 @@
 
         <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-        <!-- ตรวจสอบให้แน่ใจว่า path ไปยังไฟล์ js/lesson.js ถูกต้อง -->
         <script src="js/lesson.js"></script>
     </body>
 
 </html>
-```
-
-ผมได้ปรับปรุงโค้ดให้ดีขึ้นอีกเล็กน้อยในหน้าจอแนวตั้ง โดยการหมุนปุ่มลูกศรให้ชี้ขึ้น-ลง เพื่อให้ผู้ใช้เข้าใจได้ง่ายขึ้นว่าเป็นการเลื่อนการ์ดในแนวตั้งครับ หวังว่าจะถูกใจนะคร
