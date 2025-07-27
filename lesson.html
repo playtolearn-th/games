@@ -105,9 +105,9 @@
             .lesson-card {
                 flex-direction: column;
                 aspect-ratio: 3 / 4;
-                width: 65%; /* <<< แก้ไข: กำหนดความกว้างแทนความสูง */
-                height: auto; /* <<< แก้ไข: ให้ความสูงปรับตามอัตโนมัติ */
-                max-height: 85vh; /* เพิ่มตัวจำกัดความสูงเผื่อไว้ */
+                width: 65%;
+                height: auto;
+                max-height: 85vh;
             }
 
             .lesson-card span, .lesson-card img {
@@ -163,7 +163,9 @@
             function playSound(soundKey) {
                 if (audioCache[soundKey]) {
                     audioCache[soundKey].currentTime = 0;
-                    audioCache[soundKey].play().catch(e => {});
+                    audioCache[soundKey].play().catch(e => console.error(`ไม่สามารถเล่นเสียง: '${soundKey}' ได้`, e));
+                } else {
+                    console.warn(`ไม่พบเสียงที่ชื่อ: '${soundKey}' ใน audio cache`);
                 }
             }
 
