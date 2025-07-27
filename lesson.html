@@ -1,294 +1,218 @@
 <!DOCTYPE html>
 <html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียนพยัญชนะไทย</title>
+    <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- การตั้งค่าพื้นฐาน --- */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'TH Sarabun New', sans-serif;
+        }
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            /* --- การตั้งค่าพื้นฐาน --- */
-            html,
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                font-family: 'TH Sarabun New', sans-serif;
-            }
+        /* --- คอนเทนเนอร์หลักของหน้า --- */
+        #lesson-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            background-color: #d1f3ff;
+            box-sizing: border-box;
+            padding: 2vmin;
+        }
 
-            /* --- คอนเทนเนอร์หลักของหน้า --- */
-            #lesson-page {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                width: 100vw;
-                height: 100vh;
-                background-color: #d1f3ff;
-                box-sizing: border-box;
-                padding: 1vmin;
-            }
+        /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
+        #lesson-display-container {
+            display: flex;
+            align-items: center; /* <<< คำสั่งสำคัญที่ใช้จัดตำแหน่งให้อยู่กึ่งกลาง */
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px; /* จำกัดความกว้างสูงสุด */
+        }
 
-            /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
-            #lesson-display-container {
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center; /* <<< คำสั่งสำคัญที่ใช้จัดตำแหน่งให้อยู่กึ่งกลาง */
-                width: 100%;
-                height: 100%;
-                max-width: 1400px;
-            }
+        /* --- ปุ่มลูกศรซ้าย-ขวา --- */
+        .nav-img-btn {
+            flex-shrink: 0;
+            height: 8vmin; /* ขนาดสัมพันธ์กับหน้าจอ */
+            max-height: 60px;
+            min-height: 40px;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            user-select: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .nav-img-btn:hover {
+            transform: scale(1.1);
+        }
+        .nav-img-btn.disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
 
-            /* --- ปุ่มลูกศรซ้าย-ขวา --- */
-            .nav-img-btn {
-                flex-shrink: 0;
-                height: auto;
-                width: 6vmin;
-                max-width: 60px;
-                min-width: 30px;
-                cursor: pointer;
-                object-fit: contain;
-                margin: 0 2vmin;
-                transition: opacity 0.3s ease, transform 0.2s ease;
-                user-select: none;
-            }
+        /* --- การ์ดพยัญชนะ --- */
+        .lesson-card {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 2vmin;
+            box-sizing: border-box;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            height: auto;
+            aspect-ratio: 4 / 3; /* อัตราส่วนแนวนอน */
+        }
 
-            .nav-img-btn:hover {
-                opacity: 0.7;
-                transform: scale(1.1);
-            }
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        }
 
-            .nav-img-btn.disabled {
-                opacity: 0.3;
-                cursor: not-allowed;
-                filter: grayscale(100%);
-                transform: scale(1);
-            }
-
-            /* --- พื้นที่แสดงการ์ด (แก้ไข) --- */
-            #lesson-grid {
-                flex-grow: 1;
-                display: flex;
-                justify-content: center;
-                align-items: center; /* <<< แก้ไข: จัดให้การ์ดอยู่ตรงกลาง */
-                width: 100%;
-                height: 100%;      /* <<< แก้ไข: ให้ความสูงเต็มพื้นที่ */
-                min-width: 0;
-            }
-
-            /* --- การ์ดพยัญชนะ --- */
+        /* --- รูปภาพและตัวอักษรในการ์ด --- */
+        .lesson-card img, .lesson-card span {
+            flex: 1;
+            width: 50%;
+            height: 100%;
+            min-width: 0;
+        }
+        .lesson-card img {
+            object-fit: contain;
+        }
+        .lesson-card span {
+            font-size: clamp(10em, 25vmin, 250px); /* ฟอนต์ยืดหยุ่น */
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
+        @media (orientation: portrait) {
             .lesson-card {
-                background-color: #ffffff;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                gap: 1vmin;
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-                padding: 2vmin;
-                box-sizing: border-box;
-                border-radius: 20px;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                aspect-ratio: 4 / 3;
-                height: 85%; /* <<< ปรับความสูงของการ์ดที่นี่ */
+                flex-direction: column; /* เปลี่ยนการเรียงเป็นแนวตั้ง */
+                aspect-ratio: 3 / 4; /* เปลี่ยนอัตราส่วน */
                 width: auto;
-                max-width: 100%;
+                height: 70%; /* จำกัดความสูงของการ์ด */
             }
 
-            .lesson-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+            .lesson-card img, .lesson-card span {
+                width: 100%;
+                height: 50%;
             }
+        }
+    </style>
+</head>
+<body>
+    <div id="lesson-page">
+        <div id="lesson-display-container">
+            <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
 
-            /* --- รูปภาพในการ์ด --- */
-            .lesson-card img {
-                flex: 1;
-                width: 50%;
-                height: 100%;
-                object-fit: contain;
-                min-width: 0;
-            }
-
-            /* --- ตัวอักษรในการ์ด --- */
-            .lesson-card span {
-                flex: 1;
-                font-size: clamp(30em, 35vmin, 350px);
-                font-weight: bold;
-                color: #333;
-                white-space: nowrap;
-                text-align: center;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                min-width: 0;
-            }
-
-            /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
-            @media (orientation: portrait) {
-                .lesson-card {
-                    flex-direction: column;
-                    aspect-ratio: 3 / 4;
-                    width: auto;
-                    height: 85%;
-                    max-height: 85%;
-                }
-
-                .lesson-card img,
-                .lesson-card span {
-                    width: 100%;
-                    height: 50%;
-                }
-
-                .lesson-card span {
-                    font-size: clamp(10em, 35vmin, 250px);
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <div id="lesson-page">
-            <div id="lesson-display-container">
-                <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
-
-                <div id="lesson-grid">
-                    </div>
-
-                <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
-            </div>
+            <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
         </div>
+    </div>
 
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const displayContainer = document.getElementById('lesson-display-container');
+            const prevImgBtn = document.getElementById('prevImgBtn');
+            const nextImgBtn = document.getElementById('nextImgBtn');
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // --- DOM Elements ---
-                const lessonGrid = document.getElementById('lesson-grid');
-                const prevImgBtn = document.getElementById('prevImgBtn');
-                const nextImgBtn = document.getElementById('nextImgBtn');
+            let audioCache = {};
+            const baseUrl = "./";
+            const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
+            const allChars = allCharIds.map(id => ({
+                id: id,
+                imgSrc: `${baseUrl}${id}.png`,
+                audioSrc: `${baseUrl}${id}.mp3`,
+            }));
+            let currentCardIndex = 0;
 
-                if (!lessonGrid || !prevImgBtn || !nextImgBtn) {
-                    console.error("Essential DOM elements not found.");
-                    document.body.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดหน้าเว็บ</p>';
-                    return;
-                }
+            function preloadAllAssets(callback) {
+                const tempMessage = document.createElement('h2');
+                tempMessage.textContent = 'กำลังเตรียมข้อมูล...';
+                displayContainer.insertBefore(tempMessage, nextImgBtn);
 
-                // --- State and Caching ---
-                let audioCache = {};
-                const baseUrl = "./";
-                const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-                const allChars = allCharIds.map(id => ({
-                    id: id,
-                    imgSrc: `${baseUrl}${id}.png`,
-                    audioSrc: `${baseUrl}${id}.mp3`,
-                    imgBlobUrl: null
-                }));
-                let currentCardIndex = 0;
-
-                // --- Asset Preloading ---
-                function preloadAllAssets(callback) {
-                    lessonGrid.innerHTML = '<h2 style="color: #00796b;">กำลังเตรียมข้อมูล...</h2>';
-                    const assetPromises = allChars.flatMap(char => [
-                        fetch(char.audioSrc).then(res => res.blob()).then(blob => {
-                            audioCache[char.id] = new Audio(URL.createObjectURL(blob));
-                        }).catch(err => console.warn(`Cannot load audio: ${char.id}`, err)),
-                        fetch(char.imgSrc).then(res => res.blob()).then(blob => {
-                            char.imgBlobUrl = URL.createObjectURL(blob);
-                        }).catch(err => console.warn(`Cannot load image: ${char.id}`, err))
-                    ]);
-                    Promise.allSettled(assetPromises).then(() => {
-                        console.log("All assets preloaded.");
-                        setTimeout(callback, 100);
-                    });
-                }
-
-                function playSound(soundKey) {
-                    if (audioCache[soundKey]) {
-                        audioCache[soundKey].currentTime = 0;
-                        audioCache[soundKey].play().catch(e => console.warn("Audio playback prevented:", e));
-                    }
-                }
-
-                // --- Lesson Page Functions ---
-                function showCard(index = currentCardIndex) {
-                    if (index < 0 || index >= allChars.length) return;
-                    currentCardIndex = index;
-                    const char = allChars[currentCardIndex];
-                    lessonGrid.innerHTML = ''; // Clear previous card
-
-                    const card = document.createElement('div');
-                    card.className = 'lesson-card';
-                    card.innerHTML = `
-                        <img src="${char.imgBlobUrl || char.imgSrc}" alt="${char.id}">
-                        <span>${char.id}</span>
-                    `;
-                    card.onclick = () => playSound(char.id);
-                    lessonGrid.appendChild(card);
-
-                    playSound(char.id);
-                    updateNavigationButtons();
-                }
-
-                function showNextCard() {
-                    if (currentCardIndex < allChars.length - 1) {
-                        showCard(currentCardIndex + 1);
-                    }
-                }
-
-                function showPrevCard() {
-                    if (currentCardIndex > 0) {
-                        showCard(currentCardIndex - 1);
-                    }
-                }
-
-                function updateNavigationButtons() {
-                    prevImgBtn.classList.toggle('disabled', currentCardIndex === 0);
-                    nextImgBtn.classList.toggle('disabled', currentCardIndex === allChars.length - 1);
-                }
-
-                // --- SWIPE FUNCTIONALITY ---
-                let touchstartX = 0;
-                let touchendX = 0;
-
-                function handleSwipe() {
-                    const swipeThreshold = 50;
-                    const deltaX = touchendX - touchstartX;
-
-                    if (Math.abs(deltaX) < swipeThreshold) {
-                        return;
-                    }
-
-                    if (deltaX < 0) {
-                        showNextCard();
-                    } else {
-                        showPrevCard();
-                    }
-                }
-
-                lessonGrid.addEventListener('touchstart', e => {
-                    touchstartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                lessonGrid.addEventListener('touchend', e => {
-                    touchendX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                }, { passive: true });
-
-
-                // --- Event Listeners & Initialization ---
-                prevImgBtn.onclick = showPrevCard;
-                nextImgBtn.onclick = showNextCard;
-                window.addEventListener('resize', () => requestAnimationFrame(() => showCard(currentCardIndex)));
-
-                preloadAllAssets(() => {
-                    showCard(0);
+                const assetPromises = allChars.map(char =>
+                    fetch(char.audioSrc).then(res => res.blob()).then(blob => {
+                        audioCache[char.id] = new Audio(URL.createObjectURL(blob));
+                    }).catch(err => console.warn(`Cannot load audio: ${char.id}`, err))
+                );
+                Promise.allSettled(assetPromises).then(() => {
+                    tempMessage.remove();
+                    console.log("All assets preloaded.");
+                    if (callback) callback();
                 });
+            }
+
+            function playSound(soundKey) {
+                if (audioCache[soundKey]) {
+                    audioCache[soundKey].currentTime = 0;
+                    audioCache[soundKey].play().catch(e => {});
+                }
+            }
+
+            function showCard(index) {
+                if (index < 0 || index >= allChars.length) return;
+                currentCardIndex = index;
+                const char = allChars[currentCardIndex];
+
+                // ลบการ์ดเก่า (ถ้ามี)
+                const oldCard = document.querySelector('.lesson-card');
+                if (oldCard) oldCard.remove();
+
+                // สร้างการ์ดใหม่
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.innerHTML = `
+                    <img src="${char.imgSrc}" alt="${char.id}">
+                    <span>${char.id}</span>
+                `;
+                card.onclick = () => playSound(char.id);
+                
+                // แทรกการ์ดให้อยู่ระหว่างปุ่ม
+                displayContainer.insertBefore(card, nextImgBtn);
+
+                playSound(char.id);
+                updateNavigationButtons();
+            }
+
+            function showNextCard() {
+                if (currentCardIndex < allChars.length - 1) {
+                    showCard(currentCardIndex + 1);
+                }
+            }
+
+            function showPrevCard() {
+                if (currentCardIndex > 0) {
+                    showCard(currentCardIndex - 1);
+                }
+            }
+
+            function updateNavigationButtons() {
+                prevImgBtn.classList.toggle('disabled', currentCardIndex === 0);
+                nextImgBtn.classList.toggle('disabled', currentCardIndex === allChars.length - 1);
+            }
+
+            prevImgBtn.onclick = showPrevCard;
+            nextImgBtn.onclick = showNextCard;
+
+            preloadAllAssets(() => {
+                showCard(0);
             });
-        </script>
-    </body>
+        });
+    </script>
+</body>
 </html>
