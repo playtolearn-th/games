@@ -18,8 +18,10 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: flex-start;
+                justify-content: flex-start; /* จัดเนื้อหาให้อยู่ชิดด้านบน */
+                
             }
+
 
             #lesson-page {
                 display: flex;
@@ -28,75 +30,98 @@
                 width: 100vw; /* กว้างเต็ม viewport */
                 height: 100vh; /* สูงเต็ม viewport */
                 background-color: #ffffff; /* พื้นหลังสีขาว */
-                padding: 0; /* ลบ padding ออกจาก lesson-page */
-                /* ลบ border-radius และ box-shadow เพื่อไม่ให้มีลักษณะเป็นกรอบ */
+                padding: 1vmin; /* เพิ่ม padding เล็กน้อยรอบๆ หน้าจอทั้งหมด */
                 position: relative;
-                /* margin-top: 20px; ลบ margin-top ออก */
                 flex-grow: 1; 
-                justify-content: space-between; 
+                justify-content: flex-start; 
             }
 
             h2 {
                 color: #00796b;
-                margin-top: 2vmin; /* ปรับ margin responsive */
-                margin-bottom: 2vmin; /* ปรับ margin responsive */
+                margin-top: 0; /* ปรับ margin เป็น 0 เนื่องจาก lesson-page มี padding */
+                margin-bottom: 1.5vmin; /* ปรับ margin responsive */
                 font-size: 2.5em;
                 text-align: center;
+                 margin-top: 1vh;       /* ✅ ระยะห่างจากขอบบน */
             }
 
             #lesson-display-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                display: flex; /* ใช้ flexbox จัดเรียงปุ่มและ grid */
+                justify-content: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
+                align-items: stretch; /* ทำให้ปุ่มรูปภาพยืดเต็มความสูงของ container */
                 width: 100%;
-                flex-grow: 1; /* ให้เนื้อหาขยายเต็มพื้นที่ */
+                flex-grow: 1; /* ให้เนื้อหาการ์ดยืดเต็มพื้นที่ที่เหลือ */
                 position: relative;
-                margin-bottom: 2vmin; /* ปรับ margin responsive */
+                margin-bottom: 0; /* ลบ margin ด้านล่างเพื่อใช้พื้นที่ได้เต็มที่ */
+                gap: 0.5vmin; /* ระยะห่างระหว่างปุ่มและ card (แคบลง) */
+            }
+
+            .nav-img-btn {
+                height: auto; /* ให้ความสูงปรับตามเนื้อหา แต่ถูกจำกัดด้วย max-height */
+                max-height: 85vh; /* จำกัดความสูงสูงสุดของปุ่มรูปภาพ (ประมาณความสูงการ์ด) */
+                width: auto; /* รักษาอัตราส่วนรูปภาพ */
+                max-width: 8vmin; /* จำกัดความกว้างของปุ่มให้แคบลง */
+                cursor: pointer;
+                object-fit: contain; /* รูปภาพพอดีกับขนาดโดยไม่บิดเบี้ยว */
+                padding: 0.5vmin; /* เพิ่ม padding รอบรูปภาพให้เล็กลง */
+                transition: opacity 0.3s ease, filter 0.3s ease;
+                user-select: none; 
+            }
+
+            .nav-img-btn:hover {
+                opacity: 0.8;
+            }
+
+            .nav-img-btn.disabled { 
+                opacity: 0.4;
+                cursor: not-allowed;
+                filter: grayscale(100%);
             }
 
             #lesson-grid {
+                flex-grow: 1; /* ให้ grid ขยายเต็มพื้นที่ที่เหลือ */
                 display: flex; 
                 justify-content: center;
                 align-items: center;
-                width: 100%;
-                height: 100%; 
+                height: 100%; /* ให้ grid สูงเต็ม lesson-display-container */
+                width: auto; /* ให้ flex-grow กำหนดความกว้าง */
             }
 
             .lesson-card {
-                background-color: #ffffff; /* พื้นหลังการ์ดสีขาว */
-                /* ลบ border และ border-radius เพื่อไม่ให้มีลักษณะเป็นกรอบ */
+                background-color: #ffffff; 
                 display: flex;
-                flex-direction: row; /* จัดเรียงแนวนอน */
-                align-items: center; /* จัดให้อยู่กึ่งกลางตามแนวตั้ง */
-                justify-content: center; /* จัดให้อยู่กึ่งกลางตามแนวนอน */
-                gap: 2vmin; /* ใช้ gap responsive */
+                flex-direction: row; /* จัดเรียงแนวนอน (ค่าเริ่มต้น/แนวนอน) */
+                align-items: center; 
+                justify-content: center; 
+                gap: 1vmin; /* ลดระยะห่างภายในของการ์ดลงอีกเล็กน้อย */
                 cursor: pointer;
                 transition: transform 0.2s, box-shadow 0.2s;
-                padding: 2vmin; /* ใช้ padding responsive */
+                padding: 2vmin; 
                 box-sizing: border-box;
-                width: 80vw; /* กว้าง 90% ของ viewport width */
-                height: 80vh; /* สูง 80% ของ viewport height */
-                /* ลบ max-width และ max-height เพื่อให้การ์ดปรับขนาดตามจอได้เต็มที่ */
+                width: 100%; /* ให้การ์ดพยายามเต็มพื้นที่ของ parent */
+                height: 100%; /* ให้การ์ดพยายามเต็มพื้นที่ของ parent */
+                max-width: 75vw; /* กำหนดความกว้างสูงสุดของการ์ดตาม viewport width */
+                max-height: 65vh; /* กำหนดความสูงสูงสุดของการ์ดตาม viewport height */
             }
 
             .lesson-card:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* ยังคงเงาเมื่อ hover */
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
             }
 
             .lesson-card img {
-                max-width: 50%; /* รูปภาพไม่เกินครึ่งหนึ่งของการ์ด */
-                max-height: 100%; /* รูปภาพปรับขนาดตามความสูงของการ์ด */
+                flex: 1; /* ให้รูปภาพใช้พื้นที่ 1 ส่วนจาก flex container */
+                max-width: 100%; /* รูปภาพไม่เกินความกว้างของพื้นที่ที่ได้รับ */
+                max-height: 100%; /* รูปภาพปรับขนาดตามความสูงของพื้นที่ที่ได้รับ */
                 object-fit: contain; /* รักษาสัดส่วนรูปภาพ */
             }
 
             .lesson-card span {
-                /* ใช้ clamp() เพื่อปรับขนาดตัวอักษรให้สมดุลและอยู่ในช่วงที่กำหนด */
-                font-size: clamp(30em, 10vmin, 120px); 
+                flex: 1; /* ให้พยัญชนะใช้พื้นที่ 1 ส่วนจาก flex container */
+                font-size: clamp(30em, 35vmin, 450px); /* เพิ่มขนาดตัวอักษรให้ใหญ่ขึ้นและปรับการ scaling */
                 font-weight: bold;
                 color: #333;
-                white-space: nowrap; /* ป้องกันการขึ้นบรรทัดใหม่ */
-                max-width: 50%; /* พยัญชนะไม่เกินครึ่งหนึ่งของการ์ด */
+                white-space: nowrap; 
                 text-align: center;
                 display: flex; 
                 align-items: center;
@@ -104,48 +129,54 @@
                 height: 100%; 
             }
 
-            #carousel-controls {
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                padding: 0 10px;
-                margin-top: 2vmin; /* ปรับ margin responsive */
-            }
+            /* Media Query สำหรับแนวตั้ง (Portrait Orientation) */
+            @media (orientation: portrait) {
+                #lesson-page {
+                    padding: 1vmin; 
+                }
 
-            .carousel-btn {
-                background-color: #00796b;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 1.2em;
-                transition: background-color 0.3s ease;
-            }
+                #lesson-display-container {
+                    align-items: center; 
+                }
 
-            .carousel-btn:hover {
-                background-color: #004d40;
-            }
+                .nav-img-btn {
+                    max-height: 20vmin; 
+                    max-width: 10vmin; 
+                    padding: 0.5vmin;
+                }
 
-            .carousel-btn:disabled {
-                background-color: #cccccc;
-                cursor: not-allowed;
+                .lesson-card {
+                    flex-direction: column; /* จัดเรียงองค์ประกอบในคอลัมน์ (ตัวอักษรบน, รูปภาพล่าง) */
+                    width: 90vw; 
+                    height: auto; 
+                    max-height: 80vh; 
+                    padding: 3vmin; 
+                    gap: 1.5vmin; 
+                }
+
+                .lesson-card img {
+                    max-width: 100%; 
+                    max-height: 50%; 
+                }
+
+                .lesson-card span {
+                    max-width: 100%; 
+                    height: auto; 
+                    font-size: clamp(10em, 30vmin, 350px); /* ขนาดตัวอักษรสำหรับแนวตั้ง */
+                }
             }
         </style>
     </head>
 
     <body>
         <div id="lesson-page">
-            <h2>บทเรียนพยัญชนะไทย</h2>
-            
-            <div id="lesson-display-container">
+        <div id="lesson-display-container">
+                <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
+                
                 <div id="lesson-grid">
                     </div>
-            </div>
 
-            <div id="carousel-controls">
-                <button id="prevBtn" class="carousel-btn">ก่อนหน้า</button>
-                <button id="nextBtn" class="carousel-btn">ถัดไป</button>
+                <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
             </div>
         </div>
 
