@@ -26,8 +26,8 @@ auth.onAuthStateChanged(user => {
         if (sidebarUserEmail) sidebarUserEmail.textContent = user.email;
         displayBestRank();
     } else {
-        // แก้ไข: เปลี่ยนเส้นทางไปยังหน้า login ที่อยู่นอกโฟลเดอร์ปัจจุบัน
-        window.location.href = '../login.html';
+        // แก้ไข: เปลี่ยนเส้นทางไปยังหน้า login ที่อยู่ในระดับเดียวกัน
+        window.location.href = 'login.html';
     }
 });
 
@@ -69,11 +69,10 @@ let lives = LIVES;
 let baseScore = 0, bonusScore = 0;
 let timeLeft = TOTAL_TIME, completedLessons = 0;
 const CHARS_PER_ROUND = 12;
-// แก้ไข: กำหนด path สำหรับรูปภาพและเสียงให้ถูกต้อง
+// กำหนด path สำหรับรูปภาพและเสียง
 const imageBaseUrl = "images/";
 const soundBaseUrl = "sounds/";
 const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-// แก้ไข: ใช้ imageBaseUrl ในการสร้าง path รูปพยัญชนะ
 const allChars = allCharIds.map(id => ({ id: id, img: `${imageBaseUrl}${id}.png` }));
 let matchedPairsInRound = 0;
 let pairsInCurrentRound = 0;
@@ -113,7 +112,6 @@ function preloadAllGameAudio(callback) {
     let loadedCount = 0;
     showPopup(`<h2>กำลังเตรียมเสียง... (0/${totalAudio})</h2>`, null);
     audioKeys.forEach(key => {
-        // แก้ไข: ใช้ soundBaseUrl ในการสร้าง path เสียง
         const url = `${soundBaseUrl}${audioFiles[key]}`;
         fetch(url)
             .then(response => response.ok ? response.blob() : Promise.reject(`Error loading ${url}`))
@@ -216,7 +214,6 @@ function shuffle(array) {
     return array;
 }
 
-// --- ฟังก์ชันที่แก้ไข ---
 function selectCard(div, card) {
     if (selected.length >= 2 || div.classList.contains("selected") || timeLeft <= 0 || lives <= 0) return;
     playSound('click');
@@ -251,11 +248,9 @@ function selectCard(div, card) {
                 selected = [];
             }, 1000);
 
-            // --- เพิ่มการตรวจสอบคะแนนติดลบ ---
             if ((baseScore + bonusScore) < 0) {
                 handleScoreGameOver();
             }
-            // ------------------------------------
         }
         updateScoreDisplay();
     }
@@ -324,7 +319,6 @@ async function triggerFinalWinSequence() {
     animationContainer.className = 'end-game-animation-container';
 
     const finalMedal = document.createElement('img');
-    // แก้ไข: ใช้ imageBaseUrl สำหรับรูปเหรียญรางวัล
     finalMedal.src = imageBaseUrl + rank.image;
     finalMedal.className = 'final-rank-medal';
     animationContainer.appendChild(finalMedal);
@@ -363,7 +357,6 @@ async function triggerFinalWinSequence() {
         playSound('win');
 
         setTimeout(() => {
-            // แก้ไข: ใช้ imageBaseUrl สำหรับรูปเหรียญรางวัลใน Popup
             const popupContent = `<h2>ภารกิจสำเร็จ!</h2>
                                   <div class="final-rank-display"><img src="${imageBaseUrl}${rank.image}" alt="${rank.rank}"><h3>คุณได้รับ Rank: ${rank.rank}</h3></div>
                                   <p>คะแนนรวม: ${totalScore.toLocaleString()}</p>`;
@@ -391,7 +384,6 @@ async function displayBestRank() {
         if (doc.exists && doc.data().scores?.game01) {
             const bestScore = doc.data().scores.game01;
             const rank = getRankForScore(bestScore);
-            // แก้ไข: ใช้ imageBaseUrl สำหรับรูป Rank สูงสุด
             bestRankDisplay.innerHTML = `<img src="${imageBaseUrl}${rank.image}" title="Rank สูงสุด: ${rank.rank}">`;
         } else {
             bestRankDisplay.innerHTML = '';
@@ -426,7 +418,6 @@ function updateTimerBar() {
 }
 function addCollectedCoin() {
     const collectedCoin = document.createElement("img");
-    // แก้ไข: ใช้ imageBaseUrl สำหรับรูปเหรียญ
     collectedCoin.src = `${imageBaseUrl}Coin.png`;
     collectedCoin.className = 'round-coin-img';
     roundCoinContainer.appendChild(collectedCoin);
@@ -462,7 +453,7 @@ function createLobbyButton() {
     const controls = document.createElement('div');
     const backBtn = document.createElement('a');
     // แก้ไข: เปลี่ยน path กลับไปหน้าหลักให้ถูกต้อง
-    backBtn.href = '../index.html';
+    backBtn.href = 'index.html';
     backBtn.textContent = 'กลับไปหน้าหลัก';
     backBtn.className = 'btn btn-primary';
     return controls;
@@ -479,7 +470,7 @@ function createGameOverControls() {
     lobbyBtnPopup.textContent = 'กลับหน้าหลัก';
     lobbyBtnPopup.className = 'btn btn-secondary';
     // แก้ไข: เปลี่ยน path กลับไปหน้าหลักให้ถูกต้อง
-    lobbyBtnPopup.href = '../index.html';
+    lobbyBtnPopup.href = 'index.html';
     controls.appendChild(restartBtnPopup);
     controls.appendChild(lobbyBtnPopup);
     return controls;
