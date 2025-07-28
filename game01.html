@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>เกมจับคู่พยัญชนะ</title>
+        <!-- The CSS path is assumed to be correct relative to the HTML file -->
         <link rel="stylesheet" href="css/style.css">
         <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
         <style>
@@ -19,7 +20,9 @@
     <body>
         <div id="topBar">
             <div id="profileSection">
-                <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้"><img src="back.png"
+                <!-- Corrected link to go up one directory to the lobby's index.html -->
+                <!-- Corrected image path to point to the 'images' folder -->
+                <a href="../index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้"><img src="images/back.png"
                         alt="Back"></a>
                 <img id="profilePic-game" src="" alt="Profile" class="profile-pic-game" style="cursor: pointer;">
                 <div id="best-rank-display"></div>
@@ -80,6 +83,7 @@
         <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
+        <!-- The JS path is assumed to be correct relative to the HTML file -->
         <script src="js/game01.js"></script>
     </body>
 

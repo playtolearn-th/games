@@ -9,87 +9,106 @@ const firebaseConfig = {
     measurementId: "G-SXMFQT0TLG"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+let currentUser = null;
 
-// --- DOM Elements ---
+// --- 2. DOM Elements ---
 const loadingOverlay = document.getElementById('loading-overlay');
 const progressBarFill = document.getElementById('progress-bar-fill');
 const progressText = document.getElementById('progress-text');
 const lobbyContainer = document.querySelector('.lobby-container');
+const profilePic = document.getElementById('profilePic');
+const userInfo = document.getElementById('userInfo');
+const scoreDisplay = document.getElementById('scoreDisplay').querySelector('span');
+const game01RankDisplay = document.getElementById('game01-rank-display');
+const logoutBtn = document.getElementById('logoutBtn');
 
-// --- ค่าคงที่สำหรับคำนวณ Rank ---
+// --- 3. ค่าคงที่ของเกม (เพื่อให้สอดคล้องกับ game01.js) ---
 const MAX_SCORE_GAME01 = 180440;
+const imageBaseUrl = "images/"; // Path สำหรับรูปภาพ Rank
 
-// --- 2. ตรวจสอบสถานะการล็อกอินของผู้ใช้ ---
+// --- 4. ตรวจสอบสถานะการล็อกอิน ---
 auth.onAuthStateChanged(user => {
     if (user) {
-        if (localStorage.getItem('assets_preloaded_v4') === 'true') {
-            loadingOverlay.style.display = 'none';
-            lobbyContainer.style.display = 'block';
-            displayUserData(user);
-        } else {
-            loadingOverlay.style.display = 'flex';
-            preloadGameAssets(() => {
-                localStorage.setItem('assets_preloaded_v4', 'true');
-                loadingOverlay.style.display = 'none';
-                lobbyContainer.style.display = 'block';
-                displayUserData(user);
-            });
-        }
-
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                auth.signOut();
-            });
-        }
+        currentUser = user;
+        // เริ่มโหลดข้อมูลสำหรับล็อบบี้
+        loadLobbyData(user);
     } else {
+        // ถ้าผู้ใช้ไม่ได้ล็อกอิน ให้เปลี่ยนเส้นทางไปหน้า login.html
         window.location.href = 'login.html';
     }
 });
 
+// --- 5. ฟังก์ชันหลักสำหรับโหลดข้อมูลล็อบบี้ ---
+async function loadLobbyData(user) {
+    // แสดงหน้าจอโหลด
+    updateProgress(10, 'กำลังตรวจสอบข้อมูลผู้ใช้...');
 
-// --- 3. ฟังก์ชันสำหรับดึงและแสดงข้อมูลผู้ใช้ (แก้ไขใหม่) ---
-async function displayUserData(user) {
-    const userInfoDiv = document.getElementById('userInfo');
-    const scoreSpan = document.querySelector('#scoreDisplay span');
-    const profilePic = document.getElementById('profilePic');
-    const game01RankDisplay = document.getElementById('game01-rank-display');
+    // ตั้งค่าข้อมูลโปรไฟล์พื้นฐาน
+    const photoURL = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
+    const displayName = user.displayName || user.email.split('@')[0];
 
-    if (profilePic) profilePic.src = user.photoURL || 'https://i.imgur.com/sC22S2A.png';
-    if (userInfoDiv) userInfoDiv.textContent = `สวัสดี, ${user.displayName || 'ผู้เล่น'}`;
+    profilePic.src = photoURL;
+    userInfo.innerHTML = `สวัสดี, <strong>${displayName}</strong>!`;
 
-    const userScoreRef = db.collection('userScores').doc(user.uid);
+    updateProgress(40, 'กำลังดึงข้อมูลคะแนน...');
+
+    // ดึงข้อมูลคะแนนจาก Firestore
     try {
+        const userScoreRef = db.collection('userScores').doc(user.uid);
         const doc = await userScoreRef.get();
-        let totalBestScore = 0;
+
+        let totalScore = 0;
+        let game01Score = 0;
 
         if (doc.exists && doc.data().scores) {
             const scores = doc.data().scores;
-
-            // --- ส่วนที่แก้ไข: คำนวณคะแนนรวมจากทุกเกม ---
-            // นำค่าคะแนนทั้งหมดใน object scores มาบวกรวมกัน
-            totalBestScore = Object.values(scores).reduce((sum, currentScore) => sum + currentScore, 0);
-            // ---------------------------------------------
-
-            // แสดง Rank ของ Game 01 (เหมือนเดิม)
-            if (scores.game01 && game01RankDisplay) {
-                const rank = getRankForScore(scores.game01, MAX_SCORE_GAME01);
-                game01RankDisplay.innerHTML = `<img src="${rank.image}" title="Rank สูงสุด: ${rank.rank}">`;
-            }
+            // คำนวณคะแนนรวม (ถ้ามีเกมอื่นในอนาคต)
+            totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
+            game01Score = scores.game01 || 0;
         }
 
-        if (scoreSpan) scoreSpan.textContent = totalBestScore.toLocaleString();
+        updateProgress(70, 'กำลังคำนวณ Rank...');
+
+        // แสดงผลคะแนนรวม
+        scoreDisplay.textContent = totalScore.toLocaleString();
+
+        // แสดงผล Rank ของเกมที่ 1
+        const rankGame01 = getRankForScore(game01Score, MAX_SCORE_GAME01);
+        if (game01Score > 0) {
+            game01RankDisplay.innerHTML = `<img src="${imageBaseUrl}${rankGame01.image}" alt="${rankGame01.rank}" class="rank-medal-lobby" title="Rank: ${rankGame01.rank}">`;
+        } else {
+            // ถ้ายังไม่มีคะแนน อาจจะแสดงเป็นรูปว่างๆ หรือข้อความ
+            game01RankDisplay.innerHTML = `<img src="${imageBaseUrl}neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
+        }
+
+        updateProgress(100, 'เตรียมพร้อมสำเร็จ!');
+
+        // ซ่อนหน้าจอโหลดและแสดงล็อบบี้
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+            lobbyContainer.style.display = 'block';
+        }, 500);
 
     } catch (error) {
-        console.error("Error fetching score:", error);
-        if (scoreSpan) scoreSpan.textContent = 'N/A';
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+        userInfo.textContent = "ไม่สามารถโหลดข้อมูลได้";
+        loadingOverlay.style.display = 'none';
+        lobbyContainer.style.display = 'block';
     }
 }
 
-// --- 4. ฟังก์ชันคำนวณ Rank ---
+// --- 6. ฟังก์ชันเสริม ---
+
+/**
+ * คำนวณ Rank จากคะแนน (เหมือนกับใน game01.js)
+ * @param {number} score คะแนนที่ได้
+ * @param {number} maxScore คะแนนสูงสุดของเกมนั้น
+ * @returns {{rank: string, image: string}} Object ที่มีชื่อ Rank และชื่อไฟล์รูปภาพ
+ */
 function getRankForScore(score, maxScore) {
     const percentage = (score / maxScore) * 100;
     if (percentage >= 60) return { rank: 'เพชร', image: 'diamond.png' };
@@ -99,68 +118,21 @@ function getRankForScore(score, maxScore) {
     return { rank: 'เข้าร่วม', image: 'neutral.png' };
 }
 
-// --- 5. ฟังก์ชัน Preloading ---
-function preloadGameAssets(onComplete) {
-    const baseUrl = "./";
-    const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-    let assetsToLoad = [];
-    allCharIds.forEach(id => assetsToLoad.push({ type: 'image', url: `${baseUrl}${id}.png` }));
-    allCharIds.forEach(id => assetsToLoad.push({ type: 'audio', url: `${baseUrl}${id}.mp3` }));
-
-    const otherAssets = [
-        "Coin.png", "diamond.png", "coin.mp3", "coin-upaif.mp3", "error.mp3",
-        "game-over.mp3", "goodresult.mp3", "hover.mp3", "mouse-click.mp3",
-        "round-clear.mp3", "winning.mp3", "game-level-up.mp3"
-    ];
-
-    otherAssets.forEach(asset => assetsToLoad.push({ type: asset.endsWith('.png') ? 'image' : 'audio', url: `${baseUrl}${asset}` }));
-
-    let loadedCount = 0;
-    const totalAssets = assetsToLoad.length;
-    if (totalAssets === 0) {
-        onComplete();
-        return;
-    }
-
-    const updateProgress = () => {
-        loadedCount++;
-        const percentage = Math.round((loadedCount / totalAssets) * 100);
-        if (progressBarFill) progressBarFill.style.width = `${percentage}%`;
-        if (progressText) progressText.textContent = `${percentage}%`;
-    };
-
-    const promises = assetsToLoad.map(asset => {
-        return new Promise((resolve) => {
-            const handleLoad = () => {
-                updateProgress();
-                resolve();
-            };
-
-            if (asset.type === 'image') {
-                const img = new Image();
-                img.src = asset.url;
-                img.onload = handleLoad;
-                img.onerror = () => {
-                    console.warn(`Could not load image: ${asset.url}`);
-                    handleLoad();
-                };
-            } else if (asset.type === 'audio') {
-                fetch(asset.url)
-                    .then(response => {
-                        if (response.ok) return response.blob();
-                        throw new Error(`Failed to fetch: ${asset.url}`);
-                    })
-                    .then(blob => handleLoad())
-                    .catch(error => {
-                        console.warn(error);
-                        handleLoad();
-                    });
-            }
-        });
-    });
-
-    Promise.all(promises).then(() => {
-        console.log("All assets processed.");
-        setTimeout(onComplete, 500);
-    });
+/**
+ * อัปเดตแถบความคืบหน้าการโหลด
+ * @param {number} percentage เปอร์เซ็นต์ที่โหลด
+ * @param {string} text ข้อความที่แสดง
+ */
+function updateProgress(percentage, text) {
+    if (progressBarFill) progressBarFill.style.width = `${percentage}%`;
+    if (progressText) progressText.textContent = `${percentage}%`;
+    // สามารถเพิ่มข้อความสถานะได้ถ้าต้องการ
+    // const progressStatus = document.querySelector('.loading-box p');
+    // if (progressStatus) progressStatus.textContent = text;
 }
+
+
+// --- 7. Event Listeners ---
+logoutBtn.addEventListener('click', () => {
+    auth.signOut();
+});
