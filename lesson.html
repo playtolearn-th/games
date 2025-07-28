@@ -6,103 +6,107 @@
     <title>บทเรียนพยัญชนะไทย</title>
     <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- การตั้งค่าพื้นฐาน --- */
+        :root {
+            --book-width-landscape: 60%;
+            --book-aspect-landscape: 2 / 1;
+            --book-width-portrait: 80%;
+            --book-aspect-portrait: 3 / 4;
+        }
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; font-family: 'TH Sarabun New', sans-serif;
+            background-color: #d1f3ff;
         }
-
-        /* --- คอนเทนเนอร์หลักของหน้า --- */
         #lesson-page {
             display: flex; justify-content: center; align-items: center;
-            width: 100vw; height: 100vh; background-color: #d1f3ff;
-            box-sizing: border-box; padding: 2vmin;
-            perspective: 1500px; /* เพิ่ม perspective สำหรับ 3D effect */
+            width: 100%; height: 100%; box-sizing: border-box;
+            perspective: 2000px;
         }
-
-        /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
         #lesson-display-container {
-            display: flex; align-items: center; justify-content: space-between;
-            width: 100%; height: 100%; max-width: 1200px;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
         }
-
-        /* --- ปุ่มลูกศรซ้าย-ขวา --- */
         .nav-img-btn {
-            flex-shrink: 0; height: 8vmin; max-height: 60px; min-height: 40px;
-            cursor: pointer; transition: opacity 0.3s, transform 0.2s;
-            user-select: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            height: 8vmin; max-height: 60px; min-height: 40px;
+            cursor: pointer; transition: 0.2s ease; user-select: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            margin: 0 2vmin;
         }
         .nav-img-btn:hover { transform: scale(1.1); }
         .nav-img-btn.disabled { opacity: 0.2; cursor: not-allowed; transform: scale(1); }
 
-        /* --- การ์ดหนังสือ (Book Card) --- */
+        /* --- Book Structure --- */
         .lesson-book {
-            background-color: #ffffff;
+            position: relative;
+            width: var(--book-width-landscape);
+            aspect-ratio: var(--book-aspect-landscape);
             display: flex;
-            position: relative; /* สำคัญสำหรับเส้นแบ่ง */
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 70%; height: auto; aspect-ratio: 2 / 1;
             transform-style: preserve-3d;
         }
-        
-        /* --- เส้นแบ่งกลางหนังสือ --- */
-        .lesson-book::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 5%;
-            bottom: 5%;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, #cccccc, transparent);
-            transform: translateX(-50%);
-        }
-
-        /* --- หน้าซ้าย (ตัวอักษร) และหน้าขวา (รูปภาพ) --- */
         .book-page {
-            width: 50%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            box-sizing: border-box; padding: 2vmin;
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden; /* ซ่อนด้านหลัง */
         }
-        .book-page.left-page span {
-            font-size: clamp(10em, 25vmin, 250px);
-            font-weight: bold; color: #333;
+        .left-page {
+            border-radius: 20px 0 0 20px;
+            left: 0;
         }
-        .book-page.right-page {
+        .right-page-container {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            right: 0;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transform-style: preserve-3d;
+            transform-origin: left center;
+            transition: transform 0.8s ease-in-out;
         }
-        .book-page.right-page:hover {
-            transform: translateY(-5px);
+        .right-page-container.flipped {
+            transform: rotateY(-180deg);
         }
-        .book-page.right-page img {
-            width: 100%; height: 100%; object-fit: contain;
+        .page-front, .page-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-front {
+            background-color: #fff;
+            border-radius: 0 20px 20px 0;
+        }
+        .page-back {
+            background-color: #f5f5f5;
+            border-radius: 0 20px 20px 0;
+            transform: rotateY(180deg);
         }
 
-        /* --- แอนิเมชันเปิดหน้าหนังสือ --- */
-        .book-page.right-page.flipped {
-            animation: flip-page 0.8s ease-in-out forwards;
+        /* --- Content inside pages --- */
+        .book-page span, .page-front span, .page-back span {
+            font-size: clamp(8em, 20vmin, 200px);
+            font-weight: bold;
+            color: #333;
         }
-        @keyframes flip-page {
-            from { transform: rotateY(0deg); }
-            to   { transform: rotateY(-180deg); }
+        .book-page img, .page-front img, .page-back img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
         }
-
-        /* --- Media Query สำหรับจอแนวตั้ง --- */
+        
+        /* --- Portrait Mode --- */
         @media (orientation: portrait) {
             .lesson-book {
-                flex-direction: column;
-                aspect-ratio: 3 / 4;
-                width: auto; height: 80%;
-            }
-            .lesson-book::before { /* ปรับเส้นแบ่งเป็นแนวนอน */
-                left: 5%; right: 5%; top: 50%; bottom: auto;
-                width: auto; height: 2px;
-                transform: translateY(-50%);
-                background: linear-gradient(to right, transparent, #cccccc, transparent);
-            }
-            .book-page {
-                width: 100%; height: 50%;
+                width: var(--book-width-portrait);
+                aspect-ratio: var(--book-aspect-portrait);
             }
         }
     </style>
@@ -170,39 +174,41 @@
                     <div class="book-page left-page">
                         <span>${char.id}</span>
                     </div>
-                    <div class="book-page right-page">
-                        <img src="${char.imgSrc}" alt="${char.id}">
+                    <div class="right-page-container">
+                        <div class="book-page page-front">
+                            <img src="${char.imgSrc}" alt="${char.id}">
+                        </div>
+                        <div class="book-page page-back">
+                            </div>
                     </div>
                 `;
                 
                 displayContainer.insertBefore(book, nextImgBtn);
 
-                const rightPage = book.querySelector('.right-page');
-                rightPage.addEventListener('click', () => {
-                    if (!isAnimating) {
-                        isAnimating = true;
-                        playSound(char.id);
-                        rightPage.classList.add('flipped');
-                        setTimeout(() => {
-                            rightPage.classList.remove('flipped');
-                            isAnimating = false;
-                        }, 800); // ระยะเวลา animation
-                    }
+                const rightPageContainer = book.querySelector('.right-page-container');
+                rightPageContainer.addEventListener('click', () => {
+                    if (isAnimating) return;
+                    isAnimating = true;
+                    playSound(char.id);
+                    rightPageContainer.classList.add('flipped');
+                    
+                    setTimeout(() => {
+                        rightPageContainer.classList.remove('flipped');
+                        isAnimating = false;
+                    }, 1600); // รอ animation จบ + หน่วงเวลาเล็กน้อย
                 });
                 
                 updateNavigationButtons();
             }
 
             function showNextCard() {
-                if (currentCardIndex < allChars.length - 1) {
-                    showCard(currentCardIndex + 1);
-                }
+                if (isAnimating || currentCardIndex >= allChars.length - 1) return;
+                showCard(currentCardIndex + 1);
             }
 
             function showPrevCard() {
-                if (currentCardIndex > 0) {
-                    showCard(currentCardIndex - 1);
-                }
+                if (isAnimating || currentCardIndex <= 0) return;
+                showCard(currentCardIndex - 1);
             }
 
             function updateNavigationButtons() {
