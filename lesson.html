@@ -26,6 +26,7 @@
             background-color: #d1f3ff;
             box-sizing: border-box;
             padding: 2vmin;
+            perspective: 1200px; /* เพิ่ม perspective สำหรับ 3D effect */
         }
 
         /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
@@ -65,7 +66,6 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             padding: 2vmin;
             box-sizing: border-box;
             border-radius: 20px;
@@ -74,13 +74,9 @@
             height: auto;
             aspect-ratio: 4 / 3;
             flex-direction: row;
+            transform-style: preserve-3d; /* ทำให้ 3D transform ทำงาน */
         }
-
-        .lesson-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-        }
-
+        
         /* --- รูปภาพและตัวอักษรในการ์ด --- */
         .lesson-card span, .lesson-card img {
             flex: 1;
@@ -109,11 +105,28 @@
                 height: 70%;
                 max-width: 80vw;
             }
-
             .lesson-card span, .lesson-card img {
                 width: 100%;
                 height: 50%;
             }
+        }
+
+        /* --- แอนิเมชันเปิดหนังสือ (เพิ่มใหม่) --- */
+        .flipping-out {
+            animation: flip-out 0.5s ease-in forwards;
+        }
+        .flipping-in {
+            animation: flip-in 0.5s ease-out forwards;
+        }
+
+        @keyframes flip-out {
+            from { transform: rotateY(0deg); opacity: 1; }
+            to   { transform: rotateY(-90deg); opacity: 0; }
+        }
+
+        @keyframes flip-in {
+            from { transform: rotateY(90deg); opacity: 0; }
+            to   { transform: rotateY(0deg); opacity: 1; }
         }
     </style>
 </head>
@@ -121,7 +134,7 @@
     <div id="lesson-page">
         <div id="lesson-display-container">
             <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
-
+            
             <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
         </div>
     </div>
@@ -139,52 +152,25 @@
                 id: id,
                 imgSrc: `${baseUrl}${id}.png`,
                 audioSrc: `${baseUrl}${id}.mp3`,
-                imgBlobUrl: null // เพิ่ม property สำหรับเก็บรูปที่โหลดแล้ว
             }));
             let currentCardIndex = 0;
+            let isAnimating = false; // <-- ตัวแปรป้องกันการคลิกรัวๆ
 
-            // --- ฟังก์ชันที่แก้ไขใหม่ทั้งหมด ---
             function preloadAllAssets(callback) {
                 const tempMessage = document.createElement('h2');
                 tempMessage.style.color = '#00796b';
-                tempMessage.textContent = 'กำลังเตรียมข้อมูล... (0%)';
+                tempMessage.textContent = 'กำลังเตรียมข้อมูล...';
                 displayContainer.insertBefore(tempMessage, nextImgBtn);
 
-                const assetsToLoad = allChars.flatMap(char => [
-                    { type: 'audio', char: char },
-                    { type: 'image', char: char }
-                ]);
-
-                let loadedCount = 0;
-                const totalAssets = assetsToLoad.length;
-
-                assetsToLoad.forEach(asset => {
-                    const url = asset.type === 'audio' ? asset.char.audioSrc : asset.char.imgSrc;
-                    
-                    fetch(url)
-                        .then(res => {
-                            if (!res.ok) throw new Error(`Failed to load ${url}`);
-                            return res.blob();
-                        })
-                        .then(blob => {
-                            const blobUrl = URL.createObjectURL(blob);
-                            if (asset.type === 'audio') {
-                                audioCache[asset.char.id] = new Audio(blobUrl);
-                            } else {
-                                asset.char.imgBlobUrl = blobUrl;
-                            }
-                        })
-                        .catch(err => console.warn(err.message))
-                        .finally(() => {
-                            loadedCount++;
-                            const percentage = Math.round((loadedCount / totalAssets) * 100);
-                            tempMessage.textContent = `กำลังเตรียมข้อมูล... (${percentage}%)`;
-                            if (loadedCount === totalAssets) {
-                                tempMessage.remove();
-                                console.log("All assets preloaded.");
-                                if (callback) callback();
-                            }
-                        });
+                const assetPromises = allChars.map(char =>
+                    fetch(char.audioSrc).then(res => res.blob()).then(blob => {
+                        audioCache[char.id] = new Audio(URL.createObjectURL(blob));
+                    }).catch(err => console.warn(`Cannot load audio: ${char.id}`, err))
+                );
+                Promise.allSettled(assetPromises).then(() => {
+                    tempMessage.remove();
+                    console.log("All assets preloaded.");
+                    if (callback) callback();
                 });
             }
 
@@ -195,37 +181,54 @@
                 }
             }
 
-            function showCard(index) {
-                if (index < 0 || index >= allChars.length) return;
-                currentCardIndex = index;
-                const char = allChars[currentCardIndex];
+            function showCard(index, direction) {
+                if (isAnimating || index < 0 || index >= allChars.length) return;
+                isAnimating = true;
 
                 const oldCard = document.querySelector('.lesson-card');
-                if (oldCard) oldCard.remove();
-
-                const card = document.createElement('div');
-                card.className = 'lesson-card';
-                card.innerHTML = `
-                    <span>${char.id}</span>
-                    <img src="${char.imgBlobUrl || char.imgSrc}" alt="${char.id}">
-                `;
-                card.onclick = () => playSound(char.id);
                 
-                displayContainer.insertBefore(card, nextImgBtn);
+                if (oldCard) {
+                    oldCard.style.animation = `flip-out 0.5s ease-in forwards ${direction === 'next' ? '' : 'reverse'}`;
+                }
 
-                playSound(char.id);
-                updateNavigationButtons();
+                setTimeout(() => {
+                    if (oldCard) oldCard.remove();
+                    
+                    currentCardIndex = index;
+                    const char = allChars[currentCardIndex];
+
+                    const card = document.createElement('div');
+                    card.className = 'lesson-card';
+                    card.style.opacity = 0; // เริ่มต้นด้วยการซ่อนไว้
+                    card.innerHTML = `
+                        <span>${char.id}</span>
+                        <img src="${char.imgSrc}" alt="${char.id}">
+                    `;
+                    card.onclick = () => playSound(char.id);
+                    
+                    displayContainer.insertBefore(card, nextImgBtn);
+
+                    card.style.animation = `flip-in 0.5s ease-out forwards ${direction === 'next' ? '' : 'reverse'}`;
+
+                    playSound(char.id);
+                    updateNavigationButtons();
+
+                    setTimeout(() => {
+                        isAnimating = false;
+                    }, 500); // ระยะเวลาของ animation
+
+                }, oldCard ? 250 : 0); // หน่วงเวลาให้ animation เก่าเริ่มก่อน
             }
 
             function showNextCard() {
                 if (currentCardIndex < allChars.length - 1) {
-                    showCard(currentCardIndex + 1);
+                    showCard(currentCardIndex + 1, 'next');
                 }
             }
 
             function showPrevCard() {
                 if (currentCardIndex > 0) {
-                    showCard(currentCardIndex - 1);
+                    showCard(currentCardIndex - 1, 'prev');
                 }
             }
 
@@ -234,8 +237,8 @@
                 nextImgBtn.classList.toggle('disabled', currentCardIndex === allChars.length - 1);
             }
 
-            prevImgBtn.onclick = showPrevCard;
-            nextImgBtn.onclick = showNextCard;
+            prevImgBtn.onclick = showNextCard; // <-- แก้ไข: ปุ่มซ้ายคือ Next
+            nextImgBtn.onclick = showPrevCard; // <-- แก้ไข: ปุ่มขวาคือ Prev
 
             preloadAllAssets(() => {
                 showCard(0);
