@@ -22,8 +22,8 @@
             justify-content: center;
             align-items: center;
             width: 100vw;
-            height: 90vh;
-            background-color: #ffffff;
+            height: 100vh;
+            background-color: #d1f3ff;
             box-sizing: border-box;
             padding: 2vmin;
         }
@@ -34,7 +34,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            height: 90%;
+            height: 100%;
             max-width: 1200px;
         }
 
@@ -70,7 +70,7 @@
             box-sizing: border-box;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            width: 60%;
             height: auto;
             aspect-ratio: 4 / 3;
             flex-direction: row;
@@ -92,7 +92,7 @@
             object-fit: contain;
         }
         .lesson-card span {
-            font-size: clamp(30em, 25vmin, 250px);
+            font-size: clamp(10em, 25vmin, 250px);
             font-weight: bold;
             color: #333;
             display: flex;
@@ -105,9 +105,9 @@
             .lesson-card {
                 flex-direction: column;
                 aspect-ratio: 3 / 4;
-                width: auto; /* <<< ให้ความกว้างปรับตามอัตโนมัติ */
-                height: 70%; /* <<< กำหนดความสูงเป็นหลัก */
-                max-width: 80vw; /* <<< จำกัดความกว้างเผื่อไว้ */
+                width: auto;
+                height: 70%;
+                max-width: 80vw;
             }
 
             .lesson-card span, .lesson-card img {
@@ -139,24 +139,52 @@
                 id: id,
                 imgSrc: `${baseUrl}${id}.png`,
                 audioSrc: `${baseUrl}${id}.mp3`,
+                imgBlobUrl: null // เพิ่ม property สำหรับเก็บรูปที่โหลดแล้ว
             }));
             let currentCardIndex = 0;
 
+            // --- ฟังก์ชันที่แก้ไขใหม่ทั้งหมด ---
             function preloadAllAssets(callback) {
                 const tempMessage = document.createElement('h2');
                 tempMessage.style.color = '#00796b';
-                tempMessage.textContent = 'กำลังเตรียมข้อมูล...';
+                tempMessage.textContent = 'กำลังเตรียมข้อมูล... (0%)';
                 displayContainer.insertBefore(tempMessage, nextImgBtn);
 
-                const assetPromises = allChars.map(char =>
-                    fetch(char.audioSrc).then(res => res.blob()).then(blob => {
-                        audioCache[char.id] = new Audio(URL.createObjectURL(blob));
-                    }).catch(err => console.warn(`Cannot load audio: ${char.id}`, err))
-                );
-                Promise.allSettled(assetPromises).then(() => {
-                    tempMessage.remove();
-                    console.log("All assets preloaded.");
-                    if (callback) callback();
+                const assetsToLoad = allChars.flatMap(char => [
+                    { type: 'audio', char: char },
+                    { type: 'image', char: char }
+                ]);
+
+                let loadedCount = 0;
+                const totalAssets = assetsToLoad.length;
+
+                assetsToLoad.forEach(asset => {
+                    const url = asset.type === 'audio' ? asset.char.audioSrc : asset.char.imgSrc;
+                    
+                    fetch(url)
+                        .then(res => {
+                            if (!res.ok) throw new Error(`Failed to load ${url}`);
+                            return res.blob();
+                        })
+                        .then(blob => {
+                            const blobUrl = URL.createObjectURL(blob);
+                            if (asset.type === 'audio') {
+                                audioCache[asset.char.id] = new Audio(blobUrl);
+                            } else {
+                                asset.char.imgBlobUrl = blobUrl;
+                            }
+                        })
+                        .catch(err => console.warn(err.message))
+                        .finally(() => {
+                            loadedCount++;
+                            const percentage = Math.round((loadedCount / totalAssets) * 100);
+                            tempMessage.textContent = `กำลังเตรียมข้อมูล... (${percentage}%)`;
+                            if (loadedCount === totalAssets) {
+                                tempMessage.remove();
+                                console.log("All assets preloaded.");
+                                if (callback) callback();
+                            }
+                        });
                 });
             }
 
@@ -179,7 +207,7 @@
                 card.className = 'lesson-card';
                 card.innerHTML = `
                     <span>${char.id}</span>
-                    <img src="${char.imgSrc}" alt="${char.id}">
+                    <img src="${char.imgBlobUrl || char.imgSrc}" alt="${char.id}">
                 `;
                 card.onclick = () => playSound(char.id);
                 
