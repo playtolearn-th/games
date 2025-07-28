@@ -20,33 +20,24 @@
 
             .game-selection a {
                 display: flex;
-                /* ทำให้ส่วนประกอบด้านในจัดเรียงกันได้ */
                 align-items: center;
-                /* จัดให้อยู่กึ่งกลางแนวตั้ง */
                 width: 350px;
-                /* เพิ่มความกว้างเล็กน้อย */
                 padding: 10px 20px;
-                /* เพิ่มช่องว่างภายในปุ่ม */
                 box-sizing: border-box;
                 text-align: left;
-                /* จัดข้อความชิดซ้าย (ข้างเหรียญ) */
             }
 
-            /* จัดการกับ div ที่แสดงเหรียญ */
             .game-selection [id$="-rank-display"] {
                 width: 50px;
                 height: 50px;
                 margin-right: 20px;
-                /* สร้างระยะห่างระหว่างเหรียญกับข้อความ */
                 flex-shrink: 0;
             }
 
-            /* จัดการกับรูปเหรียญ (ที่ถูกเพิ่มเข้ามาโดย JS) */
             .game-selection .rank-medal-lobby {
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
-                /* ทำให้รูปภาพพอดีกับกรอบ ไม่ล้น */
             }
         </style>
     </head>
@@ -81,6 +72,11 @@
                 <a href="lesson3.html">
                     <div id="lesson3-rank-display"></div>
                     <span>เล่นเกมจับคู่คำศัพท์ (บทที่ 3)</span>
+                </a>
+                <!-- เพิ่มลิงก์สำหรับเกมเรียงประโยค -->
+                <a href="lesson302.html">
+                    <div id="lesson302-rank-display"></div>
+                    <span>เกมเรียงประโยค (บทที่ 3)</span>
                 </a>
             </div>
 

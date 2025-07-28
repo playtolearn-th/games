@@ -16,9 +16,9 @@ const db = firebase.firestore();
 
 // --- 3. ค่าคงที่ของเกม ---
 const MAX_SCORE_GAME01 = 180440;
-const MAX_SCORE_LESSON03 = 12080; // เพิ่มคะแนนสูงสุดของบทที่ 3
-const imageBaseUrl = "images/"; // Path สำหรับรูปภาพ Rank
-
+const MAX_SCORE_LESSON03 = 12080;
+const MAX_SCORE_LESSON302 = 120; // คะแนนสูงสุดของเกมเรียงประโยค (12 ข้อ * 10 คะแนน)
+const imageBaseUrl = "images/";
 
 // --- 6. ฟังก์ชันเสริม ---
 function getRankForScore(score, maxScore) {
@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreDisplay = document.getElementById('scoreDisplay').querySelector('span');
     const game01RankDisplay = document.getElementById('game01-rank-display');
     const lesson3RankDisplay = document.getElementById('lesson3-rank-display');
+    const lesson302RankDisplay = document.getElementById('lesson302-rank-display'); // เพิ่ม Element ของเกมเรียงประโยค
     const logoutBtn = document.getElementById('logoutBtn');
 
     let currentUser = null;
@@ -70,12 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let totalScore = 0;
             let game01Score = 0;
             let lesson3Score = 0;
+            let lesson302Score = 0; // เพิ่มตัวแปรสำหรับคะแนนเกมเรียงประโยค
 
             if (doc.exists && doc.data().scores) {
                 const scores = doc.data().scores;
                 totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
                 game01Score = scores.game01 || 0;
                 lesson3Score = scores.lesson3 || 0;
+                lesson302Score = scores.lesson302 || 0; // ดึงคะแนนของเกมเรียงประโยค
             }
 
             updateProgress(70, 'กำลังคำนวณ Rank...');
@@ -99,6 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     lesson3RankDisplay.innerHTML = `<img src="${imageBaseUrl}${rankLesson03.image}" alt="${rankLesson03.rank}" class="rank-medal-lobby" title="Rank: ${rankLesson03.rank}">`;
                 } else {
                     lesson3RankDisplay.innerHTML = `<img src="${imageBaseUrl}neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
+                }
+            }
+
+            // แสดงผล Rank ของเกมเรียงประโยค (บทที่ 3)
+            const rankLesson302 = getRankForScore(lesson302Score, MAX_SCORE_LESSON302);
+            if (lesson302RankDisplay) {
+                if (lesson302Score > 0) {
+                    lesson302RankDisplay.innerHTML = `<img src="${imageBaseUrl}${rankLesson302.image}" alt="${rankLesson302.rank}" class="rank-medal-lobby" title="Rank: ${rankLesson302.rank}">`;
+                } else {
+                    lesson302RankDisplay.innerHTML = `<img src="${imageBaseUrl}neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
                 }
             }
 
