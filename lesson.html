@@ -3,340 +3,166 @@
 
     <head>
         <meta charset="UTF-8">
+        <title>หนังสือพยัญชนะไทย ก–ฮ</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css">
         <style>
-            /* --- การตั้งค่าพื้นฐาน --- */
             html,
             body {
                 margin: 0;
                 padding: 0;
-                width: 100%;
+                background: #f0f0f0;
+                font-family: 'TH Sarabun New', sans-serif;
                 height: 100%;
                 overflow: hidden;
-                /* ป้องกันการเลื่อนหน้าจอที่ไม่จำเป็น */
-                font-family: 'TH Sarabun New', sans-serif;
             }
 
-            /* --- คอนเทนเนอร์หลักของหน้า (Flexbox Centering) --- */
-            #lesson-page {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                /* จัดให้อยู่กึ่งกลางแนวตั้ง */
-                align-items: center;
-                /* จัดให้อยู่กึ่งกลางแนวนอน */
-                width: 100vw;
-                height: 100vh;
-                background-color: #d1f3ff;
-                box-sizing: border-box;
-                padding: 1vmin;
-                /* เพิ่ม padding รอบๆ เล็กน้อย */
-            }
-
-            /* --- คอนเทนเนอร์ที่รวมปุ่มและการ์ด --- */
-            #lesson-display-container {
-                display: flex;
-                flex-direction: row;
-                /* กำหนดให้เรียงแนวนอนเสมอ */
-                justify-content: center;
-                align-items: center;
-                /* จัดให้ปุ่มและการ์ดอยู่ตรงกลางแนวเดียวกัน */
-                width: 100%;
-                height: 100%;
-                max-width: 1400px;
-                /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
-            }
-
-            /* --- ปุ่มลูกศรซ้าย-ขวา --- */
-            .nav-img-btn {
-                flex-shrink: 0;
-                /* ป้องกันไม่ให้ปุ่มหดตัว */
-                height: auto;
-                width: 6vmin;
-                /* ใช้ vmin เพื่อให้ขนาดสัมพันธ์กับด้านที่เล็กกว่าของจอ */
-                max-width: 60px;
-                /* จำกัดขนาดสูงสุดของปุ่ม */
-                min-width: 30px;
-                /* กำหนดขนาดขั้นต่ำของปุ่ม */
-                cursor: pointer;
-                object-fit: contain;
-                margin: 0 2vmin;
-                /* เพิ่มระยะห่างระหว่างปุ่มกับการ์ด */
-                transition: opacity 0.3s ease, transform 0.2s ease;
-                user-select: none;
-            }
-
-            .nav-img-btn:hover {
-                opacity: 0.7;
-                transform: scale(1.1);
-            }
-
-            .nav-img-btn.disabled {
-                opacity: 0.3;
-                cursor: not-allowed;
-                filter: grayscale(100%);
-                transform: scale(1);
-            }
-
-            /* --- พื้นที่แสดงการ์ด --- */
-            #lesson-grid {
-                flex-grow: 1;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-                height: 100%;
-                min-width: 0;
-                /* ป้องกันปัญหา flexbox item ล้น container */
-            }
-
-            /* --- การ์ดพยัญชนะ --- */
-            .lesson-card {
-                background-color: #ffffff;
-                display: flex;
-                flex-direction: row;
-                /* ค่าเริ่มต้นสำหรับแนวนอน */
-                align-items: center;
-                justify-content: center;
-                gap: 1vmin;
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-                padding: 2vmin;
-                box-sizing: border-box;
-                border-radius: 20px;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-
-                /* --- การปรับขนาดด้วย Aspect Ratio --- */
-                aspect-ratio: 4 / 3;
-                /* กำหนดอัตราส่วนการ์ดแนวนอน */
-                height: 100%;
-                /* ให้ความสูงยืดเต็มที่ใน container */
-                width: auto;
-                /* ความกว้างปรับตามอัตราส่วน */
-                max-width: 100%;
-                /* แต่ไม่ให้กว้างเกินพื้นที่ที่มี */
-            }
-
-            .lesson-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-            }
-
-            /* --- รูปภาพในการ์ด --- */
-            .lesson-card img {
-                flex: 1;
-                width: 50%;
-                height: 100%;
-                object-fit: contain;
-                min-width: 0;
-            }
-
-            /* --- ตัวอักษรในการ์ด --- */
-            .lesson-card span {
-                flex: 1;
-                font-size: clamp(30em, 30vmin, 350px);
-                /* ปรับขนาดฟอนต์ให้เหมาะสมขึ้น */
-                font-weight: bold;
-                color: #333;
-                white-space: nowrap;
+            h1 {
+                margin: 0.5rem;
                 text-align: center;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                min-width: 0;
+                font-size: clamp(1.5rem, 3vw, 2.5rem);
             }
 
-            /* --- Media Query สำหรับจอแนวตั้ง (Portrait) --- */
-            @media (orientation: portrait) {
-                /* ไม่ต้องเปลี่ยน flex-direction ของ container แล้ว */
-                /* ไม่ต้องหมุนปุ่มแล้ว */
+            #container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: calc(100vh - 60px);
+                padding: 1vh;
+                box-sizing: border-box;
+            }
 
-                .lesson-card {
-                    /* แต่ยังคงให้เนื้อหาในการ์ดเรียงแนวตั้ง */
-                    flex-direction: column;
-                    aspect-ratio: 3 / 4;
-                    /* กำหนดอัตราส่วนการ์ดแนวตั้ง */
-                    width: auto;
-                    /* ความกว้างปรับตามอัตราส่วน */
-                    height: 85%;
-                    /* ให้ความสูงเป็น % ของ container */
-                    max-height: 100%;
-                }
+            #flipbook {
+                width: 90vw;
+                height: 80vh;
+                max-width: 1000px;
+                max-height: 700px;
+                background: #e0e0e0;
+            }
 
-                .lesson-card img,
-                .lesson-card span {
-                    width: 100%;
-                    height: 50%;
-                    /* แบ่งพื้นที่กันคนละครึ่ง */
-                }
+            .page {
+                width: 100%;
+                height: 100%;
+                background: white;
+                border: 1px solid #ccc;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0;
+                margin: 0;
+                position: relative;
+                box-sizing: border-box;
+                overflow: hidden;
+            }
 
-                .lesson-card span {
-                    font-size: clamp(6em, 35vmin, 250px);
-                    /* ปรับขนาดฟอนต์สำหรับแนวตั้ง */
-                }
+            .page:not(.image-page) span {
+                font-size: 15vw;
+                /* ขนาดใหญ่อัตโนมัติตามขนาดหน้าหนังสือ */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                width: 100%;
+                text-align: center;
+                line-height: 1;
+            }
+
+
+            /* ✅ ภาพอยู่กลาง XY และย่ออัตโนมัติ */
+            .image-page {
+                position: relative;
+            }
+
+            .image-page img {
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
         </style>
     </head>
 
     <body>
-        <div id="lesson-page">
-            <div id="lesson-display-container">
-                <img id="prevImgBtn" src="back.png" alt="ก่อนหน้า" class="nav-img-btn">
 
-                <div id="lesson-grid">
-                    <!-- เนื้อหาการ์ดจะถูกสร้างโดย JavaScript -->
-                </div>
-
-                <img id="nextImgBtn" src="next.png" alt="ถัดไป" class="nav-img-btn">
-            </div>
+        <h1>📖 หนังสือพยัญชนะไทย ก–ฮ</h1>
+        <div id="container">
+            <div id="flipbook"></div>
         </div>
 
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
         <script>
-            // --- Firebase Initialization ---
-            const firebaseConfig = {
-                apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
-                authDomain: "playtolearn-e3356.firebaseapp.com",
-                projectId: "playtolearn-e3356",
-                storageBucket: "playtolearn-e3356.firebasestorage.app",
-                messagingSenderId: "233629701249",
-                appId: "1:233629701249:web:5ee775473bc00be1566980",
-                measurementId: "G-SXMFQT0TLG"
-            };
-            firebase.initializeApp(firebaseConfig);
+            const chars = [
+                "ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ",
+                "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"
+            ];
 
-            document.addEventListener('DOMContentLoaded', function () {
-                // --- DOM Elements ---
-                const lessonGrid = document.getElementById('lesson-grid');
-                const prevImgBtn = document.getElementById('prevImgBtn');
-                const nextImgBtn = document.getElementById('nextImgBtn');
+            const flipbook = document.getElementById("flipbook");
 
-                if (!lessonGrid || !prevImgBtn || !nextImgBtn) {
-                    console.error("Essential DOM elements not found.");
-                    document.body.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดหน้าเว็บ</p>';
-                    return;
+            function playSound(char) {
+                const audio = new Audio(`sound/${char}.mp3`);
+                audio.play().catch(() => console.warn(`❌ ไม่พบไฟล์เสียง: ${char}.mp3`));
+            }
+
+            function createPage(content, isImage = false) {
+                const page = document.createElement("div");
+                page.className = "page";
+
+                if (isImage) {
+                    page.classList.add("image-page");
+                    const img = document.createElement("img");
+                    img.src = `images/${content}.png`;
+                    img.alt = content;
+                    page.appendChild(img);
+                } else {
+                    const span = document.createElement("span");
+                    span.textContent = content;
+                    page.appendChild(span);
                 }
 
-                // --- State and Caching ---
-                let audioCache = {};
-                const baseUrl = "./";
-                const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
-                const allChars = allCharIds.map(id => ({
-                    id: id,
-                    imgSrc: `${baseUrl}${id}.png`,
-                    audioSrc: `${baseUrl}${id}.mp3`,
-                    imgBlobUrl: null
-                }));
-                let currentCardIndex = 0;
+                return page;
+            }
 
-                // --- Asset Preloading ---
-                function preloadAllAssets(callback) {
-                    lessonGrid.innerHTML = '<h2 style="color: #00796b;">กำลังเตรียมข้อมูล...</h2>';
-                    const assetPromises = allChars.flatMap(char => [
-                        fetch(char.audioSrc).then(res => res.blob()).then(blob => {
-                            audioCache[char.id] = new Audio(URL.createObjectURL(blob));
-                        }).catch(err => console.warn(`Cannot load audio: ${char.id}`, err)),
-                        fetch(char.imgSrc).then(res => res.blob()).then(blob => {
-                            char.imgBlobUrl = URL.createObjectURL(blob);
-                        }).catch(err => console.warn(`Cannot load image: ${char.id}`, err))
-                    ]);
-                    Promise.allSettled(assetPromises).then(() => {
-                        console.log("All assets preloaded.");
-                        setTimeout(callback, 100);
-                    });
-                }
+            // ✅ เพิ่มปก หน้าอักษร และรูปภาพ
+            flipbook.appendChild(createPage("cover01", true)); // เปลี่ยนปกเป็นภาพ cover01.png
+            chars.forEach(char => {
+                flipbook.appendChild(createPage(char));         // หน้าอักษร
+                flipbook.appendChild(createPage(char, true));   // หน้ารูปภาพ
+            });
+            flipbook.appendChild(createPage("จบบริบูรณ์"));
 
-                function playSound(soundKey) {
-                    if (audioCache[soundKey]) {
-                        audioCache[soundKey].currentTime = 0;
-                        audioCache[soundKey].play().catch(e => console.warn("Audio playback prevented:", e));
+            // ✅ เริ่มทำงานเมื่อโหลดหน้าเสร็จ
+            window.addEventListener("DOMContentLoaded", () => {
+                const pageFlip = new St.PageFlip(flipbook, {
+                    width: flipbook.clientWidth / 2,
+                    height: flipbook.clientHeight,
+                    size: "fixed",
+                    showCover: true,
+                    usePortrait: false,
+                    flippingTime: 800,
+                    mobileScrollSupport: false,
+                });
+
+                pageFlip.loadFromHTML(document.querySelectorAll(".page"));
+
+                pageFlip.on("flip", (e) => {
+                    const currentPageIndex = e.data;
+                    const pages = document.querySelectorAll(".page");
+                    const leftPage = pages[currentPageIndex];
+
+                    if (leftPage && !leftPage.classList.contains("image-page")) {
+                        const char = leftPage.textContent.trim();
+                        if (chars.includes(char)) {
+                            playSound(char);
+                        }
                     }
-                }
-
-                // --- Lesson Page Functions ---
-                function showCard(index = currentCardIndex) {
-                    if (index < 0 || index >= allChars.length) return;
-                    currentCardIndex = index;
-                    const char = allChars[currentCardIndex];
-                    lessonGrid.innerHTML = ''; // Clear previous card
-
-                    const card = document.createElement('div');
-                    card.className = 'lesson-card';
-                    card.innerHTML = `
-                        <span>${char.id}</span>
-                        <img src="${char.imgBlobUrl || char.imgSrc}" alt="${char.id}">
-                    `;
-                    card.onclick = () => playSound(char.id);
-                    lessonGrid.appendChild(card);
-
-                    playSound(char.id);
-                    updateNavigationButtons();
-                }
-
-                function showNextCard() {
-                    if (currentCardIndex < allChars.length - 1) {
-                        showCard(currentCardIndex + 1);
-                    }
-                }
-
-                function showPrevCard() {
-                    if (currentCardIndex > 0) {
-                        showCard(currentCardIndex - 1);
-                    }
-                }
-
-                function updateNavigationButtons() {
-                    prevImgBtn.classList.toggle('disabled', currentCardIndex === 0);
-                    nextImgBtn.classList.toggle('disabled', currentCardIndex === allChars.length - 1);
-                }
-
-                // --- SWIPE FUNCTIONALITY ---
-                let touchstartX = 0;
-                let touchendX = 0;
-
-                function handleSwipe() {
-                    const swipeThreshold = 50; // ระยะที่ต้องปัดเป็นอย่างน้อย (pixel)
-                    const deltaX = touchendX - touchstartX;
-
-                    if (Math.abs(deltaX) < swipeThreshold) {
-                        return; // ไม่ใช่การปัด
-                    }
-
-                    if (deltaX < 0) {
-                        // ปัดไปทางซ้าย (Next)
-                        console.log('swiped left!');
-                        showNextCard();
-                    } else {
-                        // ปัดไปทางขวา (Previous)
-                        console.log('swiped right!');
-                        showPrevCard();
-                    }
-                }
-
-                lessonGrid.addEventListener('touchstart', e => {
-                    touchstartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                lessonGrid.addEventListener('touchend', e => {
-                    touchendX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                }, { passive: true });
-
-
-                // --- Event Listeners & Initialization ---
-                prevImgBtn.onclick = showPrevCard;
-                nextImgBtn.onclick = showNextCard;
-                window.addEventListener('resize', () => requestAnimationFrame(() => showCard(currentCardIndex)));
-
-                preloadAllAssets(() => {
-                    showCard(0);
                 });
             });
         </script>
+
     </body>
 
 </html>
