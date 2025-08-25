@@ -23,6 +23,7 @@ const imageBaseUrl = "images/";
 // --- 6. ฟังก์ชันเสริม ---
 function getRankForScore(score, maxScore) {
     const percentage = (score / maxScore) * 100;
+    // หมายเหตุ: ตรวจสอบว่าชื่อไฟล์รูปภาพตรงกับในโฟลเดอร์ images/icon/
     if (percentage >= 60) return { rank: 'เพชร', image: 'diamond.png' };
     if (percentage >= 50) return { rank: 'ทอง', image: 'gold-medal.png' };
     if (percentage >= 40) return { rank: 'เงิน', image: 'silver-Coin.png' };
@@ -34,7 +35,7 @@ function updateProgress(percentage, text) {
     const progressBarFill = document.getElementById('progress-bar-fill');
     const progressText = document.getElementById('progress-text');
     if (progressBarFill) progressBarFill.style.width = `${percentage}%`;
-    if (progressText) progressText.textContent = `${percentage}%`;
+    if (progressText) progressText.textContent = text; // แสดงข้อความสถานะ
 }
 
 // --- Main execution logic ---
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreDisplay = document.getElementById('scoreDisplay').querySelector('span');
     const game01RankDisplay = document.getElementById('game01-rank-display');
     const lesson3RankDisplay = document.getElementById('lesson3-rank-display');
-    const lesson302RankDisplay = document.getElementById('lesson302-rank-display'); // เพิ่ม Element ของเกมเรียงประโยค
+    const lesson302RankDisplay = document.getElementById('lesson302-rank-display');
     const logoutBtn = document.getElementById('logoutBtn');
 
     let currentUser = null;
@@ -71,27 +72,29 @@ document.addEventListener('DOMContentLoaded', () => {
             let totalScore = 0;
             let game01Score = 0;
             let lesson3Score = 0;
-            let lesson302Score = 0; // เพิ่มตัวแปรสำหรับคะแนนเกมเรียงประโยค
+            let lesson302Score = 0;
 
             if (doc.exists && doc.data().scores) {
                 const scores = doc.data().scores;
-                totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
+                totalScore = Object.values(scores).reduce((sum, score) => sum + (Number(score) || 0), 0);
                 game01Score = scores.game01 || 0;
                 lesson3Score = scores.lesson3 || 0;
-                lesson302Score = scores.lesson302 || 0; // ดึงคะแนนของเกมเรียงประโยค
+                lesson302Score = scores.lesson302 || 0;
             }
 
             updateProgress(70, 'กำลังคำนวณ Rank...');
 
             if (scoreDisplay) scoreDisplay.textContent = totalScore.toLocaleString();
 
+            // ✅ FIX: แก้ไข Path รูปเหรียญรางวัลทั้งหมดให้ถูกต้อง (เพิ่ม "icon/")
+            
             // แสดงผล Rank ของเกมที่ 1
             const rankGame01 = getRankForScore(game01Score, MAX_SCORE_GAME01);
             if (game01RankDisplay) {
                 if (game01Score > 0) {
-                    game01RankDisplay.innerHTML = `<img src="${imageBaseUrl}${rankGame01.image}" alt="${rankGame01.rank}" class="rank-medal-lobby" title="Rank: ${rankGame01.rank}">`;
+                    game01RankDisplay.innerHTML = `<img src="${imageBaseUrl}icon/${rankGame01.image}" alt="${rankGame01.rank}" class="rank-medal-lobby" title="Rank: ${rankGame01.rank}">`;
                 } else {
-                    game01RankDisplay.innerHTML = `<img src="${imageBaseUrl}neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
+                    game01RankDisplay.innerHTML = `<img src="${imageBaseUrl}icon/neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
                 }
             }
 
@@ -99,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const rankLesson03 = getRankForScore(lesson3Score, MAX_SCORE_LESSON03);
             if (lesson3RankDisplay) {
                 if (lesson3Score > 0) {
-                    lesson3RankDisplay.innerHTML = `<img src="${imageBaseUrl}${rankLesson03.image}" alt="${rankLesson03.rank}" class="rank-medal-lobby" title="Rank: ${rankLesson03.rank}">`;
+                    lesson3RankDisplay.innerHTML = `<img src="${imageBaseUrl}icon/${rankLesson03.image}" alt="${rankLesson03.rank}" class="rank-medal-lobby" title="Rank: ${rankLesson03.rank}">`;
                 } else {
-                    lesson3RankDisplay.innerHTML = `<img src="${imageBaseUrl}neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
+                    lesson3RankDisplay.innerHTML = `<img src="${imageBaseUrl}icon/neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
                 }
             }
 
@@ -109,9 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const rankLesson302 = getRankForScore(lesson302Score, MAX_SCORE_LESSON302);
             if (lesson302RankDisplay) {
                 if (lesson302Score > 0) {
-                    lesson302RankDisplay.innerHTML = `<img src="${imageBaseUrl}${rankLesson302.image}" alt="${rankLesson302.rank}" class="rank-medal-lobby" title="Rank: ${rankLesson302.rank}">`;
+                    lesson302RankDisplay.innerHTML = `<img src="${imageBaseUrl}icon/${rankLesson302.image}" alt="${rankLesson302.rank}" class="rank-medal-lobby" title="Rank: ${rankLesson302.rank}">`;
                 } else {
-                    lesson302RankDisplay.innerHTML = `<img src="${imageBaseUrl}neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
+                    lesson302RankDisplay.innerHTML = `<img src="${imageBaseUrl}icon/neutral.png" alt="ยังไม่มี Rank" class="rank-medal-lobby" title="ยังไม่ได้เล่น">`;
                 }
             }
 

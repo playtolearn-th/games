@@ -114,19 +114,22 @@
             const flipbook = document.getElementById("flipbook");
 
             function playSound(char) {
-                const audio = new Audio(`sound/${char}.mp3`);
-                audio.play().catch(() => console.warn(`❌ ไม่พบไฟล์เสียง: ${char}.mp3`));
+                // ✅ FIX: แก้ไข Path เสียงให้ถูกต้อง
+                const audioPath = `sounds/character/${char}.mp3`;
+                const audio = new Audio(audioPath);
+                audio.play().catch(() => console.warn(`❌ ไม่พบไฟล์เสียง: ${audioPath}`));
             }
 
-            function createPage(content, isImage = false) {
+            function createPage(content, isImage = false, altText = '') {
                 const page = document.createElement("div");
                 page.className = "page";
 
                 if (isImage) {
                     page.classList.add("image-page");
                     const img = document.createElement("img");
-                    img.src = `images/${content}.png`;
-                    img.alt = content;
+                    // ✅ FIX: แก้ไขการกำหนด src ให้รับ Path เต็ม
+                    img.src = content; 
+                    img.alt = altText || content;
                     page.appendChild(img);
                 } else {
                     const span = document.createElement("span");
@@ -137,12 +140,18 @@
                 return page;
             }
 
-            // เพิ่มหน้า
-            flipbook.appendChild(createPage("cover01", true));
+            // ✅ FIX: เพิ่มหน้าโดยระบุ Path รูปภาพที่ถูกต้อง
+            // หน้าปก
+            flipbook.appendChild(createPage("images/icon/cover01.png", true, "หน้าปก"));
+            
+            // หน้าพยัญชนะและรูปภาพประกอบ
             chars.forEach(char => {
-                flipbook.appendChild(createPage(char));
-                flipbook.appendChild(createPage(char, true));
+                flipbook.appendChild(createPage(char)); // หน้าตัวอักษร
+                const imagePath = `images/character/${char}.png`;
+                flipbook.appendChild(createPage(imagePath, true, char)); // หน้ารูปภาพ
             });
+
+            // หน้าสุดท้าย
             flipbook.appendChild(createPage("จบบริบูรณ์"));
 
             window.addEventListener("DOMContentLoaded", () => {
@@ -161,7 +170,8 @@
                 pageFlip.on("flip", (e) => {
                     const currentPageIndex = e.data;
                     const pages = document.querySelectorAll(".page");
-                    const leftPage = pages[currentPageIndex];
+                    // แก้ไขการตรวจสอบเล็กน้อยเพื่อให้แม่นยำขึ้น
+                    const leftPage = pages[currentPageIndex * 2];
                     if (leftPage && !leftPage.classList.contains("image-page")) {
                         const char = leftPage.textContent.trim();
                         if (chars.includes(char)) {

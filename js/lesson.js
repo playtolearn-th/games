@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // ID ของพยัญชนะไทยทั้งหมด
     const allCharIds = ["ก", "ข", "ฃ", "ค", "ฅ", "ฆ", "ง", "จ", "ฉ", "ช", "ซ", "ฌ", "ญ", "ฎ", "ฏ", "ฐ", "ฑ", "ฒ", "ณ", "ด", "ต", "ถ", "ท", "ธ", "น", "บ", "ป", "ผ", "ฝ", "พ", "ฟ", "ภ", "ม", "ย", "ร", "ล", "ว", "ศ", "ษ", "ส", "ห", "ฬ", "อ", "ฮ"];
     
-    // สร้าง Array ของ Object ที่มี id, path รูปภาพ และจะเพิ่ม blob url เข้าไปทีหลัง
+    // ✅ FIX: สร้าง Array ของ Object โดยระบุ Path ของไฟล์รูปภาพและเสียงให้ถูกต้อง
     const allChars = allCharIds.map(id => ({
         id: id,
-        imgSrc: `${baseUrl}${id}.png`, // Path ดั้งเดิมของรูปภาพ
-        audioSrc: `${baseUrl}${id}.mp3`, // Path ดั้งเดิมของเสียง
+        imgSrc: `${baseUrl}images/character/${id}.png`, // Path รูปภาพที่ถูกต้อง
+        audioSrc: `${baseUrl}sounds/character/${id}.mp3`, // Path เสียงที่ถูกต้อง
         imgBlobUrl: null // จะถูกเติมค่าหลังจากการโหลดล่วงหน้า
     }));
 
