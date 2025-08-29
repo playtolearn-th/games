@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="th">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>บทที่ ๑ ใบโบก ใบบัว</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css">
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f0f0f0;
+        font-family: 'TH Sarabun New', sans-serif;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      h1 {
+        margin: .5rem;
+        text-align: center;
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
+      }
+
+      #preloader {
+        position: fixed;
+        inset: 0;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        font-size: 2rem;
+      }
+
+      #container {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+
+      #flipbook {
+        position: relative;
+        width: 90vw;
+        height: 80vh;
+        max-width: 1000px;
+        max-height: 700px;
+        background: #e0e0e0;
+      }
+
+      .page {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        border: 1px solid #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      /* รูป/วิดีโอ หน้าเดี่ยว */
+      .image-page:not(.spread-image)>img,
+      .image-page:not(.spread-image)>video {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .page.spread-image {
+        overflow: hidden;
+      }
+
+      .page.spread-image img,
+      .page.spread-image video {
+        max-width: none;
+        width: 200%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        transform: none;
+      }
+
+      .page.spread-image video {
+        pointer-events: none;
+      }
+
+      .page.spread-left img,
+      .page.spread-left video {
+        left: 0;
+      }
+
+      .page.spread-right img,
+      .page.spread-right video {
+        left: -100%;
+      }
+
+      /* คาราโอเกะทั่วไป */
+      .karaoke-wrap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .karaoke-lines {
+        display: flex;
+        flex-direction: column;
+        gap: .8rem;
+        line-height: 1.2;
+        max-width: 100%;
+      }
+
+      .karaoke-line {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .karaoke-text {
+        font-size: clamp(2rem, 4.8vw, 4.2rem);
+        white-space: nowrap;
+      }
+
+      .karaoke-text.bold {
+        font-weight: 700;
+      }
+
+      .karaoke-word {
+        padding: 0 .25rem;
+        border-bottom: 3px solid transparent;
+        transition: color .15s ease, border-color .15s ease;
+      }
+
+      .karaoke-line::before {
+        content: '🔊';
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        opacity: 0.3;
+        transition: opacity 0.2s ease;
+      }
+
+      .karaoke-line:hover::before {
+        opacity: 1;
+      }
+
+      .karaoke-word.active {
+        color: #d94100;
+        border-color: #d94100;
+      }
+
+      .karaoke-word.done {
+        color: #6b7280;
+        border-color: transparent;
+      }
+
+      /* รูปแบบอื่นๆ */
+      .img-title {
+        position: absolute;
+        left: 50%;
+        top: 10%;
+        transform: translateX(-50%);
+        padding: .25rem .8rem;
+        border-radius: .75rem;
+        background: rgba(255, 255, 255, .6);
+        backdrop-filter: blur(2px);
+        white-space: nowrap;
+      }
+
+      .img-title .karaoke-word {
+        font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+      }
+
+      .side-by-side {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: min(3vw, 24px);
+        padding: min(3vw, 24px);
+      }
+
+      .side-by-side img {
+        max-height: 70%;
+        max-width: 45%;
+        object-fit: contain;
+      }
+
+      .img-overlay-bottom {
+        position: absolute;
+        left: 50%;
+        bottom: 10%;
+        transform: translateX(-50%);
+        padding: .25rem .8rem;
+        border-radius: .75rem;
+        background: rgba(255, 255, 255, .6);
+        backdrop-filter: blur(2px);
+        white-space: nowrap;
+        max-width: 92%;
+        overflow: hidden;
+      }
+
+      .img-overlay-bottom .karaoke-word {
+        font-size: var(--fit-size, clamp(2rem, 4.8vw, 4.2rem));
+      }
+
+      .text-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .text-container .karaoke-word {
+        font-size: var(--fit-size, clamp(5rem, 18vw, 12rem));
+        line-height: 1.1;
+        display: block;
+        white-space: nowrap;
+      }
+
+      .hint {
+        font-size: clamp(.9rem, 2.2vw, 1.1rem);
+        color: #666;
+        margin-top: .2rem;
+      }
+
+      /* ปุ่มและส่วนควบคุม */
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 56px;
+        height: 56px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 20;
+      }
+
+      .nav-btn img {
+        width: 100%;
+        height: 100%;
+      }
+
+      #prevBtn {
+        left: -66px;
+      }
+
+      #nextBtn {
+        right: -66px;
+      }
+
+      .corner {
+        position: absolute;
+        width: 68px;
+        height: 68px;
+        z-index: 15;
+        cursor: pointer;
+      }
+
+      .corner.tl {
+        left: 0;
+        top: 0;
+      }
+
+      .corner.tr {
+        right: 0;
+        top: 0;
+      }
+
+      /* หน้าตัวอักษร */
+      .letter-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: min(2.5vh, 16px);
+        padding: min(3vw, 24px);
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .letter-stack img {
+        max-height: 55%;
+        max-width: 80%;
+        object-fit: contain;
+        pointer-events: none;
+      }
+
+      .letter-stack .big-char {
+        font-size: clamp(5rem, 18vw, 12rem);
+        line-height: .9;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="preloader">⏳ กำลังโหลด...</div>
+    <h1>📖 บทที่ ๑ ใบโบก ใบบัว</h1>
+
+    <div id="container">
+      <div id="flipbook">
+        <button id="prevBtn" class="nav-btn" aria-label="หน้าก่อนหน้า">
+          <img src="../images/icon/back.png" alt="ย้อนกลับ">
+        </button>
+        <button id="nextBtn" class="nav-btn" aria-label="หน้าถัดไป">
+          <img src="../images/icon/next.png" alt="ถัดไป">
+        </button>
+        <div class="corner tl" role="button" tabindex="0" aria-label="พลิกไปหน้าก่อนหน้า"></div>
+        <div class="corner tr" role="button" tabindex="0" aria-label="พลิกไปหน้าถัดไป"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+    <script>
+      // ---------- GLOBAL VARIABLES & AUDIO SETUP ----------
+      const flipbook = document.getElementById('flipbook');
+      const sharedAudio = new Audio();
+      let currentHighlight = null;
+      let pageFlip;
+
+      // ---------- HELPER FUNCTIONS ----------
+      const toURL = (p) => p ? encodeURI(p.trim()) : '';
+
+      function playSound(path) {
+        if (path) {
+          sharedAudio.src = path;
+          return sharedAudio.play();
+        }
+        return Promise.reject('No path provided');
+      }
+
+      function ensureDuration() {
+        return new Promise(res => {
+          if (!isNaN(sharedAudio.duration) && sharedAudio.duration > 0) return res(sharedAudio.duration);
+          sharedAudio.addEventListener('loadedmetadata', () => res(sharedAudio.duration || 0), { once: true });
+        });
+      }
+
+      // ---------- CONTENT DATA ----------
+      const chars = [
+        { word: 'ขา', image: 'images/ขา.png', sound: 'sounds/ขา.mp3' },
+        { word: 'งา', image: 'images/งา.png', sound: 'sounds/งา.mp3' },
+        { word: 'ตา', image: 'images/ตา.png', sound: 'sounds/ตา.mp3' },
+        { word: 'หู', image: 'images/หู.png', sound: 'sounds/หู.mp3' },
+        { word: 'มา', image: 'images/มา.png', sound: 'sounds/มา.mp3' },
+        { word: 'มี', image: 'images/มี.png', sound: 'sounds/มี.mp3' },
+        { word: 'ดู', image: 'images/ดู.png', sound: 'sounds/ดู.mp3' },
+        { word: 'ไม่', image: 'images/ไม่.png', sound: 'sounds/ไม่.mp3' },
+        { word: 'ใบโบก', image: 'images/ใบโบก.png', sound: 'sounds/ใบโบก.mp3' },
+        { word: 'ใบบัว', image: 'images/ใบบัว.png', sound: 'sounds/ใบบัว.mp3' },
+      ];
+      const titleText = 'ใบโบก ใบบัว';
+      const titleAudio = 'sounds/ใบโบก ใบบัว.mp3';
+      const leftImageForSpread = 'images/ภาษาพาที01.png';
+      const karaokeLinesRight = [
+        { text: 'มา มา มาดู', audio: 'sounds/มา มา มาดู.mp3' },
+        { text: 'มาดู ใบบัว', audio: 'sounds/มาดู ใบบัว.mp3' },
+        { text: 'มาดู ใบโบก', audio: 'sounds/มาดู ใบโบก.mp3' },
+      ];
+      const bogokTexts = ['ใบโบก มี ขา', 'ใบโบก มี งวง', 'ใบโบก มี ตา', 'ใบโบก มี หาง', 'ใบโบก มี หู', 'ใบโบก มี งา'];
+      const bogokPages = bogokTexts.map(text => ({ leftImg: 'images/ใบโบก.png', rightImg: `images/${text}.png`, text, audio: `sounds/${text}.mp3` }));
+      const buaTexts = ['ใบบัว มี ขา', 'ใบบัว มี งวง', 'ใบบัว มี ตา', 'ใบบัว มี หาง', 'ใบบัว มี หู', 'ใบบัว ไม่มี งา'];
+      const buaPages = buaTexts.map(text => ({ leftImg: 'images/ใบบัว.png', rightImg: `images/${text}.png`, text, audio: `sounds/${text}.mp3` }));
+      const mixedOneWordPages = [];
+      const maxLen = Math.max(bogokPages.length, buaPages.length);
+      for (let i = 0; i < maxLen; i++) {
+        if (bogokPages[i]) mixedOneWordPages.push(bogokPages[i]);
+        if (buaPages[i]) mixedOneWordPages.push(buaPages[i]);
+      }
+      const extraHead = { text: 'อธิบายเพิ่ม เติมความรู้', audio: 'sounds/อธิบายเพิ่ม เติมความรู้.mp3' };
+      const subHead = { text: 'อ่านพยัญชนะ', audio: 'sounds/อ่านพยัญชนะ.mp3' };
+      const letterPages = [
+        { ch: 'ก', img: '../images/character/ก.png', audio: 'sounds/กอไก่ อ่านว่า กอ.mp3' },
+        { ch: 'จ', img: '../images/character/จ.png', audio: 'sounds/จอจาน อ่านว่า จอ.mp3' },
+        { ch: 'ด', img: '../images/character/ด.png', audio: 'sounds/ดอเด็ก อ่านว่า ดอ.mp3' },
+        { ch: 'ต', img: '../images/character/ต.png', audio: 'sounds/ตอเต่า อ่านว่า ตอ.mp3' },
+        { ch: 'บ', img: '../images/character/บ.png', audio: 'sounds/บอใบไม้ อ่านว่า บอ.mp3' },
+        { ch: 'ป', img: '../images/character/ป.png', audio: 'sounds/ปอปลา อ่านว่า ปอ.mp3' },
+        { ch: 'อ', img: '../images/character/อ.png', audio: 'sounds/อออ่าง อ่านว่า ออ.mp3' },
+        { ch: 'ข', img: '../images/character/ข.png', audio: 'sounds/ขอไข่ อ่านว่า ขอ.mp3' },
+        { ch: 'ห', img: '../images/character/ห.png', audio: 'sounds/หอหีบ อ่านว่า หอ.mp3' },
+        { ch: 'ง', img: '../images/character/ง.png', audio: 'sounds/งองู อ่านว่า งอ.mp3' },
+        { ch: 'ม', img: '../images/character/ม.png', audio: 'sounds/มอม้า อ่านว่า มอ.mp3' },
+      ];
+
+      // ---------- DYNAMIC PAGE CREATION FUNCTIONS ----------
+      const fittedLines = [];
+      function fitLineToWidth(line, page, { max = 76, min = 28, step = 2 } = {}) {
+        let size = max;
+        const maxWidth = page.clientWidth * 0.92;
+        if (!line.hasChildNodes()) return;
+        for (let guard = 0; guard < 40; guard++) {
+          line.style.setProperty('--fit-size', size + 'px');
+          if (line.scrollWidth <= maxWidth || size <= min) break;
+          size -= step;
+        }
+      }
+
+      async function setupAudioInteraction(clickableElement, soundPath, highlightContainer) {
+        clickableElement.addEventListener('click', async () => {
+          if (!soundPath) return;
+
+          if (currentHighlight?.clear) currentHighlight.clear();
+
+          const spans = Array.from(highlightContainer.querySelectorAll('.karaoke-word'));
+          let timer = null;
+          const clearHL = () => { clearTimeout(timer); spans.forEach(s => s.classList.remove('active', 'done')); };
+          currentHighlight = { clear: clearHL };
+
+          if (!sharedAudio.paused) { sharedAudio.pause(); sharedAudio.currentTime = 0; }
+
+          try {
+            await playSound(soundPath);
+            const dur = await ensureDuration();
+            const each = (dur > 0 ? dur / spans.length : 0.5);
+            let idx = 0;
+            const advance = () => {
+              if (idx >= spans.length) { clearHL(); return; }
+              spans.forEach((s, i) => { s.classList.toggle('active', i === idx); s.classList.toggle('done', i < idx); });
+              idx++;
+              timer = setTimeout(advance, Math.max(60, Math.round(each * 1000)));
+            };
+            advance();
+            sharedAudio.addEventListener('ended', clearHL, { once: true });
+          } catch (err) {
+            console.warn('เล่นเสียงไม่ได้:', err);
+            clearHL();
+          }
+        });
+      }
+
+      function createPage(content, opts = {}) {
+        const { isImage = false, altText = '', soundPath = null } = opts;
+        const page = document.createElement('div');
+        page.className = 'page';
+        if (isImage) {
+          page.classList.add('image-page');
+          const img = new Image();
+          img.src = content;
+          img.alt = altText || 'ภาพประกอบ';
+          page.appendChild(img);
+        } else {
+          const wrap = document.createElement('div');
+          wrap.className = 'text-container';
+          const textElement = document.createElement('span');
+          textElement.className = 'karaoke-word';
+          textElement.textContent = content;
+          wrap.appendChild(textElement);
+          const hint = document.createElement('div');
+          hint.className = 'hint';
+          hint.textContent = 'แตะที่คำเพื่อฟังเสียง';
+          wrap.appendChild(hint);
+          page.appendChild(wrap);
+
+          setupAudioInteraction(wrap, soundPath, wrap);
+
+          fittedLines.push({
+            line: textElement,
+            page,
+            opts: { max: 180, min: 40, step: 4 }
+          });
+        }
+        return page;
+      }
+
+      function createCoverVideoSpread(src) {
+        const make = (sideClass) => {
+          const page = document.createElement('div');
+          page.className = 'page image-page spread-image ' + sideClass;
+          const vid = document.createElement('video');
+          vid.src = src;
+          vid.autoplay = true;
+          vid.muted = true;
+          vid.loop = true;
+          vid.playsInline = true;
+          page.appendChild(vid);
+          return page;
+        };
+        return [make('spread-left'), make('spread-right')];
+      }
+
+      // ✅ หน้าเดี่ยววิดีโอ (ไว้ใช้เป็นหน้าสุดท้าย)
+      function createSingleVideoPage(src) {
+        const page = document.createElement('div');
+        page.className = 'page image-page';
+        const vid = document.createElement('video');
+        vid.src = src;
+        vid.autoplay = true;   // ให้เริ่มเล่นอัตโนมัติ
+        vid.muted = true;      // เพื่อให้ autoplay ทำงานบนเบราว์เซอร์ได้
+        vid.loop = true;       // เล่นวน
+        vid.playsInline = true;
+        // หมายเหตุ: มีตัวดัก event ที่ flipbook (capture) อยู่แล้ว จึงไม่ใส่ controls
+        page.appendChild(vid);
+        return page;
+      }
+
+      function createImageWithKaraokeTitle(imagePath, title, audioPath, alt = 'ภาพประกอบ') {
+        const page = document.createElement('div');
+        page.className = 'page image-page';
+        const img = new Image();
+        img.src = imagePath;
+        img.alt = alt;
+        page.appendChild(img);
+        const titleBox = document.createElement('div');
+        titleBox.className = 'img-title karaoke-line';
+        title.trim().split(/\s+/).forEach(w => {
+          const s = document.createElement('span');
+          s.className = 'karaoke-word';
+          s.textContent = w;
+          titleBox.appendChild(s);
+        });
+        page.appendChild(titleBox);
+        setupAudioInteraction(titleBox, audioPath, titleBox);
+        return page;
+      }
+
+      function createOneWordPage({ leftImg, rightImg, text, audio }) {
+        const page = document.createElement('div');
+        page.className = 'page';
+        const wrap = document.createElement('div');
+        wrap.className = 'side-by-side';
+        const imgLeft = new Image();
+        imgLeft.src = leftImg;
+        imgLeft.alt = text.split(' ')[0];
+        const imgRight = new Image();
+        imgRight.src = encodeURI(rightImg);
+        imgRight.alt = text;
+        wrap.append(imgLeft, imgRight);
+        page.appendChild(wrap);
+        const line = document.createElement('div');
+        line.className = 'img-overlay-bottom karaoke-line';
+        text.trim().split(/\s+/).forEach(w => {
+          const s = document.createElement('span');
+          s.className = 'karaoke-word';
+          s.textContent = w;
+          line.appendChild(s);
+        });
+        page.appendChild(line);
+        setupAudioInteraction(line, audio, line);
+        fittedLines.push({ line, page });
+        return page;
+      }
+
+      function createTwoLineHeadPage(head, sub) {
+        const page = document.createElement('div');
+        page.className = 'page';
+        const wrap = document.createElement('div');
+        wrap.className = 'karaoke-wrap';
+        const makeRow = (text, audio, isBold) => {
+          const row = document.createElement('div');
+          row.className = 'karaoke-line';
+          const box = document.createElement('div');
+          box.className = 'karaoke-text' + (isBold ? ' bold' : '');
+          text.trim().split(/\s+/).forEach(w => {
+            const s = document.createElement('span');
+            s.className = 'karaoke-word';
+            s.textContent = w;
+            box.appendChild(s);
+          });
+          row.appendChild(box);
+          setupAudioInteraction(row, audio, row);
+          return row;
+        };
+        wrap.append(makeRow(head.text, head.audio, true), makeRow(sub.text, sub.audio, false));
+        const cap = document.createElement('div');
+        cap.className = 'hint';
+        cap.textContent = 'แตะที่บรรทัดเพื่อฟังเสียง';
+        wrap.appendChild(cap);
+        page.appendChild(wrap);
+        return page;
+      }
+
+      function createLetterPage({ ch, img, audio }) {
+        const page = document.createElement('div');
+        page.className = 'page';
+        const stack = document.createElement('div');
+        stack.className = 'letter-stack';
+        const picture = new Image();
+        picture.src = toURL(img);
+        picture.alt = ch;
+        const big = document.createElement('div');
+        big.className = 'karaoke-word big-char';
+        big.textContent = ch;
+        stack.append(picture, big);
+        page.appendChild(stack);
+        setupAudioInteraction(stack, audio, stack);
+        return page;
+      }
+
+      function createKaraokeThreeLinesPage(items) {
+        const page = document.createElement('div');
+        page.className = 'page';
+        const wrap = document.createElement('div');
+        wrap.className = 'karaoke-wrap';
+        const linesBox = document.createElement('div');
+        linesBox.className = 'karaoke-lines';
+        items.forEach(({ text, audio }) => {
+          const lineRow = document.createElement('div');
+          lineRow.className = 'karaoke-line';
+          const textBox = document.createElement('div');
+          textBox.className = 'karaoke-text';
+          text.trim().split(/\s+/).forEach(w => {
+            const s = document.createElement('span');
+            s.className = 'karaoke-word';
+            s.textContent = w;
+            textBox.appendChild(s);
+          });
+          lineRow.appendChild(textBox);
+          linesBox.appendChild(lineRow);
+          setupAudioInteraction(lineRow, audio, lineRow);
+        });
+        const cap = document.createElement('div');
+        cap.className = 'hint';
+        cap.textContent = 'แตะที่บรรทัดเพื่อฟังเสียง';
+        wrap.append(linesBox, cap);
+        page.appendChild(wrap);
+        return page;
+      }
+
+      // ---------- BUILD BOOK PAGES ----------
+      const [coverL, coverR] = createCoverVideoSpread('clip/cove.mp4');
+      flipbook.append(coverL, coverR);
+
+      chars.forEach(ch =>
+        flipbook.append(
+          createPage(ch.image, { isImage: true, altText: ch.word }),
+          createPage(ch.word, { soundPath: ch.sound })
+        )
+      );
+
+      flipbook.append(
+        createImageWithKaraokeTitle(leftImageForSpread, titleText, titleAudio),
+        createKaraokeThreeLinesPage(karaokeLinesRight)
+      );
+
+      mixedOneWordPages.forEach(item => flipbook.append(createOneWordPage(item)));
+
+      flipbook.append(createTwoLineHeadPage(extraHead, subHead));
+
+      letterPages.forEach(lp => flipbook.append(createLetterPage(lp)));
+
+      // ✅ เพิ่ม "หน้าใหม่สุดท้าย" เป็นวิดีโอ cove.mp4 (หน้าเดี่ยว)
+      flipbook.append(createSingleVideoPage('clip/cove.mp4'));
+
+      // ---------- INITIALIZATION & EVENT LISTENERS ----------
+      window.addEventListener('DOMContentLoaded', () => {
+        pageFlip = new St.PageFlip(flipbook, {
+          width: flipbook.clientWidth / 2,
+          height: flipbook.clientHeight,
+          size: 'fixed',
+          showCover: false,
+          flippingTime: 800,
+        });
+        pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+        const refitAllLines = () => {
+          document.fonts?.ready.then(() => {
+            fittedLines.forEach(({ line, page, opts }) => fitLineToWidth(line, page, opts));
+          });
+        };
+        window.addEventListener('resize', refitAllLines);
+        refitAllLines();
+
+        document.getElementById('prevBtn').addEventListener('click', () => pageFlip.flipPrev());
+        document.getElementById('nextBtn').addEventListener('click', () => pageFlip.flipNext());
+        flipbook.querySelector('.corner.tl').addEventListener('click', () => pageFlip.flipPrev());
+        flipbook.querySelector('.corner.tr').addEventListener('click', () => pageFlip.flipNext());
+
+        pageFlip.on('flip', () => {
+          document.querySelectorAll('.page').forEach(p => {
+            if (p.__finalKaraoke__) p.__finalKaraoke__.pause();
+          });
+        });
+
+        const blockFlipHandler = (e) => {
+          if (!e.target.closest('.corner, .nav-btn')) {
+            e.stopPropagation();
+          }
+        };
+        ['pointerdown', 'mousedown', 'touchstart'].forEach(evt => {
+          flipbook.addEventListener(evt, blockFlipHandler, true);
+        });
+
+        document.getElementById('preloader').style.display = 'none';
+      });
+    </script>
+  </body>
+
+</html>
