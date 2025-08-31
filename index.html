@@ -99,7 +99,7 @@
             font-weight: bold;
         }
 
-        /* ✅ เพิ่มสไตล์สำหรับเกมที่ยังไม่พร้อม */
+        /* ✅ เกมที่ยังไม่พร้อม */
         .game-card.disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -122,7 +122,7 @@
         <h1 class="text-center mb-4">เลือกเกมที่ต้องการเล่น</h1>
 
         <div class="game-grid">
-            
+            <!-- เดิม: เกมจับคู่พยัญชนะ -->
             <div class="game-card-container">
                 <a href="character.html" class="game-card">
                     <img src="images/game-cover-1.png" alt="เกมจับคู่พยัญชนะ">
@@ -131,6 +131,25 @@
                 <div id="score-display-game01" class="score-display">กำลังโหลดคะแนน...</div>
             </div>
 
+            <!-- ✅ ใหม่: บทที่ ๑ ใบบัว ใบโบก -->
+            <div class="game-card-container">
+                <a href="https://playtolearn-th.github.io/games/lesson01/" class="game-card">
+                    <img src="images/game-cover-01.png" alt="บทที่ ๑ ใบบัว ใบโบก">
+                    <h3>บทที่ ๑ ใบบัว ใบโบก</h3>
+                </a>
+                <div id="score-display-lesson01" class="score-display">กำลังโหลดคะแนน...</div>
+            </div>
+
+            <!-- ✅ ใหม่: บทที่ ๓ เพื่อนกัน -->
+            <div class="game-card-container">
+                <a href="https://playtolearn-th.github.io/games/lesson302" class="game-card">
+                    <img src="images/game-cover-03.png" alt="บทที่ ๓ เพื่อนกัน">
+                    <h3>บทที่ ๓ เพื่อนกัน</h3>
+                </a>
+                <div id="score-display-lesson03" class="score-display">กำลังโหลดคะแนน...</div>
+            </div>
+
+            <!-- เดิม: การ์ดตัวอย่างที่ยังไม่พร้อม -->
             <div class="game-card-container">
                 <div class="game-card disabled">
                     <img src="images/game-cover-2.jpg" alt="เกมที่ 2">
@@ -138,7 +157,6 @@
                 </div>
                 <div class="score-display">N/A</div>
             </div>
-            
         </div>
     </div>
 
