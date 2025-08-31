@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ห้องเรียนออนไลน์ ภาษาไทย ป.1 - ครูไพรัช</title>
 
-  <!-- Favicon -->
+  <!-- Favicon / Logo -->
   <link rel="icon" type="image/png" href="imgs/logo.png">
 
   <!-- Tailwind -->
@@ -40,7 +40,7 @@
   <nav class="bg-surface shadow-lg sticky top-0 z-50 border-b border-border-light">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
-        <!-- Logo (เปลี่ยนเป็น imgs/logo.png) -->
+        <!-- Logo -->
         <div class="flex items-center">
           <img src="imgs/logo.png" alt="โลโก้ห้องเรียน" class="w-12 h-12 rounded-xl mr-4 shadow-md object-cover"/>
           <div>
@@ -49,7 +49,7 @@
           </div>
         </div>
 
-        <!-- Desktop Menu (ลำดับใหม่) -->
+        <!-- Desktop Menu -->
         <div class="hidden md:flex space-x-8">
           <a href="#alphabet"   class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">🐓รู้จักพยัญชนะไทย</a>
           <a href="#lesson2"    class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">🐘บทที่ 1 ใบบัว ใบโบก</a>
@@ -65,7 +65,7 @@
         </button>
       </div>
 
-      <!-- Mobile Menu (ลำดับใหม่) -->
+      <!-- Mobile Menu -->
       <div id="mobile-menu" class="md:hidden hidden pb-6">
         <div class="flex flex-col space-y-2">
           <a href="#alphabet"   class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">🐓รู้จักพยัญชนะไทย</a>
@@ -77,7 +77,7 @@
     </div>
   </nav>
 
-  <!-- Hero (รูปปกเว็บ 90% + ปุ่มด้านล่าง, ไม่มีหัวข้อความ) -->
+  <!-- Hero -->
   <section id="home" class="relative flex flex-col items-center justify-center py-10">
     <img id="hero-img" alt="ปกเว็บ" class="w-[90%] max-w-[1280px] rounded-2xl shadow-lg object-cover object-center" />
     <div class="mt-8 flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -88,7 +88,7 @@
     </div>
   </section>
 
-  <!-- ⬇️ พยัญชนะไทย มาก่อนบทเรียน -->
+  <!-- Alphabet first -->
   <section id="alphabet" class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">รู้จักพยัญชนะไทย</h2>
@@ -96,8 +96,13 @@
 
       <div class="mb-16">
         <div class="bg-gray-50 rounded-2xl p-6 shadow-lg">
-          <iframe title="หนังสือพยัญชนะ ก–ฮ" src="https://playtolearn-th.github.io/games/lesson.html"
+          <!-- ✅ แก้ URL: ตัด .html -->
+          <iframe title="หนังสือพยัญชนะ ก–ฮ" src="https://playtolearn-th.github.io/games/lesson"
                   class="w-full h-[640px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
+          <div class="text-center mt-3">
+            <a href="https://playtolearn-th.github.io/games/lesson" target="_blank" rel="noopener"
+               class="text-primary hover:text-primary-hover underline">เปิดหน้าเต็ม (เผื่อ iframe โหลดช้า)</a>
+          </div>
         </div>
       </div>
 
@@ -109,7 +114,7 @@
     </div>
   </section>
 
-  <!-- บทที่ 1 -->
+  <!-- Lesson 1 -->
   <section id="lesson2" class="py-20 bg-disabled-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-4xl md:text-5xl font-bold text-center text-text-main mb-6">บทที่ ๒ : ใบบัว ใบโบก</h2>
@@ -123,89 +128,70 @@
         <button onclick="showSection('characters')" class="bg-secondary hover:bg-secondary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">อ่านพยัญชนะ</button>
       </div>
 
-      <!-- Vocabulary 10 คำ -->
+      <!-- Vocabulary 10 words -->
       <div id="vocabulary" class="lesson-section mb-20">
         <h3 class="text-3xl font-bold text-text-main mb-8 text-center">📝 คำศัพท์ 10 คำ</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <!-- ขา -->
+          <!-- 10 cards -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/ขา.png" alt="ภาพคำว่า ขา" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">ขา</h4>
-            <button onclick="playSound('ขา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">ขา</h4>
+            <button onclick="playSound('ขา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- งา -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/งา.png" alt="ภาพคำว่า งา" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">งา</h4>
-            <button onclick="playSound('งา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">งา</h4>
+            <button onclick="playSound('งา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- ตา -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/ตา.png" alt="ภาพคำว่า ตา" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">ตา</h4>
-            <button onclick="playSound('ตา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">ตา</h4>
+            <button onclick="playSound('ตา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- หู -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/หู.png" alt="ภาพคำว่า หู" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">หู</h4>
-            <button onclick="playSound('หู')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">หู</h4>
+            <button onclick="playSound('หู')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- มา -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/มา.png" alt="ภาพคำว่า มา" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">มา</h4>
-            <button onclick="playSound('มา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">มา</h4>
+            <button onclick="playSound('มา')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- มี -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/มี.png" alt="ภาพคำว่า มี" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">มี</h4>
-            <button onclick="playSound('มี')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">มี</h4>
+            <button onclick="playSound('มี')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- ดู -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/ดู.png" alt="ภาพคำว่า ดู" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">ดู</h4>
-            <button onclick="playSound('ดู')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">ดู</h4>
+            <button onclick="playSound('ดู')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- ไม่ -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/ไม่.png" alt="ภาพคำว่า ไม่" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">ไม่</h4>
-            <button onclick="playSound('ไม่')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">ไม่</h4>
+            <button onclick="playSound('ไม่')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- ใบโบก -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/ใบโบก.png" alt="ภาพคำว่า ใบโบก" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">ใบโบก</h4>
-            <button onclick="playSound('ใบโบก')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">ใบโบก</h4>
+            <button onclick="playSound('ใบโบก')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
-          <!-- ใบบัว -->
           <div class="bg-surface rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-border-light text-center">
             <div class="w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <img src="https://playtolearn-th.github.io/games/canva_ai/imgs/ใบบัว.png" alt="ภาพคำว่า ใบบัว" class="w-20 h-20 object-contain"/>
-            </div>
-            <h4 class="text-4xl font-bold text-text-main mb-4">ใบบัว</h4>
-            <button onclick="playSound('ใบบัว')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold transition-colors w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
+            </div><h4 class="text-4xl font-bold mb-4">ใบบัว</h4>
+            <button onclick="playSound('ใบบัว')" class="bg-primary hover:bg-primary-hover text-white px-6 py-4 rounded-full text-xl font-semibold w-full min-h-[56px] shadow-md">🔊 ฟังเสียง</button>
           </div>
         </div>
       </div>
@@ -216,24 +202,23 @@
         <div class="space-y-8">
           <div class="bg-surface rounded-3xl p-10 shadow-lg text-center border border-border-light">
             <h4 class="text-4xl font-bold text-text-main mb-6">มา มา มาดู</h4>
-            <button onclick="playKaraoke('มา มา มาดู')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
+            <button onclick="playKaraoke('มา มา มาดู')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
           </div>
           <div class="bg-surface rounded-3xl p-10 shadow-lg text-center border border-border-light">
             <h4 class="text-4xl font-bold text-text-main mb-6">มาดู ใบบัว</h4>
-            <button onclick="playKaraoke('มาดู ใบบัว')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
+            <button onclick="playKaraoke('มาดู ใบบัว')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
           </div>
           <div class="bg-surface rounded-3xl p-10 shadow-lg text-center border border-border-light">
             <h4 class="text-4xl font-bold text-text-main mb-6">มาดู ใบโบก</h4>
-            <button onclick="playKaraoke('มาดู ใบโบก')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
+            <button onclick="playKaraoke('มาดู ใบโบก')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
           </div>
         </div>
       </div>
 
-      <!-- ใบโบก/ใบบัว มี… (พร้อมรูปทุกประโยค) -->
+      <!-- ใบโบก/ใบบัว มี… -->
       <div id="sentences" class="lesson-section mb-16">
         <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🐘 ใบโบก/ใบบัว มี…</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- ใบโบก -->
           <div class="bg-white rounded-2xl p-6 shadow-lg">
             <div class="text-center mb-6">
               <div class="w-28 h-28 mx-auto mb-3">
@@ -243,8 +228,6 @@
             </div>
             <div id="boog-list" class="space-y-4"></div>
           </div>
-
-          <!-- ใบบัว -->
           <div class="bg-white rounded-2xl p-6 shadow-lg">
             <div class="text-center mb-6">
               <div class="w-28 h-28 mx-auto mb-3">
@@ -261,21 +244,21 @@
       <div id="characters" class="lesson-section mb-16">
         <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🐓 อ่านพยัญชนะ 🦉</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ก</div><button onclick="playCharacter('ก')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">จ</div><button onclick="playCharacter('จ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ด</div><button onclick="playCharacter('ด')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ต</div><button onclick="playCharacter('ต')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">บ</div><button onclick="playCharacter('บ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ป</div><button onclick="playCharacter('ป')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">อ</div><button onclick="playCharacter('อ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ข</div><button onclick="playCharacter('ข')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ห</div><button onclick="playCharacter('ห')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ง</div><button onclick="playCharacter('ง')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
-          <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ม</div><button onclick="playCharacter('ม')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ก</div><button onclick="playCharacter('ก')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">จ</div><button onclick="playCharacter('จ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ด</div><button onclick="playCharacter('ด')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ต</div><button onclick="playCharacter('ต')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">บ</div><button onclick="playCharacter('บ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ป</div><button onclick="playCharacter('ป')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">อ</div><button onclick="playCharacter('อ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ข</div><button onclick="playCharacter('ข')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ห</div><button onclick="playCharacter('ห')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ง</div><button onclick="playCharacter('ง')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg text-center"><div class="text-6xl font-bold mb-4">ม</div><button onclick="playCharacter('ม')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm">🔊 ฟัง</button></div>
         </div>
       </div>
 
-      <!-- ✅ VDO อ่านคล่อง ร้องเล่น (ท้ายบทที่ 1) -->
+      <!-- VDO ใบโบก ใบบัว -->
       <div id="vdo-fluent" class="lesson-section">
         <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🎬 VDO อ่านคล่อง ร้องเล่น: ใบโบก ใบบัว</h3>
         <div class="bg-white rounded-2xl p-6 shadow-lg border border-border-light">
@@ -285,11 +268,10 @@
           </div>
         </div>
       </div>
-      <!-- /VDO -->
     </div>
   </section>
 
-  <!-- บทที่ 3 -->
+  <!-- Lesson 3 -->
   <section id="lesson3" class="py-16 bg-gradient-to-br from-yellow-50 to-orange-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">✨ บทที่ 3 เพื่อนกัน</h2>
@@ -321,7 +303,6 @@
       <p class="text-xl text-center text-text-secondary mb-16 max-w-2xl mx-auto leading-relaxed">เลือกเกมและบทเรียนที่ต้องการเรียนรู้</p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <!-- เกมจับคู่พยัญชนะ -->
         <div class="bg-surface border-2 border-border-light rounded-3xl p-0 shadow-lg hover:shadow-xl transition-all hover:border-primary overflow-hidden">
           <div class="w-full h-44 bg-disabled-bg flex items-center justify-center">
             <img id="cover-match-abc" alt="ปก เกมจับคู่พยัญชนะ" class="w-full h-full object-cover"/>
@@ -336,7 +317,6 @@
           </div>
         </div>
 
-        <!-- บทที่ 1 -->
         <div class="bg-surface border-2 border-border-light rounded-3xl p-0 shadow-lg hover:shadow-xl transition-all hover:border-secondary overflow-hidden">
           <div class="w-full h-44 bg-disabled-bg flex items-center justify-center">
             <img id="cover-lesson02" alt="ปก บทที่ 1 ใบบัว ใบโบก" class="w-full h-full object-cover"/>
@@ -351,7 +331,6 @@
           </div>
         </div>
 
-        <!-- บทที่ 3: เพื่อนกัน -->
         <div class="bg-surface border-2 border-border-light rounded-3xl p-0 shadow-lg hover:shadow-xl transition-all hover:border-accent overflow-hidden">
           <div class="w-full h-44 bg-disabled-bg flex items-center justify-center">
             <img id="cover-lesson03" alt="ปก บทที่ 3 เพื่อนกัน" class="w-full h-full object-cover"/>
@@ -366,7 +345,6 @@
           </div>
         </div>
 
-        <!-- เรียงคำเป็นประโยค -->
         <div class="bg-surface border-2 border-border-light rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all hover:border-primary text-center">
           <div class="text-7xl mb-6">📝</div>
           <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 3: เรียงคำเป็นประโยค</h3>
@@ -380,7 +358,7 @@
     </div>
   </section>
 
-  <!-- Character Game (เกมจับคู่ พยัญชนะ) -->
+  <!-- Character Game -->
   <section id="character-game" class="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">เกมจับคู่พยัญชนะ</h2>
@@ -404,7 +382,6 @@
           <p class="text-gray-300 text-lg"><span class="inline-block w-6 text-xl">📧</span><span>(อีเมลติดต่อจะใส่ภายหลัง)</span></p>
         </div>
 
-        <!-- ลิงก์ด่วน -->
         <div class="text-center">
           <h3 class="text-2xl font-bold mb-6">ลิงก์ด่วน</h3>
           <button onclick="scrollToSection('alphabet')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🐓 รู้จักพยัญชนะไทย</button>
@@ -415,9 +392,13 @@
 
         <div class="text-center md:text-right">
           <h3 class="text-2xl font-bold mb-6">ติดตาม & ติดต่อ</h3>
-          <button onclick="openFacebook()" class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors inline-flex items-center space-x-3 text-lg min-h-[56px] shadow-md">
+          <!-- ✅ FB โรงเรียน -->
+          <a id="fb-school-link"
+             href="https://web.facebook.com/T1nakornnorkSongkhla"
+             target="_blank" rel="noopener"
+             class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors inline-flex items-center space-x-3 text-lg min-h-[56px] shadow-md">
             <span class="text-xl">📘</span><span>Facebook โรงเรียน</span>
-          </button>
+          </a>
           <div class="text-gray-300 text-lg mt-6">
             <p>เวลาทำการ: จันทร์-ศุกร์</p><p>08:00 - 16:30 น.</p>
           </div>
@@ -436,9 +417,9 @@
   <!-- Scripts -->
   <script>
     /* ===== Base paths ===== */
-    const IMG_BASE   = "https://playtolearn-th.github.io/games/canva_ai/imgs";     // รูป (remote)
-    const SOUND_BASE = "https://playtolearn-th.github.io/games/canva_ai/sounds";   // เสียง
-    const VDO_BASE   = "https://playtolearn-th.github.io/games/canva_ai/vdo";      // วิดีโอ
+    const IMG_BASE   = "https://playtolearn-th.github.io/games/canva_ai/imgs";
+    const SOUND_BASE = "https://playtolearn-th.github.io/games/canva_ai/sounds";
+    const VDO_BASE   = "https://playtolearn-th.github.io/games/canva_ai/vdo";
 
     /* ===== Mobile menu ===== */
     document.getElementById('mobile-menu-btn').addEventListener('click', () => {
@@ -454,7 +435,6 @@
         const m=document.getElementById('mobile-menu'); if(m) m.classList.add('hidden');
       });
     });
-
     function scrollToSection(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 
     /* ===== Show/hide lesson sub-sections ===== */
@@ -464,81 +444,44 @@
       if(t){ t.style.display='block'; t.scrollIntoView({behavior:'smooth',block:'start'}); }
     }
 
-    /* ===== Audio (mobile-friendly) ===== */
+    /* ===== Audio ===== */
     const hiddenAudio = document.createElement('audio');
     hiddenAudio.setAttribute('preload','auto');
-    hiddenAudio.setAttribute('playsinline',''); // iOS
+    hiddenAudio.setAttribute('playsinline','');
     hiddenAudio.volume = 1;
     document.body.appendChild(hiddenAudio);
-
     const enc = s => encodeURIComponent(String(s).trim());
-
     async function playFrom(url){
-      try{
-        hiddenAudio.pause();
-        hiddenAudio.src = url;
-        await hiddenAudio.play();
-      }catch(err){
-        console.warn('Audio play error:', err);
-        window.open(url,'_blank','noopener');
-      }
+      try{ hiddenAudio.pause(); hiddenAudio.src = url; await hiddenAudio.play(); }
+      catch(err){ console.warn('Audio play error:', err); window.open(url,'_blank','noopener'); }
     }
-
-    /* ===== Play helpers ===== */
     function playSound(word){       playFrom(`${SOUND_BASE}/${enc(word)}.mp3`); }
     function playKaraoke(line){     playFrom(`${SOUND_BASE}/${enc(line)}.mp3`); }
     function playSentence(text){    playFrom(`${SOUND_BASE}/${enc(text)}.mp3`); }
     function playCharacter(ch){     playFrom(`${SOUND_BASE}/${enc(ch)}.mp3`); }
 
-    /* ===== Hero image (90%) ===== */
-    document.getElementById('hero-img').src = `${IMG_BASE}/cove_page.png`;
-
-    /* ===== Game lobby covers ===== */
-    document.getElementById('cover-match-abc').src = `${IMG_BASE}/game-cover-1.png`;
-    document.getElementById('cover-lesson02').src  = `${IMG_BASE}/game-cover-01.png`;
-    document.getElementById('cover-lesson03').src  = `${IMG_BASE}/game-cover-03.png`;
-
-    /* ===== ใบโบก/ใบบัว: รูปหัวข้อ + แถวประโยคพร้อมรูปทุกคำ ===== */
+    /* ===== Sentence lists with images ===== */
     document.getElementById('img-boog').src = `${IMG_BASE}/${enc('ใบโบก')}.png`;
     document.getElementById('img-bua').src  = `${IMG_BASE}/${enc('ใบบัว')}.png`;
-
     const boogSentences = ['ใบโบก มี ขา','ใบโบก มี งวง','ใบโบก มี ตา','ใบโบก มี หาง','ใบโบก มี หู','ใบโบก มี งา'];
     const buaSentences  = ['ใบบัว มี ขา','ใบบัว มี งวง','ใบบัว มี ตา','ใบบัว มี หาง','ใบบัว มี หู','ใบบัว ไม่มี งา'];
-
     function makeSentenceRow(text){
       const isNegative = text.includes('ไม่มี');
       const color = isNegative ? 'red' : (text.startsWith('ใบโบก') ? 'green' : 'blue');
-
       const row = document.createElement('div');
       row.className = `flex items-center justify-between ${isNegative?'bg-red-50 border-red-200':'bg-gray-50 border-border-light'} p-3 rounded-lg border`;
-
-      const left = document.createElement('div');
-      left.className = 'flex items-center gap-3';
-
-      const imgWrap = document.createElement('div');
-      imgWrap.className = 'w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center border';
-      const img = document.createElement('img');
-      img.alt = text;
-      img.className = 'w-full h-full object-contain';
-      img.src = `${IMG_BASE}/${enc(text)}.png`;
-      img.onerror = ()=>{ imgWrap.innerHTML = '<div class="text-gray-400 text-xs p-1 text-center">ไม่มีรูป</div>'; };
+      const left = document.createElement('div'); left.className = 'flex items-center gap-3';
+      const imgWrap = document.createElement('div'); imgWrap.className = 'w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center border';
+      const img = document.createElement('img'); img.alt = text; img.className = 'w-full h-full object-contain';
+      img.src = `${IMG_BASE}/${enc(text)}.png`; img.onerror = ()=>{ imgWrap.innerHTML = '<div class="text-gray-400 text-xs p-1 text-center">ไม่มีรูป</div>'; };
       imgWrap.appendChild(img);
-
-      const span = document.createElement('span');
-      span.className = `text-xl font-semibold ${isNegative?'text-red-600':''}`;
-      span.textContent = text;
-
+      const span = document.createElement('span'); span.className = `text-xl font-semibold ${isNegative?'text-red-600':''}`; span.textContent = text;
       left.appendChild(imgWrap); left.appendChild(span);
-
-      const btn = document.createElement('button');
-      btn.className = `bg-${color}-500 hover:bg-${color}-600 text-white px-4 py-2 rounded-full`;
-      btn.textContent = '🔊';
+      const btn = document.createElement('button'); btn.className = `bg-${color}-500 hover:bg-${color}-600 text-white px-4 py-2 rounded-full`; btn.textContent = '🔊';
       btn.addEventListener('click', ()=>playSentence(text));
-
       row.appendChild(left); row.appendChild(btn);
       return row;
     }
-
     function renderSentenceLists(){
       const boogList = document.getElementById('boog-list');
       const buaList  = document.getElementById('bua-list');
@@ -547,7 +490,7 @@
       buaSentences.forEach(t=>  buaList.appendChild(makeSentenceRow(t)));
     }
 
-    /* ===== แกลเลอรี ก–ฮ ===== */
+    /* ===== Alphabet gallery ===== */
     const TH_CONSONANTS = [
       { ch:'ก', name:'กอ ไก่' },   { ch:'ข', name:'ขอ ไข่' },   { ch:'ฃ', name:'ฃอ ขวด' }, { ch:'ค', name:'คอ ควาย' },
       { ch:'ฅ', name:'ฅอ คน' },    { ch:'ฆ', name:'ฆอ ระฆัง' }, { ch:'ง', name:'งอ งู' },   { ch:'จ', name:'จอ จาน' },
@@ -561,42 +504,20 @@
       { ch:'ว', name:'วอ แหวน' }, { ch:'ศ', name:'ศอ ศาลา' }, { ch:'ษ', name:'ษอ ฤๅษี' }, { ch:'ส', name:'สอ เสือ' },
       { ch:'ห', name:'หอ หีบ' },   { ch:'ฬ', name:'ฬอ จุฬา' }, { ch:'อ', name:'ออ อ่าง' }, { ch:'ฮ', name:'ฮอ นกฮูก' }
     ];
-
     function makeAlphaCard({ch, name}){
       const card = document.createElement('div');
       card.className = 'group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center border border-border-light cursor-pointer';
-
-      const imgWrap = document.createElement('div');
-      imgWrap.className = 'w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-3 flex items-center justify-center overflow-hidden';
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.alt = `ภาพ ${name}`;
-      img.className = 'w-20 h-20 object-contain';
-      img.src = `${IMG_BASE}/${encodeURIComponent(ch)}.png`;
-      img.onerror = () => { imgWrap.innerHTML = `<span class="text-5xl font-bold text-gray-700">${ch}</span>`; };
-      imgWrap.appendChild(img);
-      card.appendChild(imgWrap);
-
-      const letter = document.createElement('div');
-      letter.className = 'text-4xl font-bold text-gray-800';
-      letter.textContent = ch;
-      card.appendChild(letter);
-
-      const caption = document.createElement('p');
-      caption.className = 'text-sm text-gray-600 mt-1';
-      caption.textContent = name;
-      card.appendChild(caption);
-
-      const btn = document.createElement('button');
-      btn.className = 'mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs transition-colors';
-      btn.textContent = '🔊';
+      const imgWrap = document.createElement('div'); imgWrap.className = 'w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-3 flex items-center justify-center overflow-hidden';
+      const img = document.createElement('img'); img.loading = 'lazy'; img.alt = `ภาพ ${name}`; img.className = 'w-20 h-20 object-contain';
+      img.src = `${IMG_BASE}/${encodeURIComponent(ch)}.png`; img.onerror = () => { imgWrap.innerHTML = `<span class="text-5xl font-bold text-gray-700">${ch}</span>`; };
+      imgWrap.appendChild(img); card.appendChild(imgWrap);
+      const letter = document.createElement('div'); letter.className = 'text-4xl font-bold text-gray-800'; letter.textContent = ch; card.appendChild(letter);
+      const caption = document.createElement('p'); caption.className = 'text-sm text-gray-600 mt-1'; caption.textContent = name; card.appendChild(caption);
+      const btn = document.createElement('button'); btn.className = 'mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs transition-colors'; btn.textContent = '🔊';
       btn.addEventListener('click', (e)=>{ e.stopPropagation(); playCharacter(ch); });
-
-      card.appendChild(btn);
-      card.addEventListener('click', ()=> playCharacter(ch));
+      card.appendChild(btn); card.addEventListener('click', ()=> playCharacter(ch));
       return card;
     }
-
     function renderAlphabetGallery(){
       const grid = document.getElementById('alphabet-grid');
       grid.innerHTML = '';
@@ -604,41 +525,30 @@
       document.getElementById('alphabet-count').textContent = `รวมทั้งหมด ${TH_CONSONANTS.length} ตัวอักษร`;
     }
 
-    /* ===== Contact & misc ===== */
-    function openFacebook(){ alert('📘 เปิด Facebook โรงเรียนเทศบาล ๑ (ลิงก์จะเพิ่มเติมภายหลัง)'); }
-
     /* ===== Init ===== */
     document.addEventListener('DOMContentLoaded', ()=>{
-      // ให้ทุกส่วนย่อยแสดง
       document.querySelectorAll('.lesson-section').forEach(s=>s.style.display='block');
-
-      // ประโยคพร้อมรูป
       renderSentenceLists();
-      // แกลเลอรี ก–ฮ
       renderAlphabetGallery();
 
-      // ตั้งรูปปก hero
+      // Hero & covers
       document.getElementById('hero-img').src = `${IMG_BASE}/cove_page.png`;
+      document.getElementById('cover-match-abc').src = `${IMG_BASE}/game-cover-1.png`;
+      document.getElementById('cover-lesson02').src  = `${IMG_BASE}/game-cover-01.png`;
+      document.getElementById('cover-lesson03').src  = `${IMG_BASE}/game-cover-03.png`;
 
-      // ✅ ตั้งค่า VDO ท้ายบทที่ 1
+      // VDO
       const vdoUrl = encodeURI(`${VDO_BASE}/โยกมาโยกไป.mp4`);
       const video  = document.getElementById('video-lesson1');
       const link   = document.getElementById('link-vdo-lesson1');
       if (video) {
-        video.src = vdoUrl;
-        video.load();
-        video.addEventListener('loadedmetadata', ()=>console.log('VDO OK:', vdoUrl));
-        video.addEventListener('error', ()=>{
+        video.src = vdoUrl; video.load();
+        video.addEventListener('error', ()=> {
           alert('โหลดวิดีโอไม่สำเร็จ\nกด “เปิดเต็มจอ (ลิงก์ใหม่)” เพื่อดูไฟล์โดยตรง');
           console.warn('VDO error:', vdoUrl);
         });
       }
       if (link) link.href = vdoUrl;
-
-      // ปกเกมลอบบี้
-      document.getElementById('cover-match-abc').src = `${IMG_BASE}/game-cover-1.png`;
-      document.getElementById('cover-lesson02').src  = `${IMG_BASE}/game-cover-01.png`;
-      document.getElementById('cover-lesson03').src  = `${IMG_BASE}/game-cover-03.png`;
     });
   </script>
 </body>
