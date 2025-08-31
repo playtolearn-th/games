@@ -1,84 +1,402 @@
 <!DOCTYPE html>
 <html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ด่านที่ 1: เกมจับคู่พยัญชนะ + เข้าสู่ระบบ</title>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>เกมจับคู่พยัญชนะ</title>
-        <link rel="stylesheet" href="css/style.css">
-        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body {
-                font-family: 'TH Sarabun New', sans-serif;
-                background: #e0f7fa;
-                overflow: hidden;
-            }
-        </style>
-    </head>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-    <body>
-        <div id="topBar">
-            <div id="profileSection">
-                <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้"><img src="images/icon/back.png"
-                        alt="Back"></a>
-                <img id="profilePic-game" src="" alt="Profile" class="profile-pic-game" style="cursor: pointer;">
-                <div id="best-rank-display"></div>
+  <!-- Bootstrap (สำหรับแท็บ Login/Register) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- สไตล์หลัก (ถ้ามี) -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    :root{
+      --primary:#2563EB;
+      --primary-dark:#1D4ED8;
+      --bg:#e0f7fa;
+      --surface:#ffffff;
+      --border:#e2e8f0;
+      --text:#0f172a;
+      --muted:#6c757d;
+    }
+    html,body{height:100%;}
+    body{
+      font-family:'TH Sarabun New','Roboto',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin:0;
+      overflow:hidden; /* เหมือนของเดิม */
+    }
+
+    /* ===== Top bar / เกม ===== */
+    #topBar{
+      height:74px;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 14px; gap:10px;
+    }
+    #profileSection{display:flex;align-items:center;gap:10px}
+    .back-to-lobby-btn img{width:36px;height:36px}
+    .profile-pic-game{
+      width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);
+    }
+    #best-rank-display{font-size:20px;font-weight:700;color:#16a34a}
+
+    #progressSection{flex:1; text-align:center; font-size:20px}
+    #statusSection{display:flex; align-items:center; gap:10px}
+    #scoreDisplay{
+      background:#fff; border:1px solid var(--border); border-radius:999px;
+      padding:6px 12px; font-weight:700; display:flex; align-items:center; gap:6px;
+    }
+    #timerContainer{
+      width:200px;height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden;
+    }
+    #timerFill{
+      width:0%; height:100%; background:linear-gradient(90deg,#34d399,#10b981)
+    }
+
+    #main-wrapper{height:calc(100vh - 74px); display:flex}
+    #gameArea{
+      flex:1; padding:16px; overflow:auto;
+      background:linear-gradient(180deg,#eff6ff 0%, #e0f2fe 100%);
+    }
+    .title-container{display:flex;align-items:center;justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .main-title{font-size:36px; margin:0}
+    .controls button{
+      background:var(--primary); color:#fff; border:none; border-radius:12px;
+      padding:8px 16px; font-size:20px; font-weight:700;
+    }
+    .controls button:hover{ background:var(--primary-dark) }
+    #game{margin-top:16px;}
+
+    /* ===== Sidebar ===== */
+    #sidebar-overlay{
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      display:none; z-index:1000;
+    }
+    #sidebar{
+      position:fixed; top:0; right:-340px; width:320px; height:100%;
+      background:#fff; box-shadow:-6px 0 18px rgba(0,0,0,.12);
+      padding:16px; z-index:1001; transition:right .25s ease;
+    }
+    #sidebar.open{ right:0 }
+    #sidebar-overlay.show{ display:block }
+    #sidebarCloseBtn{
+      position:absolute; top:8px; right:12px; font-size:30px; cursor:pointer;
+    }
+    #sidebarProfileImg{width:96px; height:96px; border-radius:50%; object-fit:cover; display:block; margin:12px auto}
+    #logoutBtn{
+      background:#ef4444; color:#fff; padding:10px 12px; border:none; border-radius:10px;
+      font-size:20px; font-weight:700; cursor:pointer
+    }
+    #logoutBtn:hover{ filter:brightness(.95) }
+
+    /* ===== Popup ===== */
+    #popup{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1100; }
+    #popupBox{
+      width:min(560px,92vw); background:#fff; border-radius:20px; padding:18px;
+      border:1px solid var(--border); box-shadow:0 16px 46px rgba(0,0,0,.12)
+    }
+    .popup-controls{ display:flex; gap:8px; justify-content:flex-end; margin-top:10px }
+
+    /* ===== หน้า Lesson ===== */
+    #lesson-page{
+      position:fixed; inset:24px; background:#fff; border-radius:18px; border:1px solid var(--border);
+      padding:16px; z-index:1050; display:none; overflow:auto
+    }
+    #close-lesson-btn{ position:absolute; right:14px; top:12px; background:#e11d48; color:#fff; border:none; border-radius:999px; padding:4px 12px; font-size:18px }
+
+    /* ===== แคนวาสคอนเฟตติ ===== */
+    #confetti-canvas{ position:fixed; inset:0; z-index:1001; pointer-events:none; }
+
+    /* ===== กล่อง Login/Register (overlay ทั้งหน้า) ===== */
+    .auth-overlay{
+      position:fixed; inset:0; background:linear-gradient(180deg, rgba(37,99,235,.18), rgba(5,150,105,.18));
+      display:flex; align-items:center; justify-content:center; z-index:1200;
+    }
+    .login-form{
+      width:min(420px,92vw); background:#fff; padding:2.2rem; border-radius:14px;
+      box-shadow:0 0 0 1px rgba(0,0,0,.05), 0 16px 38px rgba(0,0,0,.12);
+    }
+    .form-control-lg{ font-size:1rem; padding:.9rem; height:3.125rem; border:1px solid #dadce0 }
+    .action-btn{ border:none; width:100%; padding:.75rem; border-radius:8px; font-weight:700; font-size:1.05rem }
+    .google-btn{
+      background:#fff; color:#333; border:1px solid #dadce0; display:flex; align-items:center; justify-content:center; gap:.6rem
+    }
+    .google-btn:hover{ background:#f8f9fa }
+    .google-icon{ width:1.25rem; height:1.25rem }
+    .nav-tabs .nav-link{ color:#6c757d; font-weight:700; font-size:1.05rem }
+    .nav-tabs .nav-link.active{ color:var(--primary); border-color:var(--primary) var(--primary) #fff }
+    .hidden{ display:none !important; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======== AUTH (แสดงก่อนถ้ายังไม่ล็อกอิน) ======== -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="login-form" role="dialog" aria-label="กล่องเข้าสู่ระบบ">
+      <ul class="nav nav-tabs nav-fill mb-4" id="authTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">เข้าสู่ระบบ</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">ลงทะเบียน</button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="authTabContent">
+        <!-- Login -->
+        <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
+          <form id="loginForm">
+            <div class="mb-3">
+              <input type="email" class="form-control form-control-lg" id="login-email" placeholder="อีเมล" required />
             </div>
-            <div id="progressSection"></div>
-            <div id="statusSection">
-                <div id="roundCoinContainer"></div>
-                <div id="scoreDisplay"><span class="money-bag-icon">💰</span><span id="scoreValue">0</span></div>
-                <div id="livesDisplay"></div>
-                <div id="timerContainer">
-                    <div id="timerFill"></div>
-                </div>
+            <div class="mb-4">
+              <input type="password" class="form-control form-control-lg" id="login-password" placeholder="รหัสผ่าน" required />
             </div>
-        </div>
-
-        <div id="sidebar-overlay"></div>
-        <div id="sidebar">
-            <span id="sidebarCloseBtn">&times;</span>
-            <img id="sidebarProfileImg" src="" alt="Profile">
-            <h2 id="sidebarUserName"></h2>
-            <p id="sidebarUserEmail"></p>
-            <button id="logoutBtn" style="width: 100%;">ออกจากระบบ</button>
-        </div>
-
-        <div id="main-wrapper">
-            <div id="gameArea">
-                <div class="title-container">
-                    <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
-                    <div class="controls">
-                        <button id="lessonBtn" onclick="showLessonPage()">บทเรียน</button>
-                        <button id="startBtn" onclick="startGame()">เริ่มเกม</button>
-                        <button id="restartBtn" onclick="restartGame()" style="display:none;">เริ่มใหม่</button>
-                    </div>
-                </div>
-                <div id="game"></div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary action-btn">เข้าสู่ระบบ</button>
             </div>
+            <div class="text-center my-3 text-muted">&mdash; หรือ &mdash;</div>
+            <button type="button" id="googleBtn" class="btn google-btn action-btn">
+              <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="" class="google-icon" />
+              เข้าสู่ระบบด้วย Google
+            </button>
+          </form>
         </div>
 
-        <div id="popup">
-            <div id="popupBox">
-                <div id="popupText"></div>
-                <div id="popupControls" class="popup-controls"></div>
-            </div>
+        <!-- Register -->
+        <div class="tab-pane fade" id="register-pane" role="tabpanel">
+          <form id="registerForm">
+            <div class="mb-3"><input type="text" class="form-control form-control-lg" id="register-name" placeholder="ชื่อ" required></div>
+            <div class="mb-3"><input type="email" class="form-control form-control-lg" id="register-email" placeholder="อีเมล" required></div>
+            <div class="mb-3"><input type="password" class="form-control form-control-lg" id="register-password" placeholder="รหัสผ่าน" required></div>
+            <div class="mb-4"><input type="password" class="form-control form-control-lg" id="register-confirm-password" placeholder="ยืนยันรหัสผ่าน" required></div>
+            <div class="d-grid"><button type="submit" class="btn btn-primary action-btn">สร้างบัญชี</button></div>
+          </form>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div id="lesson-page">
-            <button id="close-lesson-btn">&times; ปิด</button>
-            <h2>บทเรียนพยัญชนะไทย </h2>
-            <div id="lesson-grid"></div>
+  <!-- ======== TOP BAR เกม ======== -->
+  <div id="topBar" class="hidden" aria-label="แถบสถานะเกม">
+    <div id="profileSection">
+      <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้">
+        <img src="images/icon/back.png" alt="ย้อนกลับ" />
+      </a>
+      <img id="profilePic-game" src="" alt="โปรไฟล์" class="profile-pic-game" />
+      <div id="best-rank-display"></div>
+    </div>
+
+    <div id="progressSection"></div>
+
+    <div id="statusSection">
+      <div id="roundCoinContainer"></div>
+      <div id="scoreDisplay"><span class="money-bag-icon">💰</span><span id="scoreValue">0</span></div>
+      <div id="livesDisplay"></div>
+      <div id="timerContainer"><div id="timerFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ======== SIDEBAR โปรไฟล์ ======== -->
+  <div id="sidebar-overlay"></div>
+  <aside id="sidebar" aria-label="แถบด้านข้างโปรไฟล์">
+    <span id="sidebarCloseBtn" aria-label="ปิดเมนู">&times;</span>
+    <img id="sidebarProfileImg" src="" alt="รูปโปรไฟล์" />
+    <h2 id="sidebarUserName"></h2>
+    <p id="sidebarUserEmail"></p>
+    <button id="logoutBtn">ออกจากระบบ</button>
+  </aside>
+
+  <!-- ======== พื้นที่เล่นเกม ======== -->
+  <div id="main-wrapper" class="hidden">
+    <div id="gameArea">
+      <div class="title-container">
+        <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
+        <div class="controls">
+          <button id="lessonBtn" type="button">บทเรียน</button>
+          <button id="startBtn" type="button">เริ่มเกม</button>
+          <button id="restartBtn" type="button" style="display:none;">เริ่มใหม่</button>
         </div>
+      </div>
+      <div id="game" aria-live="polite"></div>
+    </div>
+  </div>
 
-        <canvas id="confetti-canvas"
-            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; pointer-events: none;"></canvas>
+  <!-- ======== POPUP ======== -->
+  <div id="popup" role="dialog" aria-modal="true">
+    <div id="popupBox">
+      <div id="popupText"></div>
+      <div id="popupControls" class="popup-controls"></div>
+    </div>
+  </div>
 
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-        <script src="js/character.js"></script>
-    </body>
+  <!-- ======== หน้า LESSON ======== -->
+  <section id="lesson-page" aria-label="บทเรียนพยัญชนะไทย">
+    <button id="close-lesson-btn" type="button">&times; ปิด</button>
+    <h2>บทเรียนพยัญชนะไทย</h2>
+    <div id="lesson-grid"></div>
+  </section>
 
+  <!-- ======== คอนเฟตติ ======== -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ======== Libraries ======== -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- ======== สคริปต์เกม (ไฟล์ของคุณ) ======== -->
+  <script src="js/character.js"></script>
+
+  <!-- ======== การเชื่อม Login + เกม ในหน้าเดียว ======== -->
+  <script>
+    /* ========= 1) กำหนด Firebase ========== */
+    // TODO: ใส่ค่า config ของโปรเจกต์จริงของคุณ
+const firebaseConfig = {
+  apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
+  authDomain: "playtolearn-e3356.firebaseapp.com",
+  projectId: "playtolearn-e3356",
+  storageBucket: "playtolearn-e3356.firebasestorage.app",
+  messagingSenderId: "233629701249",
+  appId: "1:233629701249:web:5ee775473bc00be1566980",
+  measurementId: "G-SXMFQT0TLG"
+};
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    /* ========= 2) อ้างอิงองค์ประกอบหน้าจอ ========== */
+    const authOverlay = document.getElementById('authOverlay');
+
+    const topBar = document.getElementById('topBar');
+    const mainWrapper = document.getElementById('main-wrapper');
+
+    const profilePicGame = document.getElementById('profilePic-game');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const sidebarProfileImg = document.getElementById('sidebarProfileImg');
+    const sidebarUserName = document.getElementById('sidebarUserName');
+    const sidebarUserEmail = document.getElementById('sidebarUserEmail');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const googleBtn = document.getElementById('googleBtn');
+
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const lessonBtn = document.getElementById('lessonBtn');
+
+    const lessonPage = document.getElementById('lesson-page');
+    const closeLessonBtn = document.getElementById('close-lesson-btn');
+
+    /* ========= 3) ฟังก์ชันช่วยเปิด/ปิด Sidebar ========== */
+    function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
+    function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
+
+    sidebarCloseBtn.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    profilePicGame.addEventListener('click', openSidebar);
+
+    /* ========= 4) ฟังก์ชัน Login/Logout/Register ========== */
+    loginForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const pass  = document.getElementById('login-password').value;
+      try{
+        await auth.signInWithEmailAndPassword(email, pass);
+      }catch(err){
+        alert('เข้าสู่ระบบไม่สำเร็จ: ' + err.message);
+      }
+    });
+
+    registerForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('register-name').value.trim();
+      const email= document.getElementById('register-email').value.trim();
+      const pass = document.getElementById('register-password').value;
+      const pass2= document.getElementById('register-confirm-password').value;
+      if(pass !== pass2){ alert('รหัสผ่านไม่ตรงกัน'); return; }
+      try{
+        const cred = await auth.createUserWithEmailAndPassword(email, pass);
+        await cred.user.updateProfile({ displayName: name });
+        alert('ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ');
+      }catch(err){
+        alert('ลงทะเบียนไม่สำเร็จ: ' + err.message);
+      }
+    });
+
+    googleBtn.addEventListener('click', async ()=>{
+      try{
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await auth.signInWithPopup(provider);
+      }catch(err){
+        alert('ล็อกอิน Google ไม่สำเร็จ: ' + err.message);
+      }
+    });
+
+    logoutBtn.addEventListener('click', async ()=>{
+      await auth.signOut();
+      closeSidebar();
+    });
+
+    /* ========= 5) เฝ้าดูสถานะผู้ใช้ แล้วเปิดเกมได้ทันที ========== */
+    auth.onAuthStateChanged(user=>{
+      if(user){
+        // ซ่อนกล่องเข้าสู่ระบบ / โชว์เกม
+        authOverlay.classList.add('hidden');
+        topBar.classList.remove('hidden');
+        mainWrapper.classList.remove('hidden');
+
+        // เติมข้อมูลโปรไฟล์
+        const photo = user.photoURL || 'images/icon/user.png';
+        profilePicGame.src = photo;
+        sidebarProfileImg.src = photo;
+        sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่';
+        sidebarUserEmail.textContent = user.email || '';
+
+        // (ถ้าคุณมีฟังก์ชันเตรียมเกม เช่น initCharacterGame() ให้เรียกที่นี่)
+        // initCharacterGame?.();
+
+      }else{
+        // ยังไม่ล็อกอิน => เปิด overlay
+        authOverlay.classList.remove('hidden');
+        topBar.classList.add('hidden');
+        mainWrapper.classList.add('hidden');
+      }
+    });
+
+    /* ========= 6) ปุ่มควบคุมเกม (เรียกจาก character.js) ========== */
+    lessonBtn.addEventListener('click', ()=>{
+      lessonPage.style.display = 'block';
+    });
+    closeLessonBtn.addEventListener('click', ()=>{
+      lessonPage.style.display = 'none';
+    });
+
+    startBtn.addEventListener('click', ()=>{
+      if(typeof startGame === 'function'){ startGame(); }
+      else alert('ยังไม่พบฟังก์ชัน startGame() ใน js/character.js');
+    });
+
+    restartBtn.addEventListener('click', ()=>{
+      if(typeof restartGame === 'function'){ restartGame(); }
+      else alert('ยังไม่พบฟังก์ชัน restartGame() ใน js/character.js');
+    });
+
+    // คุณสามารถอัปเดตให้ character.js เรียกใช้ #restartBtn.style.display = 'inline-block' เมื่อเกมเริ่มแล้ว เป็นต้น
+  </script>
+</body>
 </html>
