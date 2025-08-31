@@ -2,11 +2,11 @@
 <html lang="th">
 
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" />
         <title>หนังสือพยัญชนะไทย ก–ฮ</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css" />
         <style>
             html,
             body {
@@ -15,27 +15,24 @@
                 background: #f0f0f0;
                 font-family: 'TH Sarabun New', sans-serif;
                 height: 100%;
-                overflow: hidden;
+                overflow: hidden
             }
 
             h1 {
-                margin: 0.5rem;
+                margin: .5rem;
                 text-align: center;
-                font-size: clamp(1.5rem, 3vw, 2.5rem);
+                font-size: clamp(1.5rem, 3vw, 2.5rem)
             }
 
             #preloader {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: white;
+                inset: 0;
+                background: #fff;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 z-index: 9999;
-                font-size: 2rem;
+                font-size: 2rem
             }
 
             #container {
@@ -43,7 +40,7 @@
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
-                box-sizing: border-box;
+                box-sizing: border-box
             }
 
             #flipbook {
@@ -51,13 +48,13 @@
                 height: 80vh;
                 max-width: 1000px;
                 max-height: 700px;
-                background: #e0e0e0;
+                background: #e0e0e0
             }
 
             .page {
                 width: 100%;
                 height: 100%;
-                background: white;
+                background: #fff;
                 border: 1px solid #ccc;
                 display: flex;
                 justify-content: center;
@@ -66,7 +63,7 @@
                 margin: 0;
                 position: relative;
                 box-sizing: border-box;
-                overflow: hidden;
+                overflow: hidden
             }
 
             .page:not(.image-page) span {
@@ -77,11 +74,11 @@
                 height: 100%;
                 width: 100%;
                 text-align: center;
-                line-height: 1;
+                line-height: 1
             }
 
             .image-page {
-                position: relative;
+                position: relative
             }
 
             .image-page img {
@@ -91,7 +88,29 @@
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%)
+            }
+
+            #audio-unlock {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .55);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                color: #fff;
+                text-align: center;
+                padding: 1rem
+            }
+
+            #audio-unlock button {
+                font-size: 1.1rem;
+                padding: .7rem 1.2rem;
+                border: none;
+                border-radius: .75rem;
+                cursor: pointer
             }
         </style>
     </head>
@@ -99,6 +118,13 @@
     <body>
         <div id="preloader">⏳ กำลังโหลด...</div>
         <h1>📖 หนังสือพยัญชนะไทย ก–ฮ</h1>
+
+        <div id="audio-unlock" role="dialog" aria-live="polite">
+            <div style="font-size:1.1rem;margin-bottom:.75rem">แตะปุ่มด้านล่างเพื่อเปิดใช้เสียง</div>
+            <button id="unlock-btn">🎧 แตะเพื่อเปิดเสียง</button>
+            <div style="margin-top:.5rem;opacity:.85;font-size:.95rem">*
+                บนอุปกรณ์พกพาบางรุ่นจำเป็นต้องยืนยันการเล่นเสียง</div>
+        </div>
 
         <div id="container">
             <div id="flipbook"></div>
@@ -113,75 +139,108 @@
 
             const flipbook = document.getElementById("flipbook");
 
-            function playSound(char) {
-                // ✅ FIX: แก้ไข Path เสียงให้ถูกต้อง
-                const audioPath = `sounds/character/${char}.mp3`;
-                const audio = new Audio(audioPath);
-                audio.play().catch(() => console.warn(`❌ ไม่พบไฟล์เสียง: ${audioPath}`));
+            // ---- จัดการเสียง (พาธใหม่: sounds/character/X.mp3) ----
+            const audioCache = new Map();
+            let audioUnlocked = false;
+
+            function getAudioForChar(ch) {
+                if (audioCache.has(ch)) return audioCache.get(ch);
+                const path = `sounds/character/${encodeURIComponent(ch)}.mp3`;
+                const a = new Audio(path);
+                a.preload = "auto";
+                a.addEventListener("error", () => console.warn("❌ ไม่พบไฟล์เสียง:", path));
+                audioCache.set(ch, a);
+                return a;
             }
 
+            function playSound(ch) {
+                if (!audioUnlocked || !chars.includes(ch)) return;
+                const a = getAudioForChar(ch);
+                try { a.pause(); a.currentTime = 0; a.play().catch(() => { }); } catch (_) { }
+            }
+
+            // ---- สร้างหน้า ----
             function createPage(content, isImage = false, altText = '') {
                 const page = document.createElement("div");
                 page.className = "page";
-
                 if (isImage) {
                     page.classList.add("image-page");
                     const img = document.createElement("img");
-                    // ✅ FIX: แก้ไขการกำหนด src ให้รับ Path เต็ม
-                    img.src = content; 
+                    img.src = content;
                     img.alt = altText || content;
                     page.appendChild(img);
                 } else {
                     const span = document.createElement("span");
                     span.textContent = content;
                     page.appendChild(span);
+                    page.addEventListener("click", () => playSound(content)); // แตะหน้าเพื่อเล่นซ้ำ
                 }
-
                 return page;
             }
 
-            // ✅ FIX: เพิ่มหน้าโดยระบุ Path รูปภาพที่ถูกต้อง
             // หน้าปก
             flipbook.appendChild(createPage("images/icon/cover01.png", true, "หน้าปก"));
-            
-            // หน้าพยัญชนะและรูปภาพประกอบ
-            chars.forEach(char => {
-                flipbook.appendChild(createPage(char)); // หน้าตัวอักษร
-                const imagePath = `images/character/${char}.png`;
-                flipbook.appendChild(createPage(imagePath, true, char)); // หน้ารูปภาพ
+
+            // หน้าพยัญชนะและรูปประกอบ
+            chars.forEach(ch => {
+                flipbook.appendChild(createPage(ch)); // หน้าอักษร
+                const imagePath = `images/character/${encodeURIComponent(ch)}.png`;
+                flipbook.appendChild(createPage(imagePath, true, ch)); // หน้ารูป
             });
 
-            // หน้าสุดท้าย
+            // หน้าจบ
             flipbook.appendChild(createPage("จบบริบูรณ์"));
 
+            let pageFlip = null;
+
             window.addEventListener("DOMContentLoaded", () => {
-                const pageFlip = new St.PageFlip(flipbook, {
+                pageFlip = new St.PageFlip(flipbook, {
                     width: flipbook.clientWidth / 2,
                     height: flipbook.clientHeight,
                     size: "fixed",
                     showCover: true,
                     usePortrait: false,
                     flippingTime: 800,
-                    mobileScrollSupport: false,
+                    mobileScrollSupport: false
                 });
 
                 pageFlip.loadFromHTML(document.querySelectorAll(".page"));
 
                 pageFlip.on("flip", (e) => {
-                    const currentPageIndex = e.data;
                     const pages = document.querySelectorAll(".page");
-                    // แก้ไขการตรวจสอบเล็กน้อยเพื่อให้แม่นยำขึ้น
-                    const leftPage = pages[currentPageIndex * 2];
-                    if (leftPage && !leftPage.classList.contains("image-page")) {
-                        const char = leftPage.textContent.trim();
-                        if (chars.includes(char)) {
-                            playSound(char);
-                        }
+                    const current = pages[e.data]; // ใช้ดัชนีหน้าโดยตรง
+                    if (current && !current.classList.contains("image-page")) {
+                        const ch = current.textContent.trim();
+                        playSound(ch);
                     }
                 });
 
-                // ✅ ซ่อนพรีโหลดเมื่อโหลดเสร็จ
+                // Preload เสียงล่วงหน้า
+                chars.forEach(getAudioForChar);
+
                 document.getElementById("preloader").style.display = "none";
+            });
+
+            // ปลดล็อกเสียงครั้งแรก
+            const unlockLayer = document.getElementById("audio-unlock");
+            document.getElementById("unlock-btn").addEventListener("click", () => {
+                audioUnlocked = true;
+                try {
+                    const pages = document.querySelectorAll(".page");
+                    const idx = pageFlip ? pageFlip.getCurrentPageIndex() : 0;
+                    const cur = pages[idx];
+                    if (cur && !cur.classList.contains("image-page")) {
+                        const ch = cur.textContent.trim();
+                        playSound(ch);
+                    }
+                } catch (_) { }
+                unlockLayer.style.display = "none";
+            });
+
+            // ปรับขนาดเมื่อย่อ/ขยาย
+            window.addEventListener("resize", () => {
+                if (!pageFlip) return;
+                pageFlip.update({ width: flipbook.clientWidth / 2, height: flipbook.clientHeight });
             });
         </script>
     </body>
