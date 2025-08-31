@@ -31,17 +31,9 @@
       background: var(--bg);
       color: var(--text);
       margin:0;
-      overflow:hidden; /* เหมือนเดิม: ให้พื้นที่เกมควบคุมสกอลล์ภายในเอง */
+      overflow:hidden; /* คงพฤติกรรมเดิม */
     }
-
-    /* ===== ล็อกพื้นหลังเมื่อยังไม่ล็อกอิน (แต่ยังมองเห็น) ===== */
-    .page-locked {
-      filter: blur(1.5px);
-      opacity: 0.9;
-      pointer-events: none;
-      user-select: none;
-      transition: filter .2s ease, opacity .2s ease;
-    }
+    .hidden{ display:none !important; }
 
     /* ===== Top bar / เกม ===== */
     #topBar{
@@ -57,6 +49,7 @@
       width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;
     }
     #best-rank-display{font-size:20px;font-weight:700;color:#16a34a}
+
     #progressSection{flex:1; text-align:center; font-size:20px}
     #statusSection{display:flex; align-items:center; gap:10px}
     #scoreDisplay{
@@ -119,7 +112,7 @@
     }
     #close-lesson-btn{ position:absolute; right:14px; top:12px; background:#e11d48; color:#fff; border:none; border-radius:999px; padding:4px 12px; font-size:18px }
 
-    /* ===== แคนวาสคอนเฟตติ ===== */
+    /* ===== คอนเฟตติ ===== */
     #confetti-canvas{ position:fixed; inset:0; z-index:1001; pointer-events:none; }
 
     /* ===== กล่อง Login/Register (overlay ทั้งหน้า) ===== */
@@ -144,14 +137,12 @@
     .auth-msg{ margin-top:10px; padding:10px; border-radius:10px; display:none; }
     .auth-msg.error{ background:#fee2e2; color:#991b1b; display:block; }
     .auth-msg.success{ background:#dcfce7; color:#166534; display:block; }
-
-    .hidden{ display:none !important; }
   </style>
 </head>
 
 <body>
 
-  <!-- ======== AUTH (ทับทั้งหน้าเมื่อยังไม่ล็อกอิน) ======== -->
+  <!-- ======== AUTH (แสดงถ้ายังไม่ล็อกอิน) — ซ้อนทับเสมอแต่ซ่อนเมื่อสำเร็จ ======== -->
   <div id="authOverlay" class="auth-overlay">
     <div class="login-form" role="dialog" aria-label="กล่องเข้าสู่ระบบ">
       <ul class="nav nav-tabs nav-fill mb-4" id="authTab" role="tablist">
@@ -180,7 +171,7 @@
             </div>
             <div class="text-center my-3 text-muted">&mdash; หรือ &mdash;</div>
             <button type="button" id="googleBtn" class="btn google-btn action-btn">
-              <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="" class="google-icon" />
+              <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" class="google-icon" />
               เข้าสู่ระบบด้วย Google
             </button>
           </form>
@@ -200,8 +191,8 @@
     </div>
   </div>
 
-  <!-- ======== TOP BAR เกม (ล็อกไว้ก่อน ปลดเมื่อ login) ======== -->
-  <div id="topBar" class="page-locked" aria-label="แถบสถานะเกม">
+  <!-- ======== TOP BAR เกม ======== -->
+  <div id="topBar" class="hidden" aria-label="แถบสถานะเกม">
     <div id="profileSection">
       <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้">
         <img src="images/icon/back.png" alt="ย้อนกลับ" />
@@ -230,8 +221,8 @@
     <button id="logoutBtn">ออกจากระบบ</button>
   </aside>
 
-  <!-- ======== พื้นที่เล่นเกม (ล็อกไว้ก่อน ปลดเมื่อ login) ======== -->
-  <div id="main-wrapper" class="page-locked">
+  <!-- ======== พื้นที่เล่นเกม ======== -->
+  <div id="main-wrapper" class="hidden">
     <div id="gameArea">
       <div class="title-container">
         <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
@@ -273,14 +264,14 @@
   <!-- ======== สคริปต์เกมของคุณ ======== -->
   <script src="js/character.js"></script>
 
-  <!-- ======== การเชื่อม Login + เกม ในหน้าเดียว ======== -->
+  <!-- ======== การเชื่อม Login + เกม ในหน้าเดียว (รวม Google popup → redirect) ======== -->
   <script>
-    /* ========= 1) กำหนด Firebase ========== */
+    /* ========= Firebase Config ========= */
     const firebaseConfig = {
       apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
       authDomain: "playtolearn-e3356.firebaseapp.com",
       projectId: "playtolearn-e3356",
-      storageBucket: "playtolearn-e3356.firebasestorage.app",
+      storageBucket: "playtolearn-e3356.appspot.com",  // ✅ มาตรฐาน
       messagingSenderId: "233629701249",
       appId: "1:233629701249:web:5ee775473bc00be1566980",
       measurementId: "G-SXMFQT0TLG"
@@ -288,37 +279,38 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // ✅ คงสถานะผู้ใช้ (อยู่อัตโนมัติในหน้านี้)
+    // ✅ จำสถานะผู้ใช้ไว้ในเบราว์เซอร์ (อยู่หน้าเดิมต่อ)
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
 
-    /* ========= 2) DOM refs ========== */
+    /* ========= อ้างอิง DOM ========= */
     const authOverlay = document.getElementById('authOverlay');
     const authMsg     = document.getElementById('authMsg');
 
     const topBar = document.getElementById('topBar');
     const mainWrapper = document.getElementById('main-wrapper');
 
-    const profilePicGame   = document.getElementById('profilePic-game');
-    const sidebar          = document.getElementById('sidebar');
-    const sidebarOverlay   = document.getElementById('sidebar-overlay');
-    const sidebarCloseBtn  = document.getElementById('sidebarCloseBtn');
-    const sidebarProfileImg= document.getElementById('sidebarProfileImg');
-    const sidebarUserName  = document.getElementById('sidebarUserName');
+    const profilePicGame = document.getElementById('profilePic-game');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const sidebarProfileImg = document.getElementById('sidebarProfileImg');
+    const sidebarUserName = document.getElementById('sidebarUserName');
     const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-    const logoutBtn        = document.getElementById('logoutBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-    const loginForm   = document.getElementById('loginForm');
-    const registerForm= document.getElementById('registerForm');
-    const googleBtn   = document.getElementById('googleBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const googleBtn = document.getElementById('googleBtn');
 
-    const startBtn    = document.getElementById('startBtn');
-    const restartBtn  = document.getElementById('restartBtn');
-    const lessonBtn   = document.getElementById('lessonBtn');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const lessonBtn = document.getElementById('lessonBtn');
 
-    const lessonPage      = document.getElementById('lesson-page');
-    const closeLessonBtn  = document.getElementById('close-lesson-btn');
+    const lessonPage = document.getElementById('lesson-page');
+    const closeLessonBtn = document.getElementById('close-lesson-btn');
 
-    /* ========= Helpers ========= */
+    /* ========= Helper ========= */
+    function isEmbedded(){ try { return window.self !== window.top; } catch { return true; } }
     function showOverlay(){ authOverlay.classList.remove('hidden'); }
     function hideOverlay(){ authOverlay.classList.add('hidden'); }
     function setMsg(type, text){
@@ -329,9 +321,9 @@
     function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
     function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
 
-    sidebarCloseBtn.addEventListener('click', closeSidebar);
-    sidebarOverlay.addEventListener('click', closeSidebar);
-    profilePicGame.addEventListener('click', openSidebar);
+    sidebarCloseBtn?.addEventListener('click', closeSidebar);
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+    profilePicGame?.addEventListener('click', openSidebar);
 
     // แปล error code เป็นไทยสั้น ๆ
     function tAuthError(code){
@@ -345,26 +337,25 @@
         'auth/popup-closed-by-user':'ปิดหน้าต่างล็อกอินก่อนสำเร็จ',
         'auth/cancelled-popup-request':'มีกระบวนการล็อกอินค้างอยู่ โปรดลองใหม่',
         'auth/operation-not-allowed':'ยังไม่เปิดใช้ผู้ให้บริการในคอนโซล',
-        'auth/unauthorized-domain':'โดเมนยังไม่ได้อนุญาตใน Firebase Console'
+        'auth/unauthorized-domain':'ยังไม่ได้เพิ่มโดเมนใน Authorized domains'
       };
       return map[code] || ('เกิดข้อผิดพลาด: ' + code);
     }
 
-    /* ========= 3) ผลลัพธ์จาก Redirect (กรณี popup ถูกบล็อก) ========= */
+    /* ========= รับผลจาก Redirect (กรณี fallback) ========= */
     auth.getRedirectResult()
       .then((result) => {
         if (result && result.user) {
           setMsg('success', 'เข้าสู่ระบบด้วย Google สำเร็จ');
-          // onAuthStateChanged จะอัปเดต UI ต่อ
         }
       })
       .catch((err) => {
-        console.error('getRedirectResult error:', err.code, err.message);
+        console.error('getRedirectResult:', err.code, err.message);
         setMsg('error', tAuthError(err.code));
       });
 
-    /* ========= 4) Login / Register / Google ========= */
-    loginForm.addEventListener('submit', async (e)=>{
+    /* ========= Email/Password ========= */
+    loginForm?.addEventListener('submit', async (e)=>{
       e.preventDefault();
       setMsg('', '');
       const email = document.getElementById('login-email').value.trim();
@@ -377,7 +368,7 @@
       }
     });
 
-    registerForm.addEventListener('submit', async (e)=>{
+    registerForm?.addEventListener('submit', async (e)=>{
       e.preventDefault();
       setMsg('', '');
       const name = document.getElementById('register-name').value.trim();
@@ -395,71 +386,76 @@
       }
     });
 
-    googleBtn.addEventListener('click', async ()=>{
+    /* ========= Google Sign-In (popup → redirect, iframe = redirect) ========= */
+    googleBtn?.addEventListener('click', async ()=>{
       setMsg('', '');
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      if (isEmbedded()) {
+        // เปิดใน iframe (เช่น Canva) → ใช้ redirect เสมอ
+        try { await auth.signInWithRedirect(provider); }
+        catch (e) { setMsg('error', tAuthError(e.code)); }
+        return;
+      }
+
+      // นอก iframe → ลอง popup ก่อน แล้ว fallback เป็น redirect
       try{
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: 'select_account' });
-        await auth.signInWithPopup(provider);           // พยายามใช้ popup ก่อน
+        await auth.signInWithPopup(provider);
         setMsg('success', 'กำลังเข้าสู่ระบบด้วย Google...');
       }catch(err){
         console.warn('Google popup error:', err.code, err.message);
-        if (err && (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user')) {
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
           try{
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: 'select_account' });
-            await auth.signInWithRedirect(provider);    // fallback เป็น redirect
+            await auth.signInWithRedirect(provider);
           }catch(e2){
-            console.error('Google redirect error:', e2.code, e2.message);
             setMsg('error', tAuthError(e2.code));
           }
         } else if (err.code === 'auth/unauthorized-domain') {
-          setMsg('error', 'โดเมนนี้ยังไม่ได้อนุญาตใน Firebase Console (Authorized domains)');
+          setMsg('error', 'ยังไม่ได้เพิ่มโดเมนใน Firebase → Authentication → Authorized domains');
         } else {
           setMsg('error', tAuthError(err.code));
         }
       }
     });
 
-    logoutBtn.addEventListener('click', async ()=>{
+    /* ========= ออกจากระบบ ========= */
+    logoutBtn?.addEventListener('click', async ()=>{
       await auth.signOut();
       closeSidebar();
       showOverlay();
       setMsg('', '');
-      // ล็อกพื้นหลังกลับ
-      topBar.classList.add('page-locked');
-      mainWrapper.classList.add('page-locked');
     });
 
-    /* ========= 5) เฝ้าดูสถานะผู้ใช้ แล้วสลับ UI ในหน้านี้ทันที ========= */
+    /* ========= เฝ้าดูสถานะผู้ใช้ & สลับ UI ========= */
     auth.onAuthStateChanged(user=>{
       if(user){
-        hideOverlay();                                // ซ่อนฟอร์ม
-        topBar.classList.remove('page-locked');       // ปลดล็อกพื้นหลัง
-        mainWrapper.classList.remove('page-locked');
+        hideOverlay();
+        topBar.classList.remove('hidden');
+        mainWrapper.classList.remove('hidden');
 
         const photo = user.photoURL || 'images/icon/user.png';
-        profilePicGame.src = photo;
-        sidebarProfileImg.src = photo;
-        sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่';
-        sidebarUserEmail.textContent = user.email || '';
+        profilePicGame && (profilePicGame.src = photo);
+        sidebarProfileImg && (sidebarProfileImg.src = photo);
+        sidebarUserName && (sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่');
+        sidebarUserEmail && (sidebarUserEmail.textContent = user.email || '');
       }else{
-        showOverlay();                                // แสดงฟอร์มทับ
-        topBar.classList.add('page-locked');          // ล็อกพื้นหลัง
-        mainWrapper.classList.add('page-locked');
+        showOverlay();
+        topBar.classList.add('hidden');
+        mainWrapper.classList.add('hidden');
       }
     });
 
-    /* ========= 6) ปุ่มควบคุมเกม (เรียกจาก character.js) ========= */
-    lessonBtn.addEventListener('click', ()=>{ lessonPage.style.display = 'block'; });
-    closeLessonBtn.addEventListener('click', ()=>{ lessonPage.style.display = 'none'; });
+    /* ========= ปุ่มควบคุมเกม (เรียกจาก character.js) ========= */
+    lessonBtn?.addEventListener('click', ()=>{ lessonPage.style.display = 'block'; });
+    closeLessonBtn?.addEventListener('click', ()=>{ lessonPage.style.display = 'none'; });
 
-    startBtn.addEventListener('click', ()=>{
+    startBtn?.addEventListener('click', ()=>{
       if(typeof startGame === 'function'){ startGame(); }
       else setMsg('error','ยังไม่พบฟังก์ชัน startGame() ใน js/character.js');
     });
 
-    restartBtn.addEventListener('click', ()=>{
+    restartBtn?.addEventListener('click', ()=>{
       if(typeof restartGame === 'function'){ restartGame(); }
       else setMsg('error','ยังไม่พบฟังก์ชัน restartGame() ใน js/character.js');
     });
