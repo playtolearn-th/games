@@ -1,329 +1,84 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ด่านที่ 1: เกมจับคู่พยัญชนะ</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>เกมจับคู่พยัญชนะ</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'TH Sarabun New', sans-serif;
+                background: #e0f7fa;
+                overflow: hidden;
+            }
+        </style>
+    </head>
 
-  <!-- Bootstrap (ถ้าใช้ปุ่ม/คลาสของ bootstrap) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-
-  <!-- สไตล์ของเกม -->
-  <link rel="stylesheet" href="css/style.css" />
-
-  <style>
-    :root{
-      --primary:#2563EB;
-      --primary-dark:#1D4ED8;
-      --bg:#e0f7fa;
-      --surface:#ffffff;
-      --border:#e2e8f0;
-      --text:#0f172a;
-    }
-    html,body{height:100%;}
-    body{
-      font-family:'TH Sarabun New','Roboto',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin:0;
-      overflow:hidden;
-    }
-    .hidden{ display:none !important; }
-
-    /* ===== Top bar / เกม ===== */
-    #topBar{
-      height:74px;
-      background:#fff;
-      border-bottom:1px solid var(--border);
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px; gap:10px;
-    }
-    #profileSection{display:flex;align-items:center;gap:10px}
-    .back-to-lobby-btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      width:40px; height:40px; border-radius:10px; border:1px solid var(--border); background:#fff;
-      cursor:pointer;
-    }
-    .back-to-lobby-btn img{width:24px;height:24px}
-    .profile-pic-game{
-      width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;
-    }
-    #best-rank-display{font-size:20px;font-weight:700;color:#16a34a}
-
-    #progressSection{flex:1; text-align:center; font-size:20px}
-    #statusSection{display:flex; align-items:center; gap:10px}
-    #scoreDisplay{
-      background:#fff; border:1px solid var(--border); border-radius:999px;
-      padding:6px 12px; font-weight:700; display:flex; align-items:center; gap:6px;
-    }
-    #timerContainer{
-      width:200px;height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden;
-    }
-    #timerFill{ width:0%; height:100%; background:linear-gradient(90deg,#34d399,#10b981) }
-
-    #main-wrapper{height:calc(100vh - 74px); display:flex}
-    #gameArea{
-      flex:1; padding:16px; overflow:auto;
-      background:linear-gradient(180deg,#eff6ff 0%, #e0f2fe 100%);
-    }
-    .title-container{display:flex;align-items:center;justify-content:space-between; gap:12px; flex-wrap:wrap}
-    .main-title{font-size:36px; margin:0}
-    .controls button{
-      background:var(--primary); color:#fff; border:none; border-radius:12px;
-      padding:8px 16px; font-size:20px; font-weight:700; cursor:pointer;
-    }
-    .controls button:hover{ background:var(--primary-dark) }
-    #game{margin-top:16px;}
-
-    /* ===== Sidebar ===== */
-    #sidebar-overlay{
-      position:fixed; inset:0; background:rgba(0,0,0,.35);
-      display:none; z-index:1000;
-    }
-    #sidebar{
-      position:fixed; top:0; right:-340px; width:320px; height:100%;
-      background:#fff; box-shadow:-6px 0 18px rgba(0,0,0,.12);
-      padding:16px; z-index:1001; transition:right .25s ease;
-    }
-    #sidebar.open{ right:0 }
-    #sidebar-overlay.show{ display:block }
-    #sidebarCloseBtn{
-      position:absolute; top:8px; right:12px; font-size:30px; cursor:pointer;
-    }
-    #sidebarProfileImg{width:96px; height:96px; border-radius:50%; object-fit:cover; display:block; margin:12px auto}
-    #logoutBtn{
-      background:#ef4444; color:#fff; padding:10px 12px; border:none; border-radius:10px;
-      font-size:20px; font-weight:700; cursor:pointer
-    }
-    #logoutBtn:hover{ filter:brightness(.95) }
-
-    /* ===== Popup ===== */
-    #popup{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1100; }
-    #popupBox{
-      width:min(560px,92vw); background:#fff; border-radius:20px; padding:18px;
-      border:1px solid var(--border); box-shadow:0 16px 46px rgba(0,0,0,.12)
-    }
-    .popup-controls{ display:flex; gap:8px; justify-content:flex-end; margin-top:10px }
-
-    /* ===== หน้า Lesson ===== */
-    #lesson-page{
-      position:fixed; inset:24px; background:#fff; border-radius:18px; border:1px solid var(--border);
-      padding:16px; z-index:1050; display:none; overflow:auto
-    }
-    #close-lesson-btn{ position:absolute; right:14px; top:12px; background:#e11d48; color:#fff; border:none; border-radius:999px; padding:4px 12px; font-size:18px }
-
-    /* ===== คอนเฟตติ ===== */
-    #confetti-canvas{ position:fixed; inset:0; z-index:1001; pointer-events:none; }
-
-    /* ===== Guard Overlay (แทนที่ฟอร์มล็อกอิน) ===== */
-    .guard-overlay{
-      position:fixed; inset:0; z-index:1200;
-      display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(180deg, rgba(37,99,235,.18), rgba(5,150,105,.18));
-    }
-    .guard-card{
-      width:min(420px,92vw); background:#fff; padding:24px; border-radius:14px;
-      box-shadow:0 0 0 1px rgba(0,0,0,.05), 0 16px 38px rgba(0,0,0,.12);
-      text-align:center;
-    }
-    .guard-card h3{ margin:0 0 8px 0; font-size:28px; }
-    .guard-card p{ margin:0 0 16px 0; font-size:18px; color:#334155; }
-  </style>
-</head>
-
-<body>
-
-  <!-- ======== Guard Overlay (ไม่มีฟอร์มแล้ว) ======== -->
-  <div id="guardOverlay" class="guard-overlay hidden">
-    <div class="guard-card">
-      <h3>ต้องเข้าสู่ระบบก่อน</h3>
-      <p>โปรดเข้าสู่ระบบเพื่อเล่นเกมนี้</p>
-      <div class="d-grid gap-2">
-        <a id="goLogin" class="btn btn-primary">ไปหน้าเข้าสู่ระบบ</a>
-        <button id="stayHere" class="btn btn-outline-secondary" type="button">อยู่หน้านี้ต่อ</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======== TOP BAR เกม ======== -->
-  <div id="topBar" class="hidden" aria-label="แถบสถานะเกม">
-    <div id="profileSection">
-      <button type="button" id="backBtn" class="back-to-lobby-btn" title="กลับหน้าก่อนหน้า">
-        <img src="images/icon/back.png" alt="ย้อนกลับ" />
-      </button>
-      <img id="profilePic-game" src="" alt="โปรไฟล์" class="profile-pic-game" title="เปิดโปรไฟล์/ออกจากระบบ" />
-      <div id="best-rank-display"></div>
-    </div>
-
-    <div id="progressSection"></div>
-
-    <div id="statusSection">
-      <div id="roundCoinContainer"></div>
-      <div id="scoreDisplay"><span class="money-bag-icon">💰</span><span id="scoreValue">0</span></div>
-      <div id="livesDisplay"></div>
-      <div id="timerContainer"><div id="timerFill"></div></div>
-    </div>
-  </div>
-
-  <!-- ======== SIDEBAR โปรไฟล์ ======== -->
-  <div id="sidebar-overlay"></div>
-  <aside id="sidebar" aria-label="แถบด้านข้างโปรไฟล์">
-    <span id="sidebarCloseBtn" aria-label="ปิดเมนู">&times;</span>
-    <img id="sidebarProfileImg" src="" alt="รูปโปรไฟล์" />
-    <h2 id="sidebarUserName"></h2>
-    <p id="sidebarUserEmail"></p>
-    <button id="logoutBtn">ออกจากระบบ</button>
-  </aside>
-
-  <!-- ======== พื้นที่เล่นเกม ======== -->
-  <div id="main-wrapper" class="hidden">
-    <div id="gameArea">
-      <div class="title-container">
-        <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
-        <div class="controls">
-          <button id="lessonBtn" type="button">บทเรียน</button>
-          <button id="startBtn" type="button">เริ่มเกม</button>
-          <button id="restartBtn" type="button" style="display:none;">เริ่มใหม่</button>
+    <body>
+        <div id="topBar">
+            <div id="profileSection">
+                <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้"><img src="images/icon/back.png"
+                        alt="Back"></a>
+                <img id="profilePic-game" src="" alt="Profile" class="profile-pic-game" style="cursor: pointer;">
+                <div id="best-rank-display"></div>
+            </div>
+            <div id="progressSection"></div>
+            <div id="statusSection">
+                <div id="roundCoinContainer"></div>
+                <div id="scoreDisplay"><span class="money-bag-icon">💰</span><span id="scoreValue">0</span></div>
+                <div id="livesDisplay"></div>
+                <div id="timerContainer">
+                    <div id="timerFill"></div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div id="game" aria-live="polite"></div>
-    </div>
-  </div>
 
-  <!-- ======== POPUP ======== -->
-  <div id="popup" role="dialog" aria-modal="true">
-    <div id="popupBox">
-      <div id="popupText"></div>
-      <div id="popupControls" class="popup-controls"></div>
-    </div>
-  </div>
+        <div id="sidebar-overlay"></div>
+        <div id="sidebar">
+            <span id="sidebarCloseBtn">&times;</span>
+            <img id="sidebarProfileImg" src="" alt="Profile">
+            <h2 id="sidebarUserName"></h2>
+            <p id="sidebarUserEmail"></p>
+            <button id="logoutBtn" style="width: 100%;">ออกจากระบบ</button>
+        </div>
 
-  <!-- ======== หน้า LESSON ======== -->
-  <section id="lesson-page" aria-label="บทเรียนพยัญชนะไทย">
-    <button id="close-lesson-btn" type="button">&times; ปิด</button>
-    <h2>บทเรียนพยัญชนะไทย</h2>
-    <div id="lesson-grid"></div>
-  </section>
+        <div id="main-wrapper">
+            <div id="gameArea">
+                <div class="title-container">
+                    <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
+                    <div class="controls">
+                        <button id="lessonBtn" onclick="showLessonPage()">บทเรียน</button>
+                        <button id="startBtn" onclick="startGame()">เริ่มเกม</button>
+                        <button id="restartBtn" onclick="restartGame()" style="display:none;">เริ่มใหม่</button>
+                    </div>
+                </div>
+                <div id="game"></div>
+            </div>
+        </div>
 
-  <!-- ======== คอนเฟตติ ======== -->
-  <canvas id="confetti-canvas"></canvas>
+        <div id="popup">
+            <div id="popupBox">
+                <div id="popupText"></div>
+                <div id="popupControls" class="popup-controls"></div>
+            </div>
+        </div>
 
-  <!-- ======== Libraries ======== -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+        <div id="lesson-page">
+            <button id="close-lesson-btn">&times; ปิด</button>
+            <h2>บทเรียนพยัญชนะไทย </h2>
+            <div id="lesson-grid"></div>
+        </div>
 
-  <!-- สคริปต์เกมของคุณ -->
-  <script src="js/character.js"></script>
+        <canvas id="confetti-canvas"
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; pointer-events: none;"></canvas>
 
-  <!-- ======== คุมสถานะล็อกอิน (ไม่มีฟอร์มแล้ว) ======== -->
-  <script>
-    /* ========= Firebase Config ========= */
-    const firebaseConfig = {
-      apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
-      authDomain: "playtolearn-e3356.firebaseapp.com",
-      projectId: "playtolearn-e3356",
-      storageBucket: "playtolearn-e3356.appspot.com",
-      messagingSenderId: "233629701249",
-      appId: "1:233629701249:web:5ee775473bc00be1566980",
-      measurementId: "G-SXMFQT0TLG"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+        <script src="js/character.js"></script>
+    </body>
 
-    /* ========= อ้างอิง DOM ========= */
-    const guardOverlay = document.getElementById('guardOverlay');
-    const goLogin = document.getElementById('goLogin');
-    const stayHere = document.getElementById('stayHere');
-
-    const topBar = document.getElementById('topBar');
-    const mainWrapper = document.getElementById('main-wrapper');
-
-    const profilePicGame = document.getElementById('profilePic-game');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
-    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
-    const sidebarProfileImg = document.getElementById('sidebarProfileImg');
-    const sidebarUserName = document.getElementById('sidebarUserName');
-    const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    const startBtn = document.getElementById('startBtn');
-    const restartBtn = document.getElementById('restartBtn');
-    const lessonBtn = document.getElementById('lessonBtn');
-
-    const lessonPage = document.getElementById('lesson-page');
-    const closeLessonBtn = document.getElementById('close-lesson-btn');
-    const backBtn = document.getElementById('backBtn');
-
-    function showGuard(){ guardOverlay.classList.remove('hidden'); }
-    function hideGuard(){ guardOverlay.classList.add('hidden'); }
-    function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
-    function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
-
-    sidebarCloseBtn?.addEventListener('click', closeSidebar);
-    sidebarOverlay?.addEventListener('click', closeSidebar);
-    profilePicGame?.addEventListener('click', openSidebar);
-
-    // ปุ่มกลับ: ถ้ามีประวัติให้ย้อน, ถ้าไม่มีก็ไม่ทำอะไร (ไม่พาไป index/login)
-    backBtn?.addEventListener('click', ()=>{ if (history.length > 1) history.back(); });
-
-    // ปุ่มไปหน้า login พร้อม redirect=หน้านี้
-    goLogin.addEventListener('click', ()=>{
-      const loginUrl = new URL('login.html', window.location.href).href;
-      const here = window.location.href;
-      window.location.href = loginUrl + (loginUrl.includes('?')?'&':'?') + 'redirect=' + encodeURIComponent(here);
-    });
-    // อยู่หน้านี้ต่อ (แค่ซ่อนการ์ดไว้ แต่ยังเล่นไม่ได้)
-    stayHere.addEventListener('click', ()=>{ /* ไม่ทำอะไร, แสดงการ์ดต่อเพื่อกันเล่น */ });
-
-    // เฝ้าดูสถานะผู้ใช้
-    auth.onAuthStateChanged(user=>{
-      if(user){
-        hideGuard();
-        topBar.classList.remove('hidden');
-        mainWrapper.classList.remove('hidden');
-
-        const photo = user.photoURL || 'images/icon/user.png';
-        if (profilePicGame) profilePicGame.src = photo;
-        if (sidebarProfileImg) sidebarProfileImg.src = photo;
-        if (sidebarUserName) sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่';
-        if (sidebarUserEmail) sidebarUserEmail.textContent = user.email || '';
-      }else{
-        // ยังไม่ล็อกอิน → โชว์การ์ดแจ้งเตือน (ไม่มีฟอร์ม)
-        showGuard();
-        topBar.classList.add('hidden');
-        mainWrapper.classList.add('hidden');
-      }
-    });
-
-    // ออกจากระบบ
-    logoutBtn?.addEventListener('click', async ()=>{
-      await auth.signOut();
-      closeSidebar();
-      showGuard();
-    });
-
-    // ปุ่มควบคุมเกม
-    lessonBtn?.addEventListener('click', ()=>{ lessonPage.style.display = 'block'; });
-    closeLessonBtn?.addEventListener('click', ()=>{ lessonPage.style.display = 'none'; });
-
-    startBtn?.addEventListener('click', ()=>{
-      if(typeof startGame === 'function'){ startGame(); }
-      else alert('ยังไม่พบฟังก์ชัน startGame() ใน js/character.js');
-    });
-
-    restartBtn?.addEventListener('click', ()=>{
-      if(typeof restartGame === 'function'){ restartGame(); }
-      else alert('ยังไม่พบฟังก์ชัน restartGame() ใน js/character.js');
-    });
-  </script>
-</body>
 </html>
