@@ -34,6 +34,15 @@
       overflow:hidden; /* คงพฤติกรรมเดิม */
     }
 
+    /* ===== ตัวช่วยล็อกพื้นหลังเมื่อยังไม่ล็อกอิน ===== */
+    .page-locked {
+      filter: blur(1.5px);
+      opacity: 0.9;
+      pointer-events: none;
+      user-select: none;
+      transition: filter .2s ease, opacity .2s ease;
+    }
+
     /* ===== Top bar / เกม ===== */
     #topBar{
       height:74px;
@@ -193,7 +202,8 @@
   </div>
 
   <!-- ======== TOP BAR เกม ======== -->
-  <div id="topBar" class="hidden" aria-label="แถบสถานะเกม">
+  <!-- ใส่ page-locked ไว้ก่อน เริ่มต้นจะถูกปลดเมื่อ login แล้ว -->
+  <div id="topBar" class="page-locked" aria-label="แถบสถานะเกม">
     <div id="profileSection">
       <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้">
         <img src="images/icon/back.png" alt="ย้อนกลับ" />
@@ -223,7 +233,8 @@
   </aside>
 
   <!-- ======== พื้นที่เล่นเกม ======== -->
-  <div id="main-wrapper" class="hidden">
+  <!-- ใส่ page-locked ไว้ก่อน เริ่มต้นจะถูกปลดเมื่อ login แล้ว -->
+  <div id="main-wrapper" class="page-locked">
     <div id="gameArea">
       <div class="title-container">
         <h1 class="main-title">ด่านที่ 1: จับคู่พยัญชนะ</h1>
@@ -367,7 +378,6 @@
         const cred = await auth.createUserWithEmailAndPassword(email, pass);
         await cred.user.updateProfile({ displayName: name });
         setMsg('success', 'ลงทะเบียนสำเร็จ! กำลังเข้าสู่ระบบ…');
-        // เข้าสู่ระบบต่อเนื่องในหน้านี้
         await auth.signInWithEmailAndPassword(email, pass);
       }catch(err){
         setMsg('error', tAuthError(err.code));
@@ -381,7 +391,6 @@
         await auth.signInWithPopup(provider); // ไม่ออกนอกหน้า
       }catch(err){
         if (err && err.code === 'auth/popup-blocked') {
-          // Fallback: redirect (ยังอยู่ origin เดิม เมื่อกลับมาจะ trigger onAuthStateChanged)
           try{
             const provider = new firebase.auth.GoogleAuthProvider();
             await auth.signInWithRedirect(provider);
@@ -400,14 +409,18 @@
       // กลับมาแสดง overlay ในหน้านี้ต่อ
       showOverlay();
       setMsg('', '');
+      // ล็อกพื้นหลังกลับทันที
+      topBar.classList.add('page-locked');
+      mainWrapper.classList.add('page-locked');
     });
 
     /* ========= 4) เฝ้าดูสถานะผู้ใช้: อยู่หน้าเดิม & ซ่อน/โชว์ overlay ========= */
     auth.onAuthStateChanged(user=>{
       if(user){
         hideOverlay();                // ซ่อนฟอร์ม แต่ยังซ้อนอยู่ใน DOM
-        topBar.classList.remove('hidden');
-        mainWrapper.classList.remove('hidden');
+        // ปลดล็อกพื้นหลัง
+        topBar.classList.remove('page-locked');
+        mainWrapper.classList.remove('page-locked');
 
         // เติมข้อมูลโปรไฟล์
         const photo = user.photoURL || 'images/icon/user.png';
@@ -416,9 +429,10 @@
         sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่';
         sidebarUserEmail.textContent = user.email || '';
       }else{
-        showOverlay();                // โชว์ฟอร์มทับหน้าเดิม
-        topBar.classList.add('hidden');
-        mainWrapper.classList.add('hidden');
+        // โชว์ฟอร์มทับ และล็อกพื้นหลัง แต่ให้เห็นหน้าเดิม
+        showOverlay();
+        topBar.classList.add('page-locked');
+        mainWrapper.classList.add('page-locked');
       }
     });
 
