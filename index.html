@@ -99,12 +99,10 @@
             font-weight: bold;
         }
 
-        /* ✅ เกมที่ยังไม่พร้อม */
         .game-card.disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
     </style>
 </head>
 
@@ -121,9 +119,9 @@
     <div class="main-container">
         <h1 class="text-center mb-4">เลือกเกมที่ต้องการเล่น</h1>
 
-        <div class="game-grid">
+        <div class="game-grid" id="game-grid">
             <!-- เดิม: เกมจับคู่พยัญชนะ -->
-            <div class="game-card-container">
+            <div class="game-card-container" id="card-game01">
                 <a href="character.html" class="game-card">
                     <img src="images/game-cover-1.png" alt="เกมจับคู่พยัญชนะ">
                     <h3>เกมจับคู่พยัญชนะ</h3>
@@ -131,8 +129,8 @@
                 <div id="score-display-game01" class="score-display">กำลังโหลดคะแนน...</div>
             </div>
 
-            <!-- ✅ ใหม่: บทที่ ๑ ใบบัว ใบโบก -->
-            <div class="game-card-container">
+            <!-- ใหม่: บทที่ ๑ ใบบัว ใบโบก -->
+            <div class="game-card-container" id="card-lesson01">
                 <a href="https://playtolearn-th.github.io/games/lesson01/" class="game-card">
                     <img src="images/game-cover-01.png" alt="บทที่ ๑ ใบบัว ใบโบก">
                     <h3>บทที่ ๑ ใบบัว ใบโบก</h3>
@@ -140,22 +138,13 @@
                 <div id="score-display-lesson01" class="score-display">กำลังโหลดคะแนน...</div>
             </div>
 
-            <!-- ✅ ใหม่: บทที่ ๓ เพื่อนกัน -->
-            <div class="game-card-container">
+            <!-- ใหม่: บทที่ ๓ เพื่อนกัน -->
+            <div class="game-card-container" id="card-lesson03">
                 <a href="https://playtolearn-th.github.io/games/lesson302" class="game-card">
                     <img src="images/game-cover-03.png" alt="บทที่ ๓ เพื่อนกัน">
                     <h3>บทที่ ๓ เพื่อนกัน</h3>
                 </a>
                 <div id="score-display-lesson03" class="score-display">กำลังโหลดคะแนน...</div>
-            </div>
-
-            <!-- เดิม: การ์ดตัวอย่างที่ยังไม่พร้อม -->
-            <div class="game-card-container">
-                <div class="game-card disabled">
-                    <img src="images/game-cover-2.jpg" alt="เกมที่ 2">
-                    <h3>เกมที่ 2 (เร็วๆ นี้)</h3>
-                </div>
-                <div class="score-display">N/A</div>
             </div>
         </div>
     </div>
@@ -163,11 +152,32 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- ตัวกรองการ์ดตาม query string: index.html?=0 / ?=1 / ?=3 -->
+    <script>
+      (function () {
+        function filterCardsByQuery() {
+          const search = window.location.search || "";
+          // ค่าหลัง '=' เช่น "?=1" -> "1"
+          const value = search.includes("=") ? decodeURIComponent(search.split("=")[1] || "") : "";
+          const map = { "0": "card-game01", "1": "card-lesson01", "3": "card-lesson03" };
+          const showId = map[value];
+
+          // ถ้าไม่ระบุหรือไม่ตรงเงื่อนไข → แสดงทั้งหมด
+          if (!showId) return;
+
+          const allIds = Object.values(map);
+          allIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = (id === showId) ? "" : "none";
+          });
+        }
+
+        document.addEventListener("DOMContentLoaded", filterCardsByQuery);
+      })();
+    </script>
+
     <script src="js/index.js"></script>
-
 </body>
-
 </html>
