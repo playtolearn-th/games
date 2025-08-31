@@ -31,7 +31,7 @@
       background: var(--bg);
       color: var(--text);
       margin:0;
-      overflow:hidden; /* เหมือนของเดิม */
+      overflow:hidden; /* คงพฤติกรรมเดิม */
     }
 
     /* ===== Top bar / เกม ===== */
@@ -45,7 +45,7 @@
     #profileSection{display:flex;align-items:center;gap:10px}
     .back-to-lobby-btn img{width:36px;height:36px}
     .profile-pic-game{
-      width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);
+      width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;
     }
     #best-rank-display{font-size:20px;font-weight:700;color:#16a34a}
 
@@ -58,9 +58,7 @@
     #timerContainer{
       width:200px;height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden;
     }
-    #timerFill{
-      width:0%; height:100%; background:linear-gradient(90deg,#34d399,#10b981)
-    }
+    #timerFill{ width:0%; height:100%; background:linear-gradient(90deg,#34d399,#10b981) }
 
     #main-wrapper{height:calc(100vh - 74px); display:flex}
     #gameArea{
@@ -71,7 +69,7 @@
     .main-title{font-size:36px; margin:0}
     .controls button{
       background:var(--primary); color:#fff; border:none; border-radius:12px;
-      padding:8px 16px; font-size:20px; font-weight:700;
+      padding:8px 16px; font-size:20px; font-weight:700; cursor:pointer;
     }
     .controls button:hover{ background:var(--primary-dark) }
     #game{margin-top:16px;}
@@ -134,13 +132,18 @@
     .google-icon{ width:1.25rem; height:1.25rem }
     .nav-tabs .nav-link{ color:#6c757d; font-weight:700; font-size:1.05rem }
     .nav-tabs .nav-link.active{ color:var(--primary); border-color:var(--primary) var(--primary) #fff }
+
+    .auth-msg{ margin-top:10px; padding:10px; border-radius:10px; display:none; }
+    .auth-msg.error{ background:#fee2e2; color:#991b1b; display:block; }
+    .auth-msg.success{ background:#dcfce7; color:#166534; display:block; }
+
     .hidden{ display:none !important; }
   </style>
 </head>
 
 <body>
 
-  <!-- ======== AUTH (แสดงก่อนถ้ายังไม่ล็อกอิน) ======== -->
+  <!-- ======== AUTH (แสดงก่อนถ้ายังไม่ล็อกอิน) — ซ้อนอยู่เสมอแต่ซ่อนเมื่อสำเร็จ ======== -->
   <div id="authOverlay" class="auth-overlay">
     <div class="login-form" role="dialog" aria-label="กล่องเข้าสู่ระบบ">
       <ul class="nav nav-tabs nav-fill mb-4" id="authTab" role="tablist">
@@ -151,6 +154,8 @@
           <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">ลงทะเบียน</button>
         </li>
       </ul>
+
+      <div id="authMsg" class="auth-msg"></div>
 
       <div class="tab-content" id="authTabContent">
         <!-- Login -->
@@ -193,7 +198,7 @@
       <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้">
         <img src="images/icon/back.png" alt="ย้อนกลับ" />
       </a>
-      <img id="profilePic-game" src="" alt="โปรไฟล์" class="profile-pic-game" />
+      <img id="profilePic-game" src="" alt="โปรไฟล์" class="profile-pic-game" title="เปิดโปรไฟล์/ออกจากระบบ" />
       <div id="best-rank-display"></div>
     </div>
 
@@ -263,21 +268,24 @@
   <!-- ======== การเชื่อม Login + เกม ในหน้าเดียว ======== -->
   <script>
     /* ========= 1) กำหนด Firebase ========== */
-    // TODO: ใส่ค่า config ของโปรเจกต์จริงของคุณ
-const firebaseConfig = {
-  apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
-  authDomain: "playtolearn-e3356.firebaseapp.com",
-  projectId: "playtolearn-e3356",
-  storageBucket: "playtolearn-e3356.firebasestorage.app",
-  messagingSenderId: "233629701249",
-  appId: "1:233629701249:web:5ee775473bc00be1566980",
-  measurementId: "G-SXMFQT0TLG"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
+      authDomain: "playtolearn-e3356.firebaseapp.com",
+      projectId: "playtolearn-e3356",
+      storageBucket: "playtolearn-e3356.firebasestorage.app",
+      messagingSenderId: "233629701249",
+      appId: "1:233629701249:web:5ee775473bc00be1566980",
+      measurementId: "G-SXMFQT0TLG"
+    };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    // ✅ คงสถานะผู้ใช้ข้ามการเปิดปิดแท็บ (อยู่หน้าเดิมต่อ)
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+
     /* ========= 2) อ้างอิงองค์ประกอบหน้าจอ ========== */
     const authOverlay = document.getElementById('authOverlay');
+    const authMsg     = document.getElementById('authMsg');
 
     const topBar = document.getElementById('topBar');
     const mainWrapper = document.getElementById('main-wrapper');
@@ -302,7 +310,14 @@ const firebaseConfig = {
     const lessonPage = document.getElementById('lesson-page');
     const closeLessonBtn = document.getElementById('close-lesson-btn');
 
-    /* ========= 3) ฟังก์ชันช่วยเปิด/ปิด Sidebar ========== */
+    /* ========= Helpers ========= */
+    function showOverlay(){ authOverlay.classList.remove('hidden'); }
+    function hideOverlay(){ authOverlay.classList.add('hidden'); }
+    function setMsg(type, text){
+      authMsg.className = 'auth-msg ' + (type || '');
+      authMsg.textContent = text || '';
+      authMsg.style.display = text ? 'block' : 'none';
+    }
     function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
     function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
 
@@ -310,53 +325,87 @@ const firebaseConfig = {
     sidebarOverlay.addEventListener('click', closeSidebar);
     profilePicGame.addEventListener('click', openSidebar);
 
-    /* ========= 4) ฟังก์ชัน Login/Logout/Register ========== */
+    // แปล error code เป็นไทยสั้น ๆ
+    function tAuthError(code){
+      const map = {
+        'auth/invalid-email':'อีเมลไม่ถูกต้อง',
+        'auth/user-not-found':'ไม่พบบัญชีผู้ใช้',
+        'auth/wrong-password':'รหัสผ่านไม่ถูกต้อง',
+        'auth/email-already-in-use':'อีเมลนี้ถูกใช้แล้ว',
+        'auth/weak-password':'รหัสผ่านสั้นเกินไป',
+        'auth/popup-blocked':'เบราว์เซอร์บล็อกป๊อปอัป โปรดอนุญาต',
+        'auth/popup-closed-by-user':'ปิดหน้าต่างล็อกอินก่อนเสร็จ',
+        'auth/operation-not-allowed':'ยังไม่เปิดใช้ผู้ให้บริการในคอนโซล',
+        'auth/unauthorized-domain':'โดเมนยังไม่ได้อนุญาตใน Firebase Console'
+      };
+      return map[code] || ('เกิดข้อผิดพลาด: ' + code);
+    }
+
+    /* ========= 3) ฟังก์ชัน Login/Logout/Register ========== */
     loginForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
+      setMsg('', '');
       const email = document.getElementById('login-email').value.trim();
       const pass  = document.getElementById('login-password').value;
       try{
         await auth.signInWithEmailAndPassword(email, pass);
+        setMsg('success', 'เข้าสู่ระบบสำเร็จ');
       }catch(err){
-        alert('เข้าสู่ระบบไม่สำเร็จ: ' + err.message);
+        setMsg('error', tAuthError(err.code));
       }
     });
 
     registerForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
+      setMsg('', '');
       const name = document.getElementById('register-name').value.trim();
       const email= document.getElementById('register-email').value.trim();
       const pass = document.getElementById('register-password').value;
       const pass2= document.getElementById('register-confirm-password').value;
-      if(pass !== pass2){ alert('รหัสผ่านไม่ตรงกัน'); return; }
+      if(pass !== pass2){ setMsg('error', 'รหัสผ่านไม่ตรงกัน'); return; }
       try{
         const cred = await auth.createUserWithEmailAndPassword(email, pass);
         await cred.user.updateProfile({ displayName: name });
-        alert('ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ');
+        setMsg('success', 'ลงทะเบียนสำเร็จ! กำลังเข้าสู่ระบบ…');
+        // เข้าสู่ระบบต่อเนื่องในหน้านี้
+        await auth.signInWithEmailAndPassword(email, pass);
       }catch(err){
-        alert('ลงทะเบียนไม่สำเร็จ: ' + err.message);
+        setMsg('error', tAuthError(err.code));
       }
     });
 
     googleBtn.addEventListener('click', async ()=>{
+      setMsg('', '');
       try{
         const provider = new firebase.auth.GoogleAuthProvider();
-        await auth.signInWithPopup(provider);
+        await auth.signInWithPopup(provider); // ไม่ออกนอกหน้า
       }catch(err){
-        alert('ล็อกอิน Google ไม่สำเร็จ: ' + err.message);
+        if (err && err.code === 'auth/popup-blocked') {
+          // Fallback: redirect (ยังอยู่ origin เดิม เมื่อกลับมาจะ trigger onAuthStateChanged)
+          try{
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await auth.signInWithRedirect(provider);
+          }catch(e2){
+            setMsg('error', tAuthError(e2.code));
+          }
+        } else {
+          setMsg('error', tAuthError(err.code));
+        }
       }
     });
 
     logoutBtn.addEventListener('click', async ()=>{
       await auth.signOut();
       closeSidebar();
+      // กลับมาแสดง overlay ในหน้านี้ต่อ
+      showOverlay();
+      setMsg('', '');
     });
 
-    /* ========= 5) เฝ้าดูสถานะผู้ใช้ แล้วเปิดเกมได้ทันที ========== */
+    /* ========= 4) เฝ้าดูสถานะผู้ใช้: อยู่หน้าเดิม & ซ่อน/โชว์ overlay ========= */
     auth.onAuthStateChanged(user=>{
       if(user){
-        // ซ่อนกล่องเข้าสู่ระบบ / โชว์เกม
-        authOverlay.classList.add('hidden');
+        hideOverlay();                // ซ่อนฟอร์ม แต่ยังซ้อนอยู่ใน DOM
         topBar.classList.remove('hidden');
         mainWrapper.classList.remove('hidden');
 
@@ -366,37 +415,26 @@ const firebaseConfig = {
         sidebarProfileImg.src = photo;
         sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่';
         sidebarUserEmail.textContent = user.email || '';
-
-        // (ถ้าคุณมีฟังก์ชันเตรียมเกม เช่น initCharacterGame() ให้เรียกที่นี่)
-        // initCharacterGame?.();
-
       }else{
-        // ยังไม่ล็อกอิน => เปิด overlay
-        authOverlay.classList.remove('hidden');
+        showOverlay();                // โชว์ฟอร์มทับหน้าเดิม
         topBar.classList.add('hidden');
         mainWrapper.classList.add('hidden');
       }
     });
 
-    /* ========= 6) ปุ่มควบคุมเกม (เรียกจาก character.js) ========== */
-    lessonBtn.addEventListener('click', ()=>{
-      lessonPage.style.display = 'block';
-    });
-    closeLessonBtn.addEventListener('click', ()=>{
-      lessonPage.style.display = 'none';
-    });
+    /* ========= 5) ปุ่มควบคุมเกม (เรียกจาก character.js) ========= */
+    lessonBtn.addEventListener('click', ()=>{ lessonPage.style.display = 'block'; });
+    closeLessonBtn.addEventListener('click', ()=>{ lessonPage.style.display = 'none'; });
 
     startBtn.addEventListener('click', ()=>{
       if(typeof startGame === 'function'){ startGame(); }
-      else alert('ยังไม่พบฟังก์ชัน startGame() ใน js/character.js');
+      else setMsg('error','ยังไม่พบฟังก์ชัน startGame() ใน js/character.js');
     });
 
     restartBtn.addEventListener('click', ()=>{
       if(typeof restartGame === 'function'){ restartGame(); }
-      else alert('ยังไม่พบฟังก์ชัน restartGame() ใน js/character.js');
+      else setMsg('error','ยังไม่พบฟังก์ชัน restartGame() ใน js/character.js');
     });
-
-    // คุณสามารถอัปเดตให้ character.js เรียกใช้ #restartBtn.style.display = 'inline-block' เมื่อเกมเริ่มแล้ว เป็นต้น
   </script>
 </body>
 </html>
