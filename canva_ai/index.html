@@ -50,16 +50,12 @@
           </div>
         </div>
 
-        <!-- Desktop Menu -->
+        <!-- Desktop Menu (ลำดับใหม่) -->
         <div class="hidden md:flex space-x-8">
-          <a href="#home" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">หน้าแรก</a>
-          <a href="#game-lobby" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">เกมลอบบี้</a>
-          <a href="#lesson1" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">บทที่ 1</a>
-          <a href="#alphabet" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">พยัญชนะ</a>
-          <a href="#lesson3" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">บทที่ 3</a>
-          <a href="#videos" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">วิดีโอ</a>
-          <a href="#activities" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">กิจกรรม</a>
-          <a href="#rewards" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">เหรียญรางวัล</a>
+          <a href="#alphabet"   class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">🐓รู้จักพยัญชนะไทย</a>
+          <a href="#lesson2"    class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">🐘บทที่ 1 ใบบัว ใบโบก</a>
+          <a href="#lesson3"    class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">✨ บทที่ 3 เพื่อนกัน</a>
+          <a href="#game-lobby" class="text-text-secondary hover:text-primary font-semibold transition-colors text-2xl py-2 border-b-2 border-transparent hover:border-primary">🎮 เริ่มเล่นเกม✨</a>
         </div>
 
         <!-- Mobile Menu Button -->
@@ -70,110 +66,65 @@
         </button>
       </div>
 
-      <!-- Mobile Menu -->
+      <!-- Mobile Menu (ลำดับใหม่) -->
       <div id="mobile-menu" class="md:hidden hidden pb-6">
         <div class="flex flex-col space-y-2">
-          <a href="#home" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">หน้าแรก</a>
-          <a href="#game-lobby" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">เกมลอบบี้</a>
-          <a href="#lesson1" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">บทที่ 1</a>
-          <a href="#alphabet" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">พยัญชนะ</a>
-          <a href="#lesson3" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">บทที่ 3</a>
-          <a href="#videos" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">วิดีโอ</a>
-          <a href="#activities" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">กิจกรรม</a>
-          <a href="#rewards" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">เหรียญรางวัล</a>
+          <a href="#alphabet"   class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">🐓รู้จักพยัญชนะไทย</a>
+          <a href="#lesson2"    class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">🐘บทที่ 1 ใบบัว ใบโบก</a>
+          <a href="#lesson3"    class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">✨ บทที่ 3 เพื่อนกัน</a>
+          <a href="#game-lobby" class="text-text-secondary hover:text-primary font-semibold py-4 px-4 rounded-lg hover:bg-disabled-bg transition-colors text-2xl">🎮 เริ่มเล่นเกม✨</a>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero -->
-  <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
-      style="background-image:url('https://playtolearn-th.github.io/games/canva_ai/cove_page.png');">
-      <div class="absolute inset-0 bg-black/35" aria-hidden="true"></div>
+  <!-- Hero (รูปปกเว็บ 90% + ปุ่มด้านล่าง, ไม่มีหัวข้อความ) -->
+  <section id="home" class="relative flex flex-col items-center justify-center py-10">
+    <img id="hero-img" alt="ปกเว็บ" class="w-[90%] max-w-[1280px] rounded-2xl shadow-lg object-cover object-center" />
+    <div class="mt-8 flex flex-col sm:flex-row gap-6 justify-center items-center">
+      <button onclick="scrollToSection('game-lobby')" class="bg-accent hover:bg-accent-hover text-text-main font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[260px]">🐓 รู้จักพยัญชนะ</button>
+      <button onclick="scrollToSection('lesson2')" class="bg-secondary hover:bg-secondary-hover text-white font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[260px]">🐘 บทที่ 1 ใบบัว ใบโบก</button>
+      <button onclick="scrollToSection('lesson3')" class="bg-primary hover:bg-primary-hover text-white font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[260px]">✨ บทที่ 3 เพื่อนกัน</button>
+      <button onclick="scrollToSection('game-lobby')" class="bg-accent hover:bg-accent-hover text-text-main font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[260px]">🎮 เริ่มเล่นเกม</button>
     </div>
+  </section>
 
-    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-      <h1 class="text-4xl md:text-6xl font-bold text-white mb-8 drop-shadow-lg leading-tight">ห้องเรียนออนไลน์ ภาษาไทย ป.1–ป.6</h1>
-      <p class="text-xl md:text-2xl text-white mb-12 drop-shadow-md leading-relaxed max-w-3xl mx-auto">
-        เรียนรู้ผ่านเกม บทเรียนภาพ–เสียง เก็บคะแนน พร้อมเหรียญรางวัล
-      </p>
-      <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-        <button onclick="scrollToSection('game-lobby')" class="bg-accent hover:bg-accent-hover text-text-main font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[280px] min-h-[70px]">🎮 เริ่มเล่นเกม</button>
-        <button onclick="scrollToSection('lesson1')" class="bg-secondary hover:bg-secondary-hover text-white font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[280px] min-h-[70px]">📖 บทที่ 1 ใบโบก ใบบัว</button>
-        <button onclick="scrollToSection('lesson3')" class="bg-primary hover:bg-primary-hover text-white font-bold py-6 px-12 rounded-full text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 min-w-[280px] min-h-[70px]">✨ บทที่ 3</button>
+  <!-- ⬇️ ย้าย “พยัญชนะไทย” มาก่อนบทเรียน -->
+  <section id="alphabet" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">รู้จักพยัญชนะไทย</h2>
+      <p class="text-xl text-center text-gray-600 mb-12">เรียนรู้พยัญชนะไทยทั้ง 44 ตัว (แตะการ์ดเพื่อฟังเสียง)</p>
+
+      <div class="mb-16">
+        <div class="bg-gray-50 rounded-2xl p-6 shadow-lg">
+          <iframe title="หนังสือพยัญชนะ ก–ฮ" src="https://playtolearn-th.github.io/games/lesson.html"
+                  class="w-full h-[640px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🐓 แกลเลอรีภาพ ก–ฮ</h3>
+        <div id="alphabet-grid" class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4"></div>
+        <div class="text-center mt-6"><span id="alphabet-count" class="text-gray-600"></span></div>
       </div>
     </div>
   </section>
 
-  <!-- Game Lobby -->
-  <section id="game-lobby" class="py-20 bg-surface">
+  <!-- บทที่ 1 -->
+  <section id="lesson2" class="py-20 bg-disabled-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl md:text-5xl font-bold text-center text-text-main mb-6">Game Lobby</h2>
-      <p class="text-xl text-center text-text-secondary mb-16 max-w-2xl mx-auto leading-relaxed">เลือกเกมและบทเรียนที่ต้องการเรียนรู้</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div class="bg-surface border-2 border-border-light rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 hover:border-primary text-center">
-          <div class="text-7xl mb-6">🎯</div>
-          <h3 class="text-2xl font-bold text-text-main mb-4">เกมจับคู่พยัญชนะ</h3>
-          <p class="text-text-secondary text-lg mb-6 leading-relaxed">จับคู่ ก–ฮ กับรูปภาพ ฟังเสียง เก็บเหรียญ</p>
-          <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4"><div class="text-4xl">💎</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 85%</span></div>
-          <button onclick="scrollToSection('character-game')" class="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เล่นเลย</button>
-        </div>
-
-        <div class="bg-surface border-2 border-border-light rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 hover:border-secondary text-center">
-          <div class="text-7xl mb-6">🌿</div>
-          <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 1: ใบโบก ใบบัว</h3>
-          <p class="text-text-secondary text-lg mb-6 leading-relaxed">คำพื้นฐาน ภาพ–เสียง–คาราโอเกะ</p>
-          <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4"><div class="text-4xl">🥇</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 92%</span></div>
-          <button onclick="scrollToSection('lesson1')" class="bg-secondary hover:bg-secondary-hover text-white font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เข้าเรียน</button>
-        </div>
-
-        <div class="bg-surface border-2 border-border-light rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 hover:border-accent text-center">
-          <div class="text-7xl mb-6">🧩</div>
-          <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 3: จับคู่คำศัพท์</h3>
-          <p class="text-text-secondary text-lg mb-6 leading-relaxed">ฝึกคำด้วยภาพ+เสียง</p>
-          <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4"><div class="text-4xl">🥈</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 78%</span></div>
-          <button onclick="scrollToSection('lesson3')" class="bg-accent hover:bg-accent-hover text-text-main font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เริ่มฝึก</button>
-        </div>
-
-        <div class="bg-surface border-2 border-border-light rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 hover:border-primary text-center">
-          <div class="text-7xl mb-6">📝</div>
-          <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 3: เรียงคำเป็นประโยค</h3>
-          <p class="text-text-secondary text-lg mb-6 leading-relaxed">ลาก-วางเรียงคำให้ถูกต้อง</p>
-          <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4"><div class="text-4xl">🥉</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 65%</span></div>
-          <button onclick="scrollToSection('lesson3')" class="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เริ่มเรียงคำ</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Lesson 1 -->
-  <section id="lesson1" class="py-20 bg-disabled-bg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl md:text-5xl font-bold text-center text-text-main mb-6">บทที่ ๑ : ใบโบก ใบบัว</h2>
-      <p class="text-xl text-center text-text-secondary mb-16 max-w-3xl mx-auto leading-relaxed">เรียนรู้คำพื้นฐานและประโยคง่าย ๆ ด้วยภาพ–เสียง–คาราโอเกะ</p>
+      <h2 class="text-4xl md:text-5xl font-bold text-center text-text-main mb-6">บทที่ ๒ : ใบบัว ใบโบก</h2>
+      <p class="text-xl text-center text-text-secondary mb-16 max-w-3xl mx-auto leading-relaxed">เรียนรู้คำพื้นฐานและประโยคง่าย ๆ ด้วยภาพ–เสียง</p>
 
       <!-- Quick Navigation -->
       <div class="flex flex-wrap justify-center gap-4 mb-16">
-        <button onclick="showSection('flipbook')" class="bg-secondary hover:bg-secondary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">ฝังหนังสือ</button>
         <button onclick="showSection('vocabulary')" class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">คำศัพท์ 10 คำ</button>
-        <button onclick="showSection('karaoke')" class="bg-accent hover:bg-accent-hover text-text-main px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">คาราโอเกะ</button>
+        <button onclick="showSection('boogbua')" class="bg-accent hover:bg-accent-hover text-text-main px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">ใบโบก ใบบัว</button>
         <button onclick="showSection('sentences')" class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">ใบโบก/ใบบัว มี…</button>
         <button onclick="showSection('characters')" class="bg-secondary hover:bg-secondary-hover text-white px-8 py-4 rounded-full font-semibold transition-colors text-lg min-h-[56px] shadow-md">อ่านพยัญชนะ</button>
       </div>
 
-      <!-- 1) Flipbook (บทที่1) -->
-      <div id="flipbook" class="lesson-section mb-20">
-        <h3 class="text-3xl font-bold text-text-main mb-8 text-center">📖 ฝังหนังสือ</h3>
-        <div class="bg-surface rounded-3xl p-8 shadow-lg border border-border-light">
-          <p class="text-xl text-center text-text-secondary mb-6 leading-relaxed">เปิดเสียงเพื่อฟังการอ่านอัตโนมัติ</p>
-          <iframe title="หนังสือบทที่ 1 ใบโบก ใบบัว" src="https://playtolearn-th.github.io/games/lesson01/index.html"
-                  class="w-full h-[720px] rounded-2xl border border-border-light" loading="lazy" referrerpolicy="no-referrer"></iframe>
-        </div>
-      </div>
-
-      <!-- 2) Vocabulary -->
+      <!-- Vocabulary 10 คำ -->
       <div id="vocabulary" class="lesson-section mb-20">
         <h3 class="text-3xl font-bold text-text-main mb-8 text-center">📝 คำศัพท์ 10 คำ</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -260,69 +211,57 @@
         </div>
       </div>
 
-      <!-- 3) Karaoke -->
-      <div id="karaoke" class="lesson-section mb-20">
-        <h3 class="text-3xl font-bold text-text-main mb-8 text-center">🎤 คาราโอเกะ</h3>
-
-        <div class="text-center mb-6">
-          <button onclick="deviceBeep()" class="bg-secondary hover:bg-secondary-hover text-white px-6 py-3 rounded-full font-semibold shadow">
-            ✅ ทดสอบเสียงในเครื่อง (Beep)
-          </button>
-        </div>
-
+      <!-- ใบโบก ใบบัว -->
+      <div id="boogbua" class="lesson-section mb-20">
+        <h3 class="text-3xl font-bold text-text-main mb-8 text-center">🪷 ใบโบก ใบบัว</h3>
         <div class="space-y-8">
           <div class="bg-surface rounded-3xl p-10 shadow-lg text-center border border-border-light">
             <h4 class="text-4xl font-bold text-text-main mb-6">มา มา มาดู</h4>
-            <button onclick="playKaraoke('มา มา มาดู')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและร้องตาม</button>
+            <button onclick="playKaraoke('มา มา มาดู')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
           </div>
           <div class="bg-surface rounded-3xl p-10 shadow-lg text-center border border-border-light">
             <h4 class="text-4xl font-bold text-text-main mb-6">มาดู ใบบัว</h4>
-            <button onclick="playKaraoke('มาดู ใบบัว')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและร้องตาม</button>
+            <button onclick="playKaraoke('มาดู ใบบัว')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
           </div>
           <div class="bg-surface rounded-3xl p-10 shadow-lg text-center border border-border-light">
             <h4 class="text-4xl font-bold text-text-main mb-6">มาดู ใบโบก</h4>
-            <button onclick="playKaraoke('มาดู ใบโบก')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและร้องตาม</button>
+            <button onclick="playKaraoke('มาดู ใบโบก')" class="bg-accent hover:bg-accent-hover text-text-main px-10 py-5 rounded-full text-xl font-semibold transition-colors min-h-[60px] shadow-md">🔊 ฟังและอ่านตาม</button>
           </div>
         </div>
       </div>
 
-      <!-- 4) Sentences -->
+      <!-- ใบโบก/ใบบัว มี… (รูปทุกประโยค) -->
       <div id="sentences" class="lesson-section mb-16">
         <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🐘 ใบโบก/ใบบัว มี…</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- ใบโบก -->
           <div class="bg-white rounded-2xl p-6 shadow-lg">
-            <div class="text-center mb-6"><div class="text-8xl mb-4">🐘</div><h4 class="text-3xl font-bold text-gray-800">ใบโบก</h4></div>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบโบก มี ขา</span><button onclick="playSentence('ใบโบก มี ขา')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบโบก มี งวง</span><button onclick="playSentence('ใบโบก มี งวง')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบโบก มี ตา</span><button onclick="playSentence('ใบโบก มี ตา')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบโบก มี หาง</span><button onclick="playSentence('ใบโบก มี หาง')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบโบก มี หู</span><button onclick="playSentence('ใบโบก มี หู')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบโบก มี งา</span><button onclick="playSentence('ใบโบก มี งา')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">🔊</button></div>
+            <div class="text-center mb-6">
+              <div class="w-28 h-28 mx-auto mb-3">
+                <img id="img-boog" alt="ใบโบก" class="w-full h-full object-contain"/>
+              </div>
+              <h4 class="text-3xl font-bold text-gray-800">ใบโบก</h4>
             </div>
+            <div id="boog-list" class="space-y-4"></div>
           </div>
 
           <!-- ใบบัว -->
           <div class="bg-white rounded-2xl p-6 shadow-lg">
-            <div class="text-center mb-6"><div class="text-8xl mb-4">🪷</div><h4 class="text-3xl font-bold text-gray-800">ใบบัว</h4></div>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบบัว มี ขา</span><button onclick="playSentence('ใบบัว มี ขา')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบบัว มี งวง</span><button onclick="playSentence('ใบบัว มี งวง')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบบัว มี ตา</span><button onclick="playSentence('ใบบัว มี ตา')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบบัว มี หาง</span><button onclick="playSentence('ใบบัว มี หาง')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg"><span class="text-xl font-semibold">ใบบัว มี หู</span><button onclick="playSentence('ใบบัว มี หู')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">🔊</button></div>
-              <div class="flex items-center justify-between bg-red-50 p-4 rounded-lg border-2 border-red-200"><span class="text-xl font-semibold text-red-600">ใบบัว ไม่มี งา</span><button onclick="playSentence('ใบบัว ไม่มี งา')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full">🔊</button></div>
+            <div class="text-center mb-6">
+              <div class="w-28 h-28 mx-auto mb-3">
+                <img id="img-bua" alt="ใบบัว" class="w-full h-full object-contain"/>
+              </div>
+              <h4 class="text-3xl font-bold text-gray-800">ใบบัว</h4>
             </div>
+            <div id="bua-list" class="space-y-4"></div>
           </div>
         </div>
       </div>
 
-      <!-- 5) Characters -->
+      <!-- อ่านพยัญชนะ (ตัวอย่างกดฟัง) -->
       <div id="characters" class="lesson-section mb-16">
-        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🔤 อ่านพยัญชนะ</h3>
+        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🐓 อ่านพยัญชนะ 🦉</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          <!-- 11 ตัวอย่าง -->
           <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ก</div><button onclick="playCharacter('ก')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
           <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">จ</div><button onclick="playCharacter('จ')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
           <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ด</div><button onclick="playCharacter('ด')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
@@ -336,62 +275,111 @@
           <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"><div class="text-6xl font-bold text-gray-800 mb-4">ม</div><button onclick="playCharacter('ม')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors">🔊 ฟัง</button></div>
         </div>
       </div>
+
+      <!-- ✅ VDO อ่านคล่อง ร้องเล่น (ท้ายบทที่ 1) -->
+      <div id="vdo-fluent" class="lesson-section">
+        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🎬 VDO อ่านคล่อง ร้องเล่น: ใบโบก ใบบัว</h3>
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-border-light">
+          <video id="video-lesson1" class="w-full rounded-2xl" controls playsinline preload="metadata">
+            <source id="src-vdo-lesson1" type="video/mp4" />
+            เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+          </video>
+          <div class="text-center mt-4">
+            <a id="link-vdo-lesson1" class="text-primary hover:text-primary-hover underline" target="_blank" rel="noopener">เปิดเต็มจอ (ลิงก์ใหม่)</a>
+          </div>
+        </div>
+      </div>
+      <!-- /VDO -->
     </div>
   </section>
 
-  <!-- Alphabet (หนังสืออ่านพยัญชนะ) -->
-  <section id="alphabet" class="py-16 bg-white">
+  <!-- บทที่ 3 (เปลี่ยนชื่อ) -->
+  <section id="lesson3" class="py-16 bg-gradient-to-br from-yellow-50 to-orange-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">หนังสือพยัญชนะไทย ก–ฮ</h2>
-      <p class="text-xl text-center text-gray-600 mb-12">เรียนรู้พยัญชนะไทยทั้ง 44 ตัว</p>
+      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">✨ บทที่ 3 เพื่อนกัน</h2>
 
       <div class="mb-16">
-        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">📖 ฝังหน้า</h3>
-        <div class="bg-gray-50 rounded-2xl p-6 shadow-lg">
-          <p class="text-lg text-center text-gray-600 mb-4">แตะเพื่อพลิกหน้า ฟังเสียงอ่านตัวอักษรอัตโนมัติ</p>
-          <iframe title="หนังสือพยัญชนะ ก–ฮ" src="https://playtolearn-th.github.io/games/lesson.html"
-                  class="w-full h-[640px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
+        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🧩 จับคู่คำศัพท์</h3>
+        <p class="text-lg text-center text-gray-600 mb-8">คำหลัก: ไก่, ลูกช้าง, ชู, จ้อง, ร้อง, เรียก, เพื่อน, เด็ก</p>
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <iframe title="บทที่ 3: จับคู่คำศัพท์" src="https://playtolearn-th.github.io/games/lesson03"
+                  class="w-full h-[720px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
         </div>
       </div>
 
-      <div>
-        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🔤 แกลเลอรีภาพ ก–ฮ</h3>
-        <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4">
-          <!-- ตัวอย่าง 8 ใบ -->
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ก</div><p class="text-sm text-gray-600">กอไก่</p>
-            <button onclick="playCharacterSound('ก')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
+      <div class="mb-16">
+        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">📝 เรียงคำเป็นประโยค</h3>
+        <p class="text-lg text-center text-gray-600 mb-8">แตะเลือก/ลากจัดเรียงคำเป็นประโยคถูกต้อง มีเอฟเฟกต์เสียงถูก/ผิด</p>
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <iframe title="บทที่ 3: เรียงคำเป็นประโยค" src="https://playtolearn-th.github.io/games/lesson302.html"
+                  class="w-full h-[720px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game Lobby (ย้ายไว้ท้ายเมนูตามลำดับใหม่) -->
+  <section id="game-lobby" class="py-20 bg-surface">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl md:text-5xl font-bold text-center text-text-main mb-6">🎮 เริ่มเล่นเกม</h2>
+      <p class="text-xl text-center text-text-secondary mb-16 max-w-2xl mx-auto leading-relaxed">เลือกเกมและบทเรียนที่ต้องการเรียนรู้</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- เกมจับคู่พยัญชนะ -->
+        <div class="bg-surface border-2 border-border-light rounded-3xl p-0 shadow-lg hover:shadow-xl transition-all hover:border-primary overflow-hidden">
+          <div class="w-full h-44 bg-disabled-bg flex items-center justify-center">
+            <img id="cover-match-abc" alt="ปก เกมจับคู่พยัญชนะ" class="w-full h-full object-cover"/>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ข</div><p class="text-sm text-gray-600">ขอไข่</p>
-            <button onclick="playCharacterSound('ข')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ค</div><p class="text-sm text-gray-600">คอควาย</p>
-            <button onclick="playCharacterSound('ค')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ง</div><p class="text-sm text-gray-600">งองู</p>
-            <button onclick="playCharacterSound('ง')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">จ</div><p class="text-sm text-gray-600">จอจาน</p>
-            <button onclick="playCharacterSound('จ')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ฉ</div><p class="text-sm text-gray-600">ฉอฉิ่ง</p>
-            <button onclick="playCharacterSound('ฉ')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ช</div><p class="text-sm text-gray-600">ชอช้าง</p>
-            <button onclick="playCharacterSound('ช')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center">
-            <div class="text-4xl font-bold text-gray-800 mb-2">ซ</div><p class="text-sm text-gray-600">ซอโซ่</p>
-            <button onclick="playCharacterSound('ซ')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs">🔊</button>
+          <div class="p-8 text-center">
+            <h3 class="text-2xl font-bold text-text-main mb-4">เกมจับคู่พยัญชนะ</h3>
+            <p class="text-text-secondary text-lg mb-6 leading-relaxed">จับคู่ ก–ฮ กับรูปภาพ ฟังเสียง เก็บเหรียญ</p>
+            <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4">
+              <div class="text-4xl">💎</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 85%</span>
+            </div>
+            <button onclick="scrollToSection('character-game')" class="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เล่นเลย</button>
           </div>
         </div>
-        <div class="text-center mt-8"><p class="text-gray-600">... และอีก 36 ตัวอักษร</p></div>
+
+        <!-- บทที่ 1 -->
+        <div class="bg-surface border-2 border-border-light rounded-3xl p-0 shadow-lg hover:shadow-xl transition-all hover:border-secondary overflow-hidden">
+          <div class="w-full h-44 bg-disabled-bg flex items-center justify-center">
+            <img id="cover-lesson02" alt="ปก บทที่ 1 ใบบัว ใบโบก" class="w-full h-full object-cover"/>
+          </div>
+          <div class="p-8 text-center">
+            <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 2: ใบบัว ใบโบก</h3>
+            <p class="text-text-secondary text-lg mb-6 leading-relaxed">คำพื้นฐาน ภาพ–เสียง</p>
+            <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4">
+              <div class="text-4xl">🥇</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 92%</span>
+            </div>
+            <button onclick="scrollToSection('lesson2')" class="bg-secondary hover:bg-secondary-hover text-white font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เข้าเรียน</button>
+          </div>
+        </div>
+
+        <!-- บทที่ 3: เพื่อนกัน -->
+        <div class="bg-surface border-2 border-border-light rounded-3xl p-0 shadow-lg hover:shadow-xl transition-all hover:border-accent overflow-hidden">
+          <div class="w-full h-44 bg-disabled-bg flex items-center justify-center">
+            <img id="cover-lesson03" alt="ปก บทที่ 3 เพื่อนกัน" class="w-full h-full object-cover"/>
+          </div>
+          <div class="p-8 text-center">
+            <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 3: เพื่อนกัน</h3>
+            <p class="text-text-secondary text-lg mb-6 leading-relaxed">ฝึกคำด้วยภาพ+เสียง</p>
+            <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4">
+              <div class="text-4xl">🥈</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 78%</span>
+            </div>
+            <button onclick="scrollToSection('lesson3')" class="bg-accent hover:bg-accent-hover text-text-main font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เริ่มฝึก</button>
+          </div>
+        </div>
+
+        <!-- เรียงคำเป็นประโยค -->
+        <div class="bg-surface border-2 border-border-light rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all hover:border-primary text-center">
+          <div class="text-7xl mb-6">📝</div>
+          <h3 class="text-2xl font-bold text-text-main mb-4">บทที่ 3: เรียงคำเป็นประโยค</h3>
+          <p class="text-text-secondary text-lg mb-6 leading-relaxed">ลาก-วางเรียงคำให้ถูกต้อง</p>
+          <div class="flex justify-center items-center mb-6 space-x-3 bg-disabled-bg rounded-xl p-4">
+            <div class="text-4xl">🥉</div><span class="text-lg font-semibold text-text-main">คะแนนสูงสุด: 65%</span>
+          </div>
+          <button onclick="scrollToSection('lesson3')" class="bg-primary hover:bg-primary-hover text-white font-bold py-4 px-8 rounded-full text-lg w-full transition-colors min-h-[56px] shadow-md">เริ่มเรียงคำ</button>
+        </div>
       </div>
     </div>
   </section>
@@ -408,213 +396,6 @@
     </div>
   </section>
 
-  <!-- Lesson 3 -->
-  <section id="lesson3" class="py-16 bg-gradient-to-br from-yellow-50 to-orange-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">บทที่ 3</h2>
-
-      <div class="mb-16">
-        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">🧩 จับคู่คำศัพท์</h3>
-        <p class="text-lg text-center text-gray-600 mb-8">คำหลัก: ไก่, ลูกช้าง, ชู, จ้อง, ร้อง, เรียก, เพื่อน, เด็ก</p>
-        <div class="bg-white rounded-2xl p-6 shadow-lg">
-          <iframe title="บทที่ 3: จับคู่คำศัพท์" src="https://playtolearn-th.github.io/games/lesson03.html"
-                  class="w-full h-[720px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
-        </div>
-      </div>
-
-      <div class="mb-16">
-        <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">📝 เรียงคำเป็นประโยค</h3>
-        <p class="text-lg text-center text-gray-600 mb-8">แตะเลือก/ลากจัดเรียงคำเป็นประโยคถูกต้อง มีเอฟเฟกต์เสียงถูก/ผิด</p>
-        <div class="bg-white rounded-2xl p-6 shadow-lg">
-          <iframe title="บทที่ 3: เรียงคำเป็นประโยค" src="https://playtolearn-th.github.io/games/lesson302.html"
-                  class="w-full h-[720px] rounded-lg border-2 border-dashed border-gray-300" loading="lazy"></iframe>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Videos (placeholder) -->
-  <section id="videos" class="py-16 bg-gradient-to-br from-purple-50 to-pink-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">คลังวิดีโอห้องเรียน</h2>
-      <p class="text-xl text-center text-gray-600 mb-12">วิดีโอบทเรียนสำหรับเด็ก</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div class="relative"><div class="w-full h-48 bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center"><div class="text-6xl">🎬</div></div>
-            <button onclick="playVideo('lesson1')" class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all" aria-label="เล่นวิดีโอ บทที่ 1">
-              <div class="bg-white rounded-full p-4 shadow-lg"><svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            </button>
-          </div>
-          <div class="p-6"><h3 class="text-xl font-bold text-gray-800 mb-2">บทที่ 1: ใบโบก ใบบัว</h3><p class="text-gray-600">เรียนรู้เรื่องใบไม้และธรรมชาติ</p></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div class="relative"><div class="w-full h-48 bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center"><div class="text-6xl">🎵</div></div>
-            <button onclick="playVideo('alphabet-song')" class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all" aria-label="เล่นเพลงพยัญชนะ">
-              <div class="bg-white rounded-full p-4 shadow-lg"><svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            </button>
-          </div>
-          <div class="p-6"><h3 class="text-xl font-bold text-gray-800 mb-2">เพลงพยัญชนะไทย</h3><p class="text-gray-600">ร้องเพลงจำพยัญชนะ ก-ฮ</p></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div class="relative"><div class="w-full h-48 bg-gradient-to-br from-yellow-200 to-yellow-300 flex items-center justify-center"><div class="text-6xl">📚</div></div>
-            <button onclick="playVideo('read-words')" class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all" aria-label="เล่นวิดีโอการอ่านคำศัพท์">
-              <div class="bg-white rounded-full p-4 shadow-lg"><svg class="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            </button>
-          </div>
-          <div class="p-6"><h3 class="text-xl font-bold text-gray-800 mb-2">การอ่านคำศัพท์</h3><p class="text-gray-600">ฝึกอ่านคำศัพท์พื้นฐาน</p></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div class="relative"><div class="w-full h-48 bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center"><div class="text-6xl">🎭</div></div>
-            <button onclick="playVideo('thai-tales')" class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all" aria-label="เล่นนิทานภาษาไทย">
-              <div class="bg-white rounded-full p-4 shadow-lg"><svg class="w-8 h-8 text-purple-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            </button>
-          </div>
-          <div class="p-6"><h3 class="text-xl font-bold text-gray-800 mb-2">นิทานภาษาไทย</h3><p class="text-gray-600">นิทานสนุกๆ เพื่อการเรียนรู้</p></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div class="relative"><div class="w-full h-48 bg-gradient-to-br from-teal-200 to-teal-300 flex items-center justify-center"><div class="text-6xl">🎨</div></div>
-            <button onclick="playVideo('write-letters')" class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all" aria-label="เล่นวิดีโอฝึกเขียน">
-              <div class="bg-white rounded-full p-4 shadow-lg"><svg class="w-8 h-8 text-teal-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            </button>
-          </div>
-          <div class="p-6"><h3 class="text-xl font-bold text-gray-800 mb-2">เขียนตัวอักษร</h3><p class="text-gray-600">ฝึกเขียนพยัญชนะไทย</p></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div class="relative"><div class="w-full h-48 bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center"><div class="text-6xl">🌟</div></div>
-            <button onclick="playVideo('review')" class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all" aria-label="เล่นวิดีโอทบทวน">
-              <div class="bg-white rounded-full p-4 shadow-lg"><svg class="w-8 h-8 text-pink-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            </button>
-          </div>
-          <div class="p-6"><h3 class="text-xl font-bold text-gray-800 mb-2">ทบทวนบทเรียน</h3><p class="text-gray-600">สรุปและทบทวนความรู้</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Rewards -->
-  <section id="rewards" class="py-16 bg-gradient-to-br from-amber-50 to-yellow-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">เหรียญรางวัล & ความก้าวหน้า</h2>
-      <p class="text-xl text-center text-gray-600 mb-12">สะสมคะแนนจากเกมและบทเรียน เพื่อปลดล็อคเหรียญ</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow"><div class="text-8xl mb-4">💎</div><h3 class="text-2xl font-bold text-gray-800 mb-3">เพชร</h3><p class="text-lg text-gray-600 mb-4">≥ 60% คะแนน</p><div class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold">ปลดล็อคแล้ว!</div></div>
-        <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow"><div class="text-8xl mb-4">🥇</div><h3 class="text-2xl font-bold text-gray-800 mb-3">ทอง</h3><p class="text-lg text-gray-600 mb-4">≥ 50% คะแนน</p><div class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-6 py-3 rounded-full font-semibold">ปลดล็อคแล้ว!</div></div>
-        <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow"><div class="text-8xl mb-4">🥈</div><h3 class="text-2xl font-bold text-gray-800 mb-3">เงิน</h3><p class="text-lg text-gray-600 mb-4">≥ 40% คะแนน</p><div class="bg-gradient-to-r from-gray-400 to-gray-600 text-white px-6 py-3 rounded-full font-semibold">ปลดล็อคแล้ว!</div></div>
-        <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow"><div class="text-8xl mb-4 opacity-50">🥉</div><h3 class="text-2xl font-bold text-gray-800 mb-3">ทองแดง</h3><p class="text-lg text-gray-600 mb-4">≥ 30% คะแนน</p><div class="bg-gray-300 text-gray-600 px-6 py-3 rounded-full font-semibold">ยังไม่ปลดล็อค</div></div>
-      </div>
-
-      <div class="mt-12 bg-white rounded-2xl p-8 shadow-lg">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">ความก้าวหน้าโดยรวม</h3>
-        <div class="space-y-4">
-          <div class="flex justify-between items-center"><span class="text-lg font-semibold text-gray-700">เกมจับคู่พยัญชนะ</span><span class="text-lg font-bold text-blue-600">85%</span></div>
-          <div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-gradient-to-r from-blue-500 to-blue-600 h-4 rounded-full" style="width:85%"></div></div>
-
-          <div class="flex justify-between items-center"><span class="text-lg font-semibold text-gray-700">บทที่ 1: ใบโบก ใบบัว</span><span class="text-lg font-bold text-green-600">92%</span></div>
-          <div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full" style="width:92%"></div></div>
-
-          <div class="flex justify-between items-center"><span class="text-lg font-semibold text-gray-700">บทที่ 3: จับคู่คำศัพท์</span><span class="text-lg font-bold text-yellow-600">78%</span></div>
-          <div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-gradient-to-r from-yellow-500 to-yellow-600 h-4 rounded-full" style="width:78%"></div></div>
-
-          <div class="flex justify-between items-center"><span class="text-lg font-semibold text-gray-700">บทที่ 3: เรียงคำเป็นประโยค</span><span class="text-lg font-bold text-purple-600">65%</span></div>
-          <div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-gradient-to-r from-purple-500 to-purple-600 h-4 rounded-full" style="width:65%"></div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Activities -->
-  <section id="activities" class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">กิจกรรม & คำชม</h2>
-      <p class="text-xl text-center text-gray-600 mb-12">กิจกรรมหลากหลายและความคิดเห็นจากนักเรียน</p>
-
-    <div class="mb-16">
-      <h3 class="text-3xl font-bold text-gray-800 mb-8 text-center">🎯 กิจกรรมในโรงเรียน</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-center">
-          <div class="text-6xl mb-4">🏕️</div><h4 class="text-xl font-bold text-gray-800 mb-3">ค่ายภาษาไทย</h4>
-          <p class="text-gray-600 text-sm leading-relaxed mb-4">ค่ายเรียนรู้ภาษาไทยผ่านกิจกรรมสนุกสนาน เกมการเรียนรู้ และการแสดง</p>
-          <div class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">📅 เดือนมีนาคม</div>
-        </div>
-        <div class="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-center">
-          <div class="text-6xl mb-4">🔬</div><h4 class="text-xl font-bold text-gray-800 mb-3">วิทยาศาสตร์สนุก</h4>
-          <p class="text-gray-600 text-sm leading-relaxed mb-4">เรียนรู้คำศัพท์วิทยาศาสตร์ผ่านการทดลองง่ายๆ และกิจกรรมสำรวจ</p>
-          <div class="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold">📅 เดือนพฤษภาคม</div>
-        </div>
-        <div class="bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-center">
-          <div class="text-6xl mb-4">⚽</div><h4 class="text-xl font-bold text-gray-800 mb-3">กีฬาสีภาษาไทย</h4>
-          <p class="text-gray-600 text-sm leading-relaxed mb-4">แข่งขันกีฬาพร้อมเรียนรู้คำศัพท์กีฬาและการเชียร์เป็นภาษาไทย</p>
-          <div class="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold">📅 เดือนกุมภาพันธ์</div>
-        </div>
-        <div class="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-center">
-          <div class="text-6xl mb-4">🎭</div><h4 class="text-xl font-bold text-gray-800 mb-3">วันวัฒนธรรมไทย</h4>
-          <p class="text-gray-600 text-sm leading-relaxed mb-4">แสดงนาฏศิลป์ไทย เล่านิทาน และเรียนรู้ประเพณีไทยผ่านภาษา</p>
-          <div class="bg-purple-500 text-white px-4 py-2 rounded-full text-sm font-semibold">📅 เดือนธันวาคม</div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <h3 class="text-3xl font-bold text-gray-800 mb-8 text-center">💬 คำชมจากนักเรียน</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-gradient-to-br from-pink-50 to-rose-100 rounded-2xl p-6 shadow-lg">
-          <div class="text-center mb-4">
-            <div class="w-20 h-20 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full mx-auto mb-4 flex items-center justify-center"><span class="text-3xl">👧</span></div>
-            <h4 class="text-lg font-bold text-gray-800">น้องมายา</h4><p class="text-sm text-gray-600">ป.2/1</p>
-          </div>
-          <div class="bg-white rounded-lg p-4 shadow-sm">
-            <p class="text-gray-700 text-center leading-relaxed">"ชอบเล่นเกมจับคู่พยัญชนะมากค่ะ สนุกและจำได้ง่าย ครูไพรัชสอนดีมาก!"</p>
-            <div class="text-center mt-3"><span class="text-yellow-400 text-xl">⭐⭐⭐⭐⭐</span></div>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-50 to-sky-100 rounded-2xl p-6 shadow-lg">
-          <div class="text-center mb-4">
-            <div class="w-20 h-20 bg-gradient-to-br from-blue-300 to-blue-400 rounded-full mx-auto mb-4 flex items-center justify-center"><span class="text-3xl">👦</span></div>
-            <h4 class="text-lg font-bold text-gray-800">น้องกิตติ</h4><p class="text-sm text-gray-600">ป.1/2</p>
-          </div>
-          <div class="bg-white rounded-lg p-4 shadow-sm">
-            <p class="text-gray-700 text-center leading-relaxed">"เรียนออนไลน์สนุกมาก มีเสียงและภาพสวย อยากเรียนทุกวันเลยครับ"</p>
-            <div class="text-center mt-3"><span class="text-yellow-400 text-xl">⭐⭐⭐⭐⭐</span></div>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-6 shadow-lg">
-          <div class="text-center mb-4">
-            <div class="w-20 h-20 bg-gradient-to-br from-green-300 to-green-400 rounded-full mx-auto mb-4 flex items-center justify-center"><span class="text-3xl">👧</span></div>
-            <h4 class="text-lg font-bold text-gray-800">น้องปุณณ์</h4><p class="text-sm text-gray-600">ป.3/1</p>
-          </div>
-          <div class="bg-white rounded-lg p-4 shadow-sm">
-            <p class="text-gray-700 text-center leading-relaxed">"บทเรียนใบโบกใบบัวน่ารักมาก ได้เรียนรู้เรื่องธรรมชาติด้วยค่ะ"</p>
-            <div class="text-center mt-3"><span class="text-yellow-400 text-xl">⭐⭐⭐⭐⭐</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-  </section>
-
-  <!-- Teacher -->
-  <section class="py-16 bg-gradient-to-r from-primary to-secondary text-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="bg-white/10 rounded-2xl p-8 backdrop-blur-sm">
-        <h2 class="text-3xl font-bold mb-6">เกี่ยวกับครูไพรัช</h2>
-        <p class="text-xl leading-relaxed mb-6">
-          ครูผู้สอนภาษาไทย โรงเรียนเทศบาล ๑ ถนนนครนอก (สงขลา)<br/>
-          มุ่งมั่นพัฒนาการเรียนรู้ภาษาไทยให้สนุกและมีประสิทธิภาพ
-        </p>
-        <button onclick="showContact()" class="bg-white text-primary font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors text-lg">📞 ติดต่อครู</button>
-      </div>
-    </div>
-  </section>
-
   <!-- Footer -->
   <footer class="bg-text-main text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -627,12 +408,13 @@
           <p class="text-gray-300 text-lg"><span class="inline-block w-6 text-xl">📧</span><span>(อีเมลติดต่อจะใส่ภายหลัง)</span></p>
         </div>
 
+        <!-- ลิงก์ด่วน (ลำดับใหม่) -->
         <div class="text-center">
           <h3 class="text-2xl font-bold mb-6">ลิงก์ด่วน</h3>
-          <button onclick="scrollToSection('game-lobby')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🎮 เกมลอบบี้</button>
-          <button onclick="scrollToSection('lesson1')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">📖 บทที่ 1</button>
-          <button onclick="scrollToSection('videos')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🎬 วิดีโอ</button>
-          <button onclick="scrollToSection('rewards')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🏆 เหรียญรางวัล</button>
+          <button onclick="scrollToSection('alphabet')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🐓 รู้จักพยัญชนะไทย</button>
+          <button onclick="scrollToSection('lesson2')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🐘 บทที่ 1 ใบบัว ใบโบก</button>
+          <button onclick="scrollToSection('lesson3')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">✨ บทที่ 3 เพื่อนกัน</button>
+          <button onclick="scrollToSection('game-lobby')" class="text-primary hover:text-accent transition-colors block mx-auto text-lg py-2">🎮 เริ่มเล่นเกม✨</button>
         </div>
 
         <div class="text-center md:text-right">
@@ -657,10 +439,10 @@
 
   <!-- Scripts -->
   <script>
-    /* ===== Base paths (อัปเดตตามจริง) ===== */
-    const IMG_BASE   = "https://playtolearn-th.github.io/games/canva_ai/imgs";     // ✅ รูป
-    const SOUND_BASE = "https://playtolearn-th.github.io/games/canva_ai/sounds";   // ✅ เสียง
-    const VDO_BASE   = "https://playtolearn-th.github.io/games/canva_ai/canva_ai/vdo"; // วิดีโอ (ตามเดิม)
+    /* ===== Base paths ===== */
+    const IMG_BASE   = "https://playtolearn-th.github.io/games/canva_ai/imgs";     // รูป
+    const SOUND_BASE = "https://playtolearn-th.github.io/games/canva_ai/sounds";   // เสียง
+    const VDO_BASE   = "https://playtolearn-th.github.io/games/canva_ai/canva_ai/vdo"; // วิดีโอ (ถ้ามี)
 
     /* ===== Mobile menu ===== */
     document.getElementById('mobile-menu-btn').addEventListener('click', () => {
@@ -673,20 +455,20 @@
         e.preventDefault();
         const t=document.querySelector(a.getAttribute('href'));
         if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
-        document.getElementById('mobile-menu').classList.add('hidden');
+        const m=document.getElementById('mobile-menu'); if(m) m.classList.add('hidden');
       });
     });
 
     function scrollToSection(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 
-    /* ===== Show/hide Lesson 1 sub-sections ===== */
+    /* ===== Show/hide lesson sub-sections ===== */
     function showSection(id){
       document.querySelectorAll('.lesson-section').forEach(s=>s.style.display='none');
       const t=document.getElementById(id);
       if(t){ t.style.display='block'; t.scrollIntoView({behavior:'smooth',block:'start'}); }
     }
 
-    /* ===== One hidden audio (reliable on mobile) ===== */
+    /* ===== One hidden audio (mobile-friendly) ===== */
     const hiddenAudio = document.createElement('audio');
     hiddenAudio.setAttribute('preload','auto');
     hiddenAudio.setAttribute('playsinline',''); // iOS
@@ -695,73 +477,156 @@
 
     const enc = s => encodeURIComponent(String(s).trim());
 
-    function toast(msg){
-      if(!document.getElementById('mini-toast')){
-        const t=document.createElement('div');
-        t.id='mini-toast';
-        t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000a;color:#fff;padding:10px 14px;border-radius:12px;font-size:16px;z-index:9999;transition:opacity .2s';
-        t.style.opacity='0';
-        document.body.appendChild(t);
-      }
-      const t=document.getElementById('mini-toast');
-      t.textContent=msg; t.style.opacity='1';
-      setTimeout(()=>t.style.opacity='0',1600);
-    }
-
     async function playFrom(url){
       try{
         hiddenAudio.pause();
         hiddenAudio.src = url;
         await hiddenAudio.play();          // ต้องเกิดจากการคลิก/แตะ
-        toast('🔊 กำลังเล่นเสียง');
       }catch(err){
         console.warn('Audio play error:', err);
-        toast('❗เล่นเสียงไม่ได้ — เปิดไฟล์โดยตรง');
         window.open(url,'_blank','noopener');
       }
     }
 
-    /* ===== ฟังก์ชันเล่นเสียง (พอยท์ไป SOUND_BASE เดียว) ===== */
+    /* ===== Play helpers ===== */
     function playSound(word){       playFrom(`${SOUND_BASE}/${enc(word)}.mp3`); }
     function playKaraoke(line){     playFrom(`${SOUND_BASE}/${enc(line)}.mp3`); }
     function playSentence(text){    playFrom(`${SOUND_BASE}/${enc(text)}.mp3`); }
-    function playCharacter(ch){     playFrom(`${SOUND_BASE}/${enc(ch)}.mp3`); }  // ✅ รวมพยัญชนะ
+    function playCharacter(ch){     playFrom(`${SOUND_BASE}/${enc(ch)}.mp3`); }
 
-    /* ===== วิดีโอ (ถ้ามีไฟล์ .mp4 ในโฟลเดอร์ vdo) ===== */
-    function playVideo(name){
-      const f=/\.mp4$/i.test(name)?name:`${name}.mp4`;
-      window.open(`${VDO_BASE}/${enc(f)}`,'_blank','noopener');
+    /* ===== Hero image (90%) ===== */
+    document.getElementById('hero-img').src = `${IMG_BASE}/cove_page.png`;
+
+    /* ===== Game lobby covers ===== */
+    document.getElementById('cover-match-abc').src = `${IMG_BASE}/game-cover-1.png`;
+    document.getElementById('cover-lesson02').src  = `${IMG_BASE}/game-cover-01.png`; /* ใช้ภาพเดิมของบทก่อนหน้า */
+    document.getElementById('cover-lesson03').src  = `${IMG_BASE}/game-cover-03.png`;
+
+    /* ===== ใบโบก/ใบบัว: รูปหัวข้อ + แถวประโยคพร้อมรูปทุกคำ ===== */
+    document.getElementById('img-boog').src = `${IMG_BASE}/${enc('ใบโบก')}.png`;
+    document.getElementById('img-bua').src  = `${IMG_BASE}/${enc('ใบบัว')}.png`;
+
+    const boogSentences = ['ใบโบก มี ขา','ใบโบก มี งวง','ใบโบก มี ตา','ใบโบก มี หาง','ใบโบก มี หู','ใบโบก มี งา'];
+    const buaSentences  = ['ใบบัว มี ขา','ใบบัว มี งวง','ใบบัว มี ตา','ใบบัว มี หาง','ใบบัว มี หู','ใบบัว ไม่มี งา'];
+
+    function makeSentenceRow(text){
+      const isNegative = text.includes('ไม่มี');
+      const color = isNegative ? 'red' : (text.startsWith('ใบโบก') ? 'green' : 'blue');
+
+      const row = document.createElement('div');
+      row.className = `flex items-center justify-between ${isNegative?'bg-red-50 border-red-200':'bg-gray-50 border-border-light'} p-3 rounded-lg border`;
+
+      const left = document.createElement('div');
+      left.className = 'flex items-center gap-3';
+
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center border';
+      const img = document.createElement('img');
+      img.alt = text;
+      img.className = 'w-full h-full object-contain';
+      img.src = `${IMG_BASE}/${enc(text)}.png`;
+      img.onerror = ()=>{ imgWrap.innerHTML = '<div class="text-gray-400 text-xs p-1 text-center">ไม่มีรูป</div>'; };
+      imgWrap.appendChild(img);
+
+      const span = document.createElement('span');
+      span.className = `text-xl font-semibold ${isNegative?'text-red-600':''}`;
+      span.textContent = text;
+
+      left.appendChild(imgWrap); left.appendChild(span);
+
+      const btn = document.createElement('button');
+      btn.className = `bg-${color}-500 hover:bg-${color}-600 text-white px-4 py-2 rounded-full`;
+      btn.textContent = '🔊';
+      btn.addEventListener('click', ()=>playSentence(text));
+
+      row.appendChild(left); row.appendChild(btn);
+      return row;
     }
 
-    /* ===== Device beep (ช่วยปลดล็อกเสียงบน iOS) ===== */
-    function deviceBeep(){
-      try{
-        const ctx = new (window.AudioContext||window.webkitAudioContext)();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type='sine'; o.frequency.value=880; g.gain.value=0.08;
-        o.connect(g); g.connect(ctx.destination); o.start();
-        setTimeout(()=>{ o.stop(); ctx.close(); }, 280);
-      }catch{ alert('อุปกรณ์ไม่รองรับ WebAudio'); }
+    function renderSentenceLists(){
+      const boogList = document.getElementById('boog-list');
+      const buaList  = document.getElementById('bua-list');
+      boogList.innerHTML=''; buaList.innerHTML='';
+      boogSentences.forEach(t=> boogList.appendChild(makeSentenceRow(t)));
+      buaSentences.forEach(t=>  buaList.appendChild(makeSentenceRow(t)));
     }
 
-    /* ===== Init: แสดงทุกส่วนย่อยของบทที่ 1 ===== */
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll('.lesson-section').forEach(s=>s.style.display='block');
-    });
+    /* ===== แกลเลอรี ก–ฮ (44 ตัว) ===== */
+    const TH_CONSONANTS = [
+      { ch:'ก', name:'กอ ไก่' },   { ch:'ข', name:'ขอ ไข่' },   { ch:'ฃ', name:'ฃอ ขวด' }, { ch:'ค', name:'คอ ควาย' },
+      { ch:'ฅ', name:'ฅอ คน' },    { ch:'ฆ', name:'ฆอ ระฆัง' }, { ch:'ง', name:'งอ งู' },   { ch:'จ', name:'จอ จาน' },
+      { ch:'ฉ', name:'ฉอ ฉิ่ง' },  { ch:'ช', name:'ชอ ช้าง' },  { ch:'ซ', name:'ซอ โซ่' },  { ch:'ฌ', name:'ฌอ เฌอ' },
+      { ch:'ญ', name:'ญอ หญิง' }, { ch:'ฎ', name:'ฎอ ชฎา' },   { ch:'ฏ', name:'ฏอ ปฏัก' }, { ch:'ฐ', name:'ฐอ ฐาน' },
+      { ch:'ฑ', name:'ฑอ มณโฑ' }, { ch:'ฒ', name:'ฒอ ผู้เฒ่า' }, { ch:'ณ', name:'ณอ เณร' }, { ch:'ด', name:'ดอ เด็ก' },
+      { ch:'ต', name:'ตอ เต่า' }, { ch:'ถ', name:'ถอ ถุง' },   { ch:'ท', name:'ทอ ทหาร' }, { ch:'ธ', name:'ธอ ธง' },
+      { ch:'น', name:'นอ หนู' },   { ch:'บ', name:'บอ ใบไม้' }, { ch:'ป', name:'ปอ ปลา' },  { ch:'ผ', name:'ผอ ผึ้ง' },
+      { ch:'ฝ', name:'ฝอ ฝา' },   { ch:'พ', name:'พอ พาน' },   { ch:'ฟ', name:'ฟอ ฟัน' },  { ch:'ภ', name:'ภอ สำเภา' },
+      { ch:'ม', name:'มอ ม้า' },   { ch:'ย', name:'ยอ ยักษ์' }, { ch:'ร', name:'รอ เรือ' }, { ch:'ล', name:'ลอ ลิง' },
+      { ch:'ว', name:'วอ แหวน' }, { ch:'ศ', name:'ศอ ศาลา' }, { ch:'ษ', name:'ษอ ฤๅษี' }, { ch:'ส', name:'สอ เสือ' },
+      { ch:'ห', name:'หอ หีบ' },   { ch:'ฬ', name:'ฬอ จุฬา' }, { ch:'อ', name:'ออ อ่าง' }, { ch:'ฮ', name:'ฮอ นกฮูก' }
+    ];
 
-    /* ===== Gentle parallax ===== */
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-      window.addEventListener('scroll', ()=>{
-        const s=window.pageYOffset||0;
-        const bgLayer=document.querySelector('#home > div');
-        if(bgLayer) bgLayer.style.transform=`translateY(${s*0.15}px)`;
-      });
+    function makeAlphaCard({ch, name}){
+      const card = document.createElement('div');
+      card.className = 'group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow text-center border border-border-light cursor-pointer';
+
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'w-24 h-24 bg-disabled-bg rounded-2xl mx-auto mb-3 flex items-center justify-center overflow-hidden';
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.alt = `ภาพ ${name}`;
+      img.className = 'w-20 h-20 object-contain';
+      img.src = `${IMG_BASE}/${encodeURIComponent(ch)}.png`;
+      img.onerror = () => { imgWrap.innerHTML = `<span class="text-5xl font-bold text-gray-700">${ch}</span>`; };
+      imgWrap.appendChild(img);
+      card.appendChild(imgWrap);
+
+      const letter = document.createElement('div');
+      letter.className = 'text-4xl font-bold text-gray-800';
+      letter.textContent = ch;
+      card.appendChild(letter);
+
+      const caption = document.createElement('p');
+      caption.className = 'text-sm text-gray-600 mt-1';
+      caption.textContent = name;
+      card.appendChild(caption);
+
+      const btn = document.createElement('button');
+      btn.className = 'mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs transition-colors';
+      btn.textContent = '🔊';
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); playCharacter(ch); });
+
+      card.appendChild(btn);
+      card.addEventListener('click', ()=> playCharacter(ch));
+      return card;
+    }
+
+    function renderAlphabetGallery(){
+      const grid = document.getElementById('alphabet-grid');
+      grid.innerHTML = '';
+      TH_CONSONANTS.forEach(item => grid.appendChild(makeAlphaCard(item)));
+      document.getElementById('alphabet-count').textContent = `รวมทั้งหมด ${TH_CONSONANTS.length} ตัวอักษร`;
     }
 
     /* ===== Contact & misc ===== */
-    function showContact(){ alert('📞 ติดต่อครูไพรัช\nโรงเรียนเทศบาล ๑ ถนนนครนอก (สงขลา)\nอีเมล: (จะใส่ภายหลัง)'); }
     function openFacebook(){ alert('📘 เปิด Facebook โรงเรียนเทศบาล ๑ (ลิงก์จะเพิ่มเติมภายหลัง)'); }
+
+    /* ===== Init ===== */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // เริ่มต้นให้ทุกส่วนย่อยของบทเรียนแสดงได้
+      document.querySelectorAll('.lesson-section').forEach(s=>s.style.display='block');
+      // เรนเดอร์ประโยคพร้อมรูป
+      renderSentenceLists();
+      // เรนเดอร์แกลเลอรี ก–ฮ
+      renderAlphabetGallery();
+
+      // ✅ ตั้งค่า VDO บทที่ 1
+      const vdoUrl = `${VDO_BASE}/${encodeURIComponent('ใบโบกใบบัว')}.mp4`;
+      const v = document.getElementById('src-vdo-lesson1');
+      const a = document.getElementById('link-vdo-lesson1');
+      if (v) v.src = vdoUrl;
+      if (a) a.href = vdoUrl;
+    });
   </script>
 </body>
 </html>
