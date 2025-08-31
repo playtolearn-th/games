@@ -31,7 +31,7 @@
       background: var(--bg);
       color: var(--text);
       margin:0;
-      overflow:hidden; /* คงพฤติกรรมเดิม */
+      overflow:hidden; /* ให้เหมือนเดิม */
     }
     .hidden{ display:none !important; }
 
@@ -44,7 +44,12 @@
       padding:0 14px; gap:10px;
     }
     #profileSection{display:flex;align-items:center;gap:10px}
-    .back-to-lobby-btn img{width:36px;height:36px}
+    .back-to-lobby-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:40px; height:40px; border-radius:10px; border:1px solid var(--border); background:#fff;
+      cursor:pointer;
+    }
+    .back-to-lobby-btn img{width:24px;height:24px}
     .profile-pic-game{
       width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;
     }
@@ -194,9 +199,10 @@
   <!-- ======== TOP BAR เกม ======== -->
   <div id="topBar" class="hidden" aria-label="แถบสถานะเกม">
     <div id="profileSection">
-      <a href="index.html" class="back-to-lobby-btn" title="กลับไปหน้าล็อบบี้">
+      <!-- ปุ่มกลับ (ไม่พาไป index.html อีก) -->
+      <button type="button" id="backBtn" class="back-to-lobby-btn" title="กลับหน้าก่อนหน้า">
         <img src="images/icon/back.png" alt="ย้อนกลับ" />
-      </a>
+      </button>
       <img id="profilePic-game" src="" alt="โปรไฟล์" class="profile-pic-game" title="เปิดโปรไฟล์/ออกจากระบบ" />
       <div id="best-rank-display"></div>
     </div>
@@ -264,14 +270,14 @@
   <!-- ======== สคริปต์เกมของคุณ ======== -->
   <script src="js/character.js"></script>
 
-  <!-- ======== การเชื่อม Login + เกม ในหน้าเดียว (รวม Google popup → redirect) ======== -->
+  <!-- ======== การเชื่อม Login + เกม ในหน้าเดียว (ครอบคลุม popup/redirect + stay-on-this-page) ======== -->
   <script>
     /* ========= Firebase Config ========= */
     const firebaseConfig = {
       apiKey: "AIzaSyCmKRzrsXDhHtbmhG56jM-0OYqp3YvXc48",
       authDomain: "playtolearn-e3356.firebaseapp.com",
       projectId: "playtolearn-e3356",
-      storageBucket: "playtolearn-e3356.appspot.com",  // ✅ มาตรฐาน
+      storageBucket: "playtolearn-e3356.appspot.com",
       messagingSenderId: "233629701249",
       appId: "1:233629701249:web:5ee775473bc00be1566980",
       measurementId: "G-SXMFQT0TLG"
@@ -308,8 +314,9 @@
 
     const lessonPage = document.getElementById('lesson-page');
     const closeLessonBtn = document.getElementById('close-lesson-btn');
+    const backBtn = document.getElementById('backBtn');
 
-    /* ========= Helper ========= */
+    /* ========= Helpers ========= */
     function isEmbedded(){ try { return window.self !== window.top; } catch { return true; } }
     function showOverlay(){ authOverlay.classList.remove('hidden'); }
     function hideOverlay(){ authOverlay.classList.add('hidden'); }
@@ -324,6 +331,11 @@
     sidebarCloseBtn?.addEventListener('click', closeSidebar);
     sidebarOverlay?.addEventListener('click', closeSidebar);
     profilePicGame?.addEventListener('click', openSidebar);
+
+    // ปุ่มกลับ: พยายามย้อนประวัติ ถ้าไม่มีประวัติ อยู่หน้านี้ต่อ
+    backBtn?.addEventListener('click', ()=>{
+      if (history.length > 1) history.back();
+    });
 
     // แปล error code เป็นไทยสั้น ๆ
     function tAuthError(code){
@@ -342,11 +354,23 @@
       return map[code] || ('เกิดข้อผิดพลาด: ' + code);
     }
 
-    /* ========= รับผลจาก Redirect (กรณี fallback) ========= */
+    /* ========= บันทึก URL ปัจจุบัน ก่อนเริ่ม Google Redirect ========= */
+    function rememberReturnUrl(){
+      try { sessionStorage.setItem('returnTo', window.location.href); } catch {}
+    }
+
+    /* ========= รับผลจาก Redirect (กรณี fallback หรือเปิดใน iframe) ========= */
     auth.getRedirectResult()
       .then((result) => {
         if (result && result.user) {
           setMsg('success', 'เข้าสู่ระบบด้วย Google สำเร็จ');
+          // ✅ กลับสู่ URL เดิมเสมอ (กันเด้งไป login.html / index.html)
+          const returnTo = (sessionStorage.getItem('returnTo') || '').trim();
+          if (returnTo && returnTo !== window.location.href) {
+            sessionStorage.removeItem('returnTo');
+            window.location.replace(returnTo);
+            return; // ให้โหลดหน้าเดิมใหม่
+          }
         }
       })
       .catch((err) => {
@@ -394,6 +418,7 @@
 
       if (isEmbedded()) {
         // เปิดใน iframe (เช่น Canva) → ใช้ redirect เสมอ
+        rememberReturnUrl(); // ✅ จำ URL หน้านี้ไว้ก่อน
         try { await auth.signInWithRedirect(provider); }
         catch (e) { setMsg('error', tAuthError(e.code)); }
         return;
@@ -406,6 +431,7 @@
       }catch(err){
         console.warn('Google popup error:', err.code, err.message);
         if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+          rememberReturnUrl(); // ✅ ก่อนสลับเป็น redirect ต้องจำ URL
           try{
             await auth.signInWithRedirect(provider);
           }catch(e2){
@@ -435,10 +461,10 @@
         mainWrapper.classList.remove('hidden');
 
         const photo = user.photoURL || 'images/icon/user.png';
-        profilePicGame && (profilePicGame.src = photo);
-        sidebarProfileImg && (sidebarProfileImg.src = photo);
-        sidebarUserName && (sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่');
-        sidebarUserEmail && (sidebarUserEmail.textContent = user.email || '');
+        if (profilePicGame) profilePicGame.src = photo;
+        if (sidebarProfileImg) sidebarProfileImg.src = photo;
+        if (sidebarUserName) sidebarUserName.textContent = user.displayName || 'ผู้ใช้ใหม่';
+        if (sidebarUserEmail) sidebarUserEmail.textContent = user.email || '';
       }else{
         showOverlay();
         topBar.classList.add('hidden');
