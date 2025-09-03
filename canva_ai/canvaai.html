@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เรียนรู้ภาษาไทยและอังกฤษ - Play to Learn</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 'thai': ['TH Sarabun New', 'Sarabun', 'sans-serif'] },
+          animation: {
+            'bounce-slow': 'bounce 2s infinite',
+            'pulse-fast': 'pulse 1s infinite',
+            'spin-slow': 'spin 3s linear infinite',
+            'wiggle': 'wiggle 1s ease-in-out infinite',
+          },
+          keyframes: {
+            wiggle: {
+              '0%, 100%': { transform: 'rotate(-3deg)' },
+              '50%': { transform: 'rotate(3deg)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="font-thai bg-gradient-to-br from-pink-200 via-purple-200 via-blue-200 to-green-200 min-h-screen text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 shadow-2xl py-8 border-b-8 border-rainbow">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h1 class="text-5xl font-bold text-white mb-4 drop-shadow-lg animate-bounce-slow">
+        🌈 Play to Learn - เรียนรู้ภาษาไทยและอังกฤษ 🎉
+      </h1>
+      <p class="text-2xl text-white font-semibold drop-shadow-md">
+        🎯 เรียนรู้พยัญชนะไทย สระ ตัวเลข และคำศัพท์ภาษาอังกฤษ (แตะการ์ดเพื่อฟังเสียง) 🔊
+      </p>
+      <div id="player-info" class="mt-4 bg-white bg-opacity-20 rounded-2xl p-4 inline-block">
+        <span id="current-player" class="text-xl font-bold">🧩 ทั่วไป - ผู้เล่น</span>
+        <span id="current-score" class="text-xl font-bold ml-4">คะแนน: 0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Menu -->
+  <nav class="max-w-6xl mx-auto px-4 py-6">
+    <div class="flex flex-wrap justify-center gap-4">
+      <button onclick="showSection('consonants')" class="nav-btn bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full font-bold hover:from-yellow-500 hover:to-orange-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        📝 พยัญชนะไทย
+      </button>
+      <button onclick="showSection('vowels')" class="nav-btn bg-gradient-to-r from-purple-400 to-pink-500 text-white px-6 py-3 rounded-full font-bold hover:from-purple-500 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        🎵 สระไทย
+      </button>
+      <button onclick="showSection('numbers')" class="nav-btn bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-full font-bold hover:from-green-500 hover:to-blue-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        🔢 ตัวเลขไทย
+      </button>
+      <button onclick="showSection('tones')" class="nav-btn bg-gradient-to-r from-orange-400 to-red-500 text-white px-6 py-3 rounded-full font-bold hover:from-orange-500 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        🎼 วรรณยุกต์
+      </button>
+      <button onclick="showSection('thai-vocab')" class="nav-btn bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-full font-bold hover:from-teal-500 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        📚 คำศัพท์ไทย
+      </button>
+      <button onclick="showSection('english-alphabet')" class="nav-btn bg-gradient-to-r from-indigo-400 to-blue-500 text-white px-6 py-3 rounded-full font-bold hover:from-indigo-500 hover:to-blue-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        🔤 A-Z อังกฤษ
+      </button>
+      <button onclick="showSection('english-vocab')" class="nav-btn bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full font-bold hover:from-red-500 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white">
+        🌟 คำศัพท์อังกฤษ
+      </button>
+      <button onclick="showLeaderboard()" class="nav-btn bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-6 py-3 rounded-full font-bold hover:from-yellow-600 hover:to-amber-700 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white animate-pulse-fast">
+        🏆 อันดับคะแนน
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 pb-8">
+    <!-- Consonants Section -->
+    <div id="consonants-section" class="section-content">
+      <div class="bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-yellow-300">
+        <h2 class="text-6xl font-bold text-yellow-600 mb-8 text-center drop-shadow-lg animate-wiggle">📝 พยัญชนะไทย 🌟</h2>
+
+        <!-- Gallery/Grid Toggle -->
+        <div class="text-center mb-6">
+          <button id="toggle-consonants" onclick="toggleView('consonants')" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+            📋 ดูแบบตาราง ✨
+          </button>
+        </div>
+
+        <!-- Gallery View -->
+        <div id="consonants-gallery" class="gallery-view">
+          <!-- Gallery controls and display will be here -->
+        </div>
+
+        <!-- Grid View -->
+        <div id="consonants-grid" class="grid-view hidden">
+          <!-- Grid will be populated here -->
+        </div>
+
+        <!-- Game Button -->
+        <div class="text-center mt-8">
+          <button onclick="startGame('consonants')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+            🎮 เล่นเกมทดสอบ! 🏆
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other sections will follow the same pattern -->
+    <div id="vowels-section" class="section-content hidden"></div>
+    <div id="numbers-section" class="section-content hidden"></div>
+    <div id="tones-section" class="section-content hidden"></div>
+    <div id="thai-vocab-section" class="section-content hidden"></div>
+    <div id="english-alphabet-section" class="section-content hidden"></div>
+    <div id="english-vocab-section" class="section-content hidden"></div>
+  </main>
+
+  <!-- Game Modal -->
+  <div id="game-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl p-8 shadow-2xl border-4 border-purple-300 max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+      <div class="text-center mb-6">
+        <h2 id="game-title" class="text-5xl font-bold text-purple-600 mb-4 animate-bounce">🎮 เกมทดสอบ 🏆</h2>
+        <div class="flex justify-center items-center gap-8 mb-4">
+          <div class="bg-white rounded-2xl p-4 shadow-lg">
+            <div class="text-2xl font-bold text-green-600">คะแนน: <span id="game-score">0</span></div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-lg">
+            <div class="text-2xl font-bold text-blue-600">ข้อที่: <span id="question-number">1</span>/10</div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-lg">
+            <div class="text-2xl font-bold text-red-600">เวลา: <span id="timer">30</span>s</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="game-content" class="text-center"></div>
+
+      <div class="flex justify-center gap-4 mt-6">
+        <button onclick="closeGame()" class="bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold py-3 px-6 rounded-full hover:from-gray-500 hover:to-gray-600 transition-all transform hover:scale-105">
+          ❌ ปิดเกม
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Modal -->
+  <div id="leaderboard-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-3xl p-8 shadow-2xl border-4 border-yellow-300 max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+      <h2 class="text-5xl font-bold text-yellow-600 mb-8 text-center animate-bounce">🏆 อันดับคะแนน 👑</h2>
+
+      <div id="leaderboard-content" class="space-y-4"></div>
+
+      <div class="text-center mt-8">
+        <button onclick="closeLeaderboard()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105">
+          ✨ ปิด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ===== Base Configuration ===== */
+    const IMG_BASE = "https://playtolearn-th.github.io/games/canva_ai/imgs";
+    const SOUND_BASE = "https://playtolearn-th.github.io/games/canva_ai/sounds";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJgSMNP1jLacXCtNysivFj6CK_kHEmjL8ZUxKMqEQx-Vjj3fst_ahtYDhgmeQmc9tI/exec";
+
+    /* ===== Player State (no login) ===== */
+    let currentPlayer = {
+      name: 'ผู้เล่น',
+      team: '🧩 ทั่วไป',
+      score: 0
+    };
+
+    let gameState = {
+      currentSection: 'consonants',
+      currentIndex: 0,
+      isGridView: false,
+      gameActive: false,
+      gameScore: 0,
+      questionNumber: 1,
+      timeLeft: 30,
+      gameTimer: null
+    };
+
+    /* ===== Data Arrays ===== */
+  const thaiConsonants = [
+  { ch: 'ก', name: 'กอ ไก่', img: 'ก.png', sound: 'ก.mp3' },
+  { ch: 'ข', name: 'ขอ ไข่', img: 'ข.png', sound: 'ข.mp3' },
+  { ch: 'ฃ', name: 'ฃอ ขวด', img: 'ฃ.png', sound: 'ฃ.mp3' },
+  { ch: 'ค', name: 'คอ ควาย', img: 'ค.png', sound: 'ค.mp3' },
+  { ch: 'ฅ', name: 'ฅอ คน', img: 'ฅ.png', sound: 'ฅ.mp3' },
+  { ch: 'ฆ', name: 'ฆอ ระฆัง', img: 'ฆ.png', sound: 'ฆ.mp3' },
+  { ch: 'ง', name: 'งอ งู', img: 'ง.png', sound: 'ง.mp3' },
+  { ch: 'จ', name: 'จอ จาน', img: 'จ.png', sound: 'จ.mp3' },
+  { ch: 'ฉ', name: 'ฉอ ฉิ่ง', img: 'ฉ.png', sound: 'ฉ.mp3' },
+  { ch: 'ช', name: 'ชอ ช้าง', img: 'ช.png', sound: 'ช.mp3' },
+  { ch: 'ซ', name: 'ซอ โซ่', img: 'ซ.png', sound: 'ซ.mp3' },
+  { ch: 'ฌ', name: 'ฌอ เฌอ', img: 'ฌ.png', sound: 'ฌ.mp3' },
+  { ch: 'ญ', name: 'ญอ หญิง', img: 'ญ.png', sound: 'ญ.mp3' },
+  { ch: 'ฎ', name: 'ฎอ ชฎา', img: 'ฎ.png', sound: 'ฎ.mp3' },
+  { ch: 'ฏ', name: 'ฏอ ปฏัก', img: 'ฏ.png', sound: 'ฏ.mp3' },
+  { ch: 'ฐ', name: 'ฐอ ฐาน', img: 'ฐ.png', sound: 'ฐ.mp3' },
+  { ch: 'ฑ', name: 'ฑอ มณโฑ', img: 'ฑ.png', sound: 'ฑ.mp3' },
+  { ch: 'ฒ', name: 'ฒอ ผู้เฒ่า', img: 'ฒ.png', sound: 'ฒ.mp3' },
+  { ch: 'ณ', name: 'ณอ เณร', img: 'ณ.png', sound: 'ณ.mp3' },
+  { ch: 'ด', name: 'ดอ เด็ก', img: 'ด.png', sound: 'ด.mp3' },
+  { ch: 'ต', name: 'ตอ เต่า', img: 'ต.png', sound: 'ต.mp3' },
+  { ch: 'ถ', name: 'ถอ ถุง', img: 'ถ.png', sound: 'ถ.mp3' },
+  { ch: 'ท', name: 'ทอ ทหาร', img: 'ท.png', sound: 'ท.mp3' },
+  { ch: 'ธ', name: 'ธอ ธง', img: 'ธ.png', sound: 'ธ.mp3' },
+  { ch: 'น', name: 'นอ หนู', img: 'น.png', sound: 'น.mp3' },
+  { ch: 'บ', name: 'บอ ใบไม้', img: 'บ.png', sound: 'บ.mp3' },
+  { ch: 'ป', name: 'ปอ ปลา', img: 'ป.png', sound: 'ป.mp3' },
+  { ch: 'ผ', name: 'ผอ ผึ้ง', img: 'ผ.png', sound: 'ผ.mp3' },
+  { ch: 'ฝ', name: 'ฝอ ฝา', img: 'ฝ.png', sound: 'ฝ.mp3' },
+  { ch: 'พ', name: 'พอ พาน', img: 'พ.png', sound: 'พ.mp3' },
+  { ch: 'ฟ', name: 'ฟอ ฟัน', img: 'ฟ.png', sound: 'ฟ.mp3' },
+  { ch: 'ภ', name: 'ภอ สำเภา', img: 'ภ.png', sound: 'ภ.mp3' },
+  { ch: 'ม', name: 'มอ ม้า', img: 'ม.png', sound: 'ม.mp3' },
+  { ch: 'ย', name: 'ยอ ยักษ์', img: 'ย.png', sound: 'ย.mp3' },
+  { ch: 'ร', name: 'รอ เรือ', img: 'ร.png', sound: 'ร.mp3' },
+  { ch: 'ล', name: 'ลอ ลิง', img: 'ล.png', sound: 'ล.mp3' },
+  { ch: 'ว', name: 'วอ แหวน', img: 'ว.png', sound: 'ว.mp3' },
+  { ch: 'ศ', name: 'ศอ ศาลา', img: 'ศ.png', sound: 'ศ.mp3' },
+  { ch: 'ษ', name: 'ษอ ฤๅษี', img: 'ษ.png', sound: 'ษ.mp3' },
+  { ch: 'ส', name: 'สอ เสือ', img: 'ส.png', sound: 'ส.mp3' },
+  { ch: 'ห', name: 'หอ หีบ', img: 'ห.png', sound: 'ห.mp3' },
+  { ch: 'ฬ', name: 'ฬอ จุฬา', img: 'ฬ.png', sound: 'ฬ.mp3' },
+  { ch: 'อ', name: 'ออ อ่าง', img: 'อ.png', sound: 'อ.mp3' },
+  { ch: 'ฮ', name: 'ฮอ นกฮูก', img: 'ฮ.png', sound: 'ฮ.mp3' }
+];
+
+const thaiVowels = [ { ch: 'อะ', name: 'สระอะ', emoji: '-ะ', sound: 'สะ-หระ-อะ.mp3' }, { ch: 'อา', name: 'สระอา', emoji: '-า', sound: 'สะ-หระ-อา.mp3' }, { ch: 'อิ', name: 'สระอิ', emoji: '-ิ', sound: 'สะ-หระ-อิ.mp3' }, { ch: 'อี', name: 'สระอี', emoji: '-ี', sound: 'สะ-หระ-อี.mp3' }, { ch: 'อึ', name: 'สระอึ', emoji: '-ึ', sound: 'สะ-หระ-อึ.mp3' }, { ch: 'อือ', name: 'สระอือ', emoji: '-ื', sound: 'สะ-หระ-อือ.mp3' }, { ch: 'อุ', name: 'สระอุ', emoji: '-ุ', sound: 'สะ-หระ-อุ.mp3' }, { ch: 'อู', name: 'สระอู', emoji: '-ู', sound: 'สะ-หระ-อู.mp3' }, { ch: 'เอะ', name: 'สระเอะ', emoji: 'เ-ะ', sound: 'สะ-หระ-เอะ.mp3' }, { ch: 'เอ', name: 'สระเอ', emoji: 'เ-', sound: 'สะ-หระ-เอ.mp3' }, { ch: 'แอะ', name: 'สระแอะ', emoji: 'แ-ะ', sound: 'สะ-หระ-แอะ.mp3' }, { ch: 'แอ', name: 'สระแอ', emoji: 'แ-', sound: 'สะ-หระ-แอ.mp3' }, { ch: 'โอะ', name: 'สระโอะ', emoji: 'โ-ะ', sound: 'สะ-หระ-โอะ.mp3' }, { ch: 'โอ', name: 'สระโอ', emoji: 'โ-', sound: 'สะ-หระ-โอ.mp3' }, { ch: 'เอาะ', name: 'สระเอาะ', emoji: 'เ-าะ', sound: 'สะ-หระ-เอาะ.mp3' }, { ch: 'ออ', name: 'สระออ', emoji: '-อ', sound: 'สะ-หระ-ออ.mp3' }, { ch: 'เออะ', name: 'สระเออะ', emoji: 'เ-อะ', sound: 'สะ-หระ-เออะ.mp3' }, { ch: 'เออ', name: 'สระเออ', emoji: 'เ-อ', sound: 'สะ-หระ-เออ.mp3' }, { ch: 'เอียะ', name: 'สระเอียะ', emoji: 'เ-ียะ', sound: 'สะ-หระ-เอียะ.mp3' }, { ch: 'เอีย', name: 'สระเอีย', emoji: 'เ-ีย', sound: 'สะ-หระ-เอีย.mp3' }, { ch: 'เอือะ', name: 'สระเอือะ', emoji: 'เ-ือะ', sound: 'สะ-หระ-เอือะ.mp3' }, { ch: 'เอือ', name: 'สระเอือ', emoji: 'เ-ือ', sound: 'สะ-หระ-เอือ.mp3' }, { ch: 'อัวะ', name: 'สระอัวะ', emoji: '-ัวะ', sound: 'สะ-หระ-อัวะ.mp3' }, { ch: 'อัว', name: 'สระอัว', emoji: '-ัว', sound: 'สะ-หระ-อัว.mp3' }, { ch: 'อำ', name: 'สระอำ', emoji: '-ำ', sound: 'สะ-หระ-อำ.mp3' }, { ch: 'ใอ', name: 'สระใอ (ไม้ม้วน)', emoji: 'ใ-', sound: 'สะ-หระ-ใอ (ไม้ม้วน).mp3' }, { ch: 'ไอ', name: 'สระไอ (ไม้มลาย)', emoji: 'ไ-', sound: 'สะ-หระ-ไอ (ไม้มลาย).mp3' }, { ch: 'เอา', name: 'สระเอา', emoji: 'เ-า', sound: 'สะ-หระ-เอา.mp3' }, { ch: 'ฤ', name: 'ฤ', emoji: 'ฤ', sound: 'ฤ.mp3' }, { ch: 'ฤๅ', name: 'ฤๅ', emoji: 'ฤๅ', sound: 'ฤๅ.mp3' }, { ch: 'ฦ', name: 'ฦ', emoji: 'ฦ', sound: 'ฦ.mp3' }, { ch: 'ฦๅ', name: 'ฦๅ', emoji: 'ฦๅ', sound: 'ฦๅ.mp3' } ];
+
+    const thaiNumbers = [
+      { ch: '๐', name: 'ศูนย์', emoji: '', arabic: '0' },
+      { ch: '๑', name: 'หนึ่ง', emoji: '🐣', arabic: '1' },
+      { ch: '๒', name: 'สอง', emoji: '🦢🦢', arabic: '2' },
+      { ch: '๓', name: 'สาม', emoji: '🐻🐻🐻', arabic: '3' },
+      { ch: '๔', name: 'สี่', emoji: '🍀', arabic: '4' },
+      { ch: '๕', name: 'ห้า', emoji: '⭐⭐⭐⭐⭐', arabic: '5' },
+      { ch: '๖', name: 'หก', emoji: '🐝🐝🐝🐝🐝🐝', arabic: '6' },
+      { ch: '๗', name: 'เจ็ด', emoji: '🌈', arabic: '7' },
+      { ch: '๘', name: 'แปด', emoji: '🐙', arabic: '8' },
+      { ch: '๙', name: 'เก้า', emoji: '🌸🌸🌸🌸🌸🌸🌸🌸🌸', arabic: '9' },
+      { ch: '๑๐', name: 'สิบ', emoji: '⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐', arabic: '10' }
+    ];
+
+    const thaiToneMarks = [
+      { emoji: '📉', ch: '่', name: 'ไม้เอก', desc: '' },
+      { emoji: '📈', ch: '้', name: 'ไม้โท', desc: '' },
+      { emoji: '⬆️', ch: '๊', name: 'ไม้ตรี', desc: '' },
+      { emoji: '🎵', ch: '๋', name: 'ไม้จัตวา', desc: '' }
+    ];
+
+    const thaiVocabulary = {
+      animals: [
+        { word: 'แมว', reading: 'แมว', meaning: 'สัตว์เลี้ยงที่ชอบจับหนู', emoji: '🐱', img: 'cat_thai.png' },
+        { word: 'หมา', reading: 'หมา', meaning: 'สัตว์เลี้ยงที่ซื่อสัตย์', emoji: '🐶', img: 'dog_thai.png' },
+        { word: 'ช้าง', reading: 'ช้าง', meaning: 'สัตว์ใหญ่ที่มีงวง', emoji: '🐘', img: 'elephant_thai.png' },
+        { word: 'เสือ', reading: 'เสือ', meaning: 'สัตว์ป่าที่มีลายดำ', emoji: '🐅', img: 'tiger_thai.png' },
+        { word: 'ลิง', reading: 'ลิง', meaning: 'สัตว์ที่ชอบกินกล้วย', emoji: '🐵', img: 'monkey_thai.png' },
+        { word: 'นก', reading: 'นก', meaning: 'สัตว์ที่บินได้', emoji: '🐦', img: 'bird_thai.png' },
+        { word: 'ปลา', reading: 'ปลา', meaning: 'สัตว์ที่อยู่ในน้ำ', emoji: '🐟', img: 'fish_thai.png' },
+        { word: 'กบ', reading: 'กบ', meaning: 'สัตว์ที่กระโดดได้', emoji: '🐸', img: 'frog_thai.png' }
+      ],
+      fruits: [
+        { word: 'กล้วย', reading: 'กล้วย', meaning: 'ผลไม้สีเหลือง', emoji: '🍌', img: 'banana_thai.png' },
+        { word: 'ส้ม', reading: 'ส้ม', meaning: 'ผลไม้รสเปรี้ยว', emoji: '🍊', img: 'orange_thai.png' },
+        { word: 'แอปเปิ้ล', reading: 'แอป-เปิ้ล', meaning: 'ผลไม้สีแดง', emoji: '🍎', img: 'apple_thai.png' },
+        { word: 'มะม่วง', reading: 'มะ-ม่วง', meaning: 'ผลไม้หวานๆ', emoji: '🥭', img: 'mango_thai.png' },
+        { word: 'แตงโม', reading: 'แตง-โม', meaning: 'ผลไม้ใหญ่สีเขียว', emoji: '🍉', img: 'watermelon_thai.png' },
+        { word: 'องุ่น', reading: 'อ-งุ่น', meaning: 'ผลไม้เป็นพวง', emoji: '🍇', img: 'grape_thai.png' },
+        { word: 'สับปะรด', reading: 'สับ-ปะ-รด', meaning: 'ผลไม้มีหนาม', emoji: '🍍', img: 'pineapple_thai.png' },
+        { word: 'มะพร้าว', reading: 'มะ-พร้าว', meaning: 'ผลไม้มีน้ำหวาน', emoji: '🥥', img: 'coconut_thai.png' }
+      ],
+      colors: [
+        { word: 'แดง', reading: 'แดง', meaning: 'สีของเลือด', emoji: '🔴', img: 'red_thai.png' },
+        { word: 'เขียว', reading: 'เขียว', meaning: 'สีของใบไม้', emoji: '🟢', img: 'green_thai.png' },
+        { word: 'น้ำเงิน', reading: 'น้ำ-เงิน', meaning: 'สีของท้องฟ้า', emoji: '🔵', img: 'blue_thai.png' },
+        { word: 'เหลือง', reading: 'เหลือง', meaning: 'สีของดวงอาทิตย์', emoji: '🟡', img: 'yellow_thai.png' },
+        { word: 'ส้ม', reading: 'ส้ม', meaning: 'สีของผลส้ม', emoji: '🟠', img: 'orange_color_thai.png' },
+        { word: 'ม่วง', reading: 'ม่วง', meaning: 'สีของมะเขือ', emoji: '🟣', img: 'purple_thai.png' },
+        { word: 'ชมพู', reading: 'ชม-พู', meaning: 'สีของดอกไม้', emoji: '🩷', img: 'pink_thai.png' },
+        { word: 'ดำ', reading: 'ดำ', meaning: 'สีของคืน', emoji: '⚫', img: 'black_thai.png' }
+      ],
+      body: [
+        { word: 'หัว', reading: 'หัว', meaning: 'ส่วนบนของร่างกาย', emoji: '👤', img: 'head_thai.png' },
+        { word: 'ตา', reading: 'ตา', meaning: 'อวัยวะที่ใช้มอง', emoji: '👁️', img: 'eye_thai.png' },
+        { word: 'จมูก', reading: 'จ-มูก', meaning: 'อวัยวะที่ใช้หายใจ', emoji: '👃', img: 'nose_thai.png' },
+        { word: 'ปาก', reading: 'ปาก', meaning: 'อวัยวะที่ใช้กิน', emoji: '👄', img: 'mouth_thai.png' },
+        { word: 'หู', reading: 'หู', meaning: 'อวัยวะที่ใช้ฟัง', emoji: '👂', img: 'ear_thai.png' },
+        { word: 'มือ', reading: 'มือ', meaning: 'อวัยวะที่ใช้จับ', emoji: '✋', img: 'hand_thai.png' },
+        { word: 'เท้า', reading: 'เท้า', meaning: 'อวัยวะที่ใช้เดิน', emoji: '🦶', img: 'foot_thai.png' },
+        { word: 'ฟัน', reading: 'ฟัน', meaning: 'อวัยวะที่ใช้เคี้ยว', emoji: '🦷', img: 'tooth_thai.png' }
+      ],
+      food: [
+        { word: 'ข้าว', reading: 'ข้าว', meaning: 'อาหารหลักของคนไทย', emoji: '🍚', img: 'rice_thai.png' },
+        { word: 'น้ำ', reading: 'น้ำ', meaning: 'ของเหลวใส', emoji: '💧', img: 'water_thai.png' },
+        { word: 'นม', reading: 'นม', meaning: 'ของเหลวสีขาว', emoji: '🥛', img: 'milk_thai.png' },
+        { word: 'ขนมปัง', reading: 'ขนม-ปัง', meaning: 'อาหารทำจากแป้ง', emoji: '🍞', img: 'bread_thai.png' },
+        { word: 'ไข่', reading: 'ไข่', meaning: 'อาหารจากไก่', emoji: '🥚', img: 'egg_thai.png' },
+        { word: 'ผัก', reading: 'ผัก', meaning: 'อาหารสีเขียว', emoji: '🥬', img: 'vegetable_thai.png' },
+        { word: 'เนื้อ', reading: 'เนื้อ', meaning: 'อาหารจากสัตว์', emoji: '🥩', img: 'meat_thai.png' },
+        { word: 'ผลไม้', reading: 'ผล-ไม้', meaning: 'อาหารหวานจากต้นไม้', emoji: '🍎', img: 'fruit_thai.png' }
+      ]
+    };
+
+    const englishAlphabet = [
+      { ch: 'A', name: 'เอ', word: 'Apple', emoji: '🍎' },
+      { ch: 'B', name: 'บี', word: 'Ball', emoji: '⚽' },
+      { ch: 'C', name: 'ซี', word: 'Cat', emoji: '🐱' },
+      { ch: 'D', name: 'ดี', word: 'Dog', emoji: '🐶' },
+      { ch: 'E', name: 'อี', word: 'Elephant', emoji: '🐘' },
+      { ch: 'F', name: 'เอฟ', word: 'Fish', emoji: '🐟' },
+      { ch: 'G', name: 'จี', word: 'Giraffe', emoji: '🦒' },
+      { ch: 'H', name: 'เอช', word: 'House', emoji: '🏠' },
+      { ch: 'I', name: 'ไอ', word: 'Ice cream', emoji: '🍦' },
+      { ch: 'J', name: 'เจ', word: 'Juice', emoji: '🧃' },
+      { ch: 'K', name: 'เค', word: 'Kite', emoji: '🪁' },
+      { ch: 'L', name: 'เอล', word: 'Lion', emoji: '🦁' },
+      { ch: 'M', name: 'เอม', word: 'Monkey', emoji: '🐵' },
+      { ch: 'N', name: 'เอน', word: 'Nose', emoji: '👃' },
+      { ch: 'O', name: 'โอ', word: 'Orange', emoji: '🍊' },
+      { ch: 'P', name: 'พี', word: 'Pig', emoji: '🐷' },
+      { ch: 'Q', name: 'คิว', word: 'Queen', emoji: '👸' },
+      { ch: 'R', name: 'อาร์', word: 'Rabbit', emoji: '🐰' },
+      { ch: 'S', name: 'เอส', word: 'Sun', emoji: '☀️' },
+      { ch: 'T', name: 'ที', word: 'Tiger', emoji: '🐅' },
+      { ch: 'U', name: 'ยู', word: 'Umbrella', emoji: '☂️' },
+      { ch: 'V', name: 'วี', word: 'Van', emoji: '🚐' },
+      { ch: 'W', name: 'ดับเบิลยู', word: 'Water', emoji: '💧' },
+      { ch: 'X', name: 'เอ็กซ์', word: 'X-ray', emoji: '🩻' },
+      { ch: 'Y', name: 'วาย', word: 'Yellow', emoji: '🟡' },
+      { ch: 'Z', name: 'แซด', word: 'Zebra', emoji: '🦓' }
+    ];
+
+    const englishVocabulary = {
+      animals: [
+        { en: 'Cat', th: 'แมว', emoji: '🐱', img: 'cat.png' },
+        { en: 'Dog', th: 'หมา', emoji: '🐶', img: 'dog.png' },
+        { en: 'Bird', th: 'นก', emoji: '🐦', img: 'bird.png' },
+        { en: 'Fish', th: 'ปลา', emoji: '🐟', img: 'fish.png' },
+        { en: 'Elephant', th: 'ช้าง', emoji: '🐘', img: 'elephant.png' },
+        { en: 'Lion', th: 'สิงโต', emoji: '🦁', img: 'lion.png' },
+        { en: 'Tiger', th: 'เสือ', emoji: '🐅', img: 'tiger.png' },
+        { en: 'Monkey', th: 'ลิง', emoji: '🐵', img: 'monkey.png' },
+        { en: 'Rabbit', th: 'กระต่าย', emoji: '🐰', img: 'rabbit.png' },
+        { en: 'Bear', th: 'หมี', emoji: '🐻', img: 'bear.png' },
+        { en: 'Cow', th: 'วัว', emoji: '🐄', img: 'cow.png' },
+        { en: 'Pig', th: 'หมู', emoji: '🐷', img: 'pig.png' }
+      ],
+      fruits: [
+        { en: 'Apple', th: 'แอปเปิ้ล', emoji: '🍎', img: 'apple.png' },
+        { en: 'Banana', th: 'กล้วย', emoji: '🍌', img: 'banana.png' },
+        { en: 'Orange', th: 'ส้ม', emoji: '🍊', img: 'orange.png' },
+        { en: 'Grape', th: 'องุ่น', emoji: '🍇', img: 'grape.png' },
+        { en: 'Strawberry', th: 'สตรอเบอร์รี่', emoji: '🍓', img: 'strawberry.png' },
+        { en: 'Watermelon', th: 'แตงโม', emoji: '🍉', img: 'watermelon.png' },
+        { en: 'Pineapple', th: 'สับปะรด', emoji: '🍍', img: 'pineapple.png' },
+        { en: 'Mango', th: 'มะม่วง', emoji: '🥭', img: 'mango.png' },
+        { en: 'Coconut', th: 'มะพร้าว', emoji: '🥥', img: 'coconut.png' },
+        { en: 'Peach', th: 'ลูกพีช', emoji: '🍑', img: 'peach.png' },
+        { en: 'Cherry', th: 'เชอร์รี่', emoji: '🍒', img: 'cherry.png' },
+        { en: 'Lemon', th: 'มะนาว', emoji: '🍋', img: 'lemon.png' }
+      ],
+      colors: [
+        { en: 'Red', th: 'สีแดง', emoji: '🔴', img: 'red.png' },
+        { en: 'Blue', th: 'สีน้ำเงิน', emoji: '🔵', img: 'blue.png' },
+        { en: 'Green', th: 'สีเขียว', emoji: '🟢', img: 'green.png' },
+        { en: 'Yellow', th: 'สีเหลือง', emoji: '🟡', img: 'yellow.png' },
+        { en: 'Orange', th: 'สีส้ม', emoji: '🟠', img: 'orange_color.png' },
+        { en: 'Purple', th: 'สีม่วง', emoji: '🟣', img: 'purple.png' },
+        { en: 'Pink', th: 'สีชมพู', emoji: '🩷', img: 'pink.png' },
+        { en: 'Brown', th: 'สีน้ำตาล', emoji: '🤎', img: 'brown.png' },
+        { en: 'Black', th: 'สีดำ', emoji: '⚫', img: 'black.png' },
+        { en: 'White', th: 'สีขาว', emoji: '⚪', img: 'white.png' },
+        { en: 'Gray', th: 'สีเทา', emoji: '🩶', img: 'gray.png' },
+        { en: 'Gold', th: 'สีทอง', emoji: '🟨', img: 'gold.png' }
+      ]
+    };
+
+    /* ===== Initialize Application (auto, no login) ===== */
+    function initializeApp() {
+      // set initial display name/team
+      document.getElementById('current-player').textContent = `${currentPlayer.team} - ${currentPlayer.name}`;
+      document.getElementById('current-score').textContent = `คะแนน: ${currentPlayer.score}`;
+      showSection('consonants');
+      createAllSections();
+    }
+    window.addEventListener('DOMContentLoaded', initializeApp);
+
+    /* ===== Section Management ===== */
+    function showSection(sectionName) {
+      document.querySelectorAll('.section-content').forEach(section => section.classList.add('hidden'));
+      document.getElementById(`${sectionName}-section`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('animate-pulse-fast'));
+
+      gameState.currentSection = sectionName;
+      gameState.currentIndex = 0;
+      gameState.isGridView = false;
+
+      initializeSection(sectionName);
+    }
+
+    /* ===== Create All Sections ===== */
+    function createAllSections() {
+      createConsonantsSection();
+      createVowelsSection();
+      createNumbersSection();
+      createTonesSection();
+      createThaiVocabSection();
+      createEnglishAlphabetSection();
+      createEnglishVocabSection();
+    }
+
+    /* ===== Create Consonants Section ===== */
+    function createConsonantsSection() {
+      const section = document.getElementById('consonants-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-yellow-300">
+          <h2 class="text-6xl font-bold text-yellow-600 mb-8 text-center drop-shadow-lg animate-wiggle">📝 พยัญชนะไทย 🌟</h2>
+          <div class="text-center mb-6">
+            <button id="toggle-consonants" onclick="toggleView('consonants')" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="consonants-gallery" class="gallery-view">
+            ${createGalleryView('consonants', thaiConsonants)}
+          </div>
+          <div id="consonants-grid" class="grid-view hidden">
+            ${createGridView('consonants', thaiConsonants)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('consonants')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ===== Create Gallery View ===== */
+    function createGalleryView(sectionName, dataArray) {
+      return `
+        <div class="flex justify-between items-center mb-6">
+          <button id="prev-${sectionName}" onclick="previousItem('${sectionName}')" class="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white p-4 rounded-full shadow-xl transition-all transform hover:scale-110">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+
+          <div class="text-center bg-white rounded-2xl p-4 shadow-lg border-4 border-pink-300">
+            <div class="text-2xl font-bold text-purple-600 mb-2">
+              🎯 <span id="${sectionName}-counter">1</span> / ${dataArray.length} 🎯
+            </div>
+            <div class="text-lg text-pink-600 font-semibold">✨ แตะการ์ดเพื่อฟังเสียง ✨</div>
+          </div>
+
+          <button id="next-${sectionName}" onclick="nextItem('${sectionName}')" class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white p-4 rounded-full shadow-xl transition-all transform hover:scale-110">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div id="${sectionName}-display" class="max-w-2xl mx-auto">
+          <div class="rounded-3xl p-8 cursor-pointer hover:shadow-2xl transition-all transform hover:scale-105 border-4 border-white shadow-xl"
+               onclick="playCurrentSound('${sectionName}')"
+               style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #fecfef 50%, #a8edea 75%, #fed6e3 100%);">
+            <div class="flex items-center justify-center gap-8">
+              <div class="flex-shrink-0">
+                <div class="w-64 h-80 bg-white rounded-2xl shadow-lg flex items-center justify-center overflow-hidden">
+                  <img id="${sectionName}-image" src="" alt="" class="w-60 h-76 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                  <div id="${sectionName}-emoji" class="text-4xl hidden">🐓</div>
+                </div>
+              </div>
+
+              <div class="flex flex-col items-center text-center">
+                <div id="${sectionName}-char" class="font-bold text-gray-800 mb-2 leading-none" style="font-size: 10rem; height: 10rem;">ก</div>
+                <div id="${sectionName}-name" class="text-3xl font-bold text-gray-700 mb-6">กอ ไก่</div>
+                <button class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-2xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white">
+                  🔊 ฟังเสียง 🎵
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-center mt-8 space-x-2 overflow-x-auto pb-2">
+          <div id="${sectionName}-dots" class="flex space-x-2"></div>
+        </div>
+      `;
+    }
+
+    /* ===== Create Grid View ===== */
+    function createGridView(sectionName, dataArray) {
+      return `
+        <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4" id="${sectionName}-grid-container"></div>
+        <div class="text-center mt-6">
+          <span class="text-gray-600">ทั้งหมด ${dataArray.length} รายการ</span>
+        </div>
+      `;
+    }
+
+    /* ===== Initialize Section ===== */
+    function initializeSection(sectionName) {
+      const dataMap = {
+        'consonants': thaiConsonants,
+        'vowels': thaiVowels,
+        'numbers': thaiNumbers,
+        'tones': thaiToneMarks,
+        'thai-vocab': thaiVocabulary.animals,
+        'english-alphabet': englishAlphabet,
+        'english-vocab': englishVocabulary.animals
+      };
+
+      const data = dataMap[sectionName];
+      if (data) {
+        updateDisplay(sectionName, data);
+        createNavigationDots(sectionName, data);
+        populateGrid(sectionName, data);
+      }
+    }
+
+    /* ===== Update Display ===== */
+    function updateDisplay(sectionName, dataArray) {
+      const currentIndex = gameState.currentIndex;
+      const item = dataArray[currentIndex];
+      if (!item) return;
+
+      const charElement = document.getElementById(`${sectionName}-char`);
+      const nameElement = document.getElementById(`${sectionName}-name`);
+      const imageElement = document.getElementById(`${sectionName}-image`);
+      const emojiElement = document.getElementById(`${sectionName}-emoji`);
+      const counterElement = document.getElementById(`${sectionName}-counter`);
+
+      if (charElement) charElement.textContent = item.ch || item.word || item.en;
+      if (nameElement) nameElement.textContent = item.name || item.reading || item.th;
+      if (counterElement) counterElement.textContent = currentIndex + 1;
+
+      if (imageElement && item.img) {
+        imageElement.src = `${IMG_BASE}/${item.img}`;
+        imageElement.alt = item.name || item.word || item.en;
+      }
+
+      if (emojiElement) {
+        if (item.emoji && !item.img) {
+          emojiElement.textContent = item.emoji;
+          emojiElement.classList.remove('hidden');
+          if (imageElement) imageElement.style.display = 'none';
+        } else {
+          emojiElement.classList.add('hidden');
+          if (imageElement) imageElement.style.display = 'block';
+        }
+      }
+
+      const prevBtn = document.getElementById(`prev-${sectionName}`);
+      const nextBtn = document.getElementById(`next-${sectionName}`);
+      if (prevBtn) prevBtn.disabled = currentIndex === 0;
+      if (nextBtn) nextBtn.disabled = currentIndex === dataArray.length - 1;
+
+      updateNavigationDots(sectionName, dataArray);
+    }
+
+    /* ===== Navigation Functions ===== */
+    function previousItem(sectionName) {
+      if (gameState.currentIndex > 0) {
+        gameState.currentIndex--;
+        const dataMap = {
+          'consonants': thaiConsonants,
+          'vowels': thaiVowels,
+          'numbers': thaiNumbers,
+          'tones': thaiToneMarks,
+          'thai-vocab': thaiVocabulary.animals,
+          'english-alphabet': englishAlphabet,
+          'english-vocab': englishVocabulary.animals
+        };
+        updateDisplay(sectionName, dataMap[sectionName]);
+      }
+    }
+
+    function nextItem(sectionName) {
+      const dataMap = {
+        'consonants': thaiConsonants,
+        'vowels': thaiVowels,
+        'numbers': thaiNumbers,
+        'tones': thaiToneMarks,
+        'thai-vocab': thaiVocabulary.animals,
+        'english-alphabet': englishAlphabet,
+        'english-vocab': englishVocabulary.animals
+      };
+      const data = dataMap[sectionName];
+
+      if (gameState.currentIndex < data.length - 1) {
+        gameState.currentIndex++;
+        updateDisplay(sectionName, data);
+      }
+    }
+
+    function goToItem(sectionName, index) {
+      gameState.currentIndex = index;
+      const dataMap = {
+        'consonants': thaiConsonants,
+        'vowels': thaiVowels,
+        'numbers': thaiNumbers,
+        'tones': thaiToneMarks,
+        'thai-vocab': thaiVocabulary.animals,
+        'english-alphabet': englishAlphabet,
+        'english-vocab': englishVocabulary.animals
+      };
+      updateDisplay(sectionName, dataMap[sectionName]);
+    }
+
+    /* ===== Toggle View ===== */
+    function toggleView(sectionName) {
+      const galleryView = document.getElementById(`${sectionName}-gallery`);
+      const gridView = document.getElementById(`${sectionName}-grid`);
+      const toggleButton = document.getElementById(`toggle-${sectionName}`);
+
+      gameState.isGridView = !gameState.isGridView;
+
+      if (gameState.isGridView) {
+        galleryView.classList.add('hidden');
+        gridView.classList.remove('hidden');
+        toggleButton.textContent = '🔄 กลับสู่แกลเลอรี ✨';
+        toggleButton.className = 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl';
+      } else {
+        galleryView.classList.remove('hidden');
+        gridView.classList.add('hidden');
+        toggleButton.textContent = '📋 ดูแบบตาราง ✨';
+        toggleButton.className = 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl';
+      }
+    }
+
+    /* ===== Create Navigation Dots ===== */
+    function createNavigationDots(sectionName, dataArray) {
+      const dotsContainer = document.getElementById(`${sectionName}-dots`);
+      if (!dotsContainer) return;
+
+      dotsContainer.innerHTML = '';
+
+      dataArray.forEach((item, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'w-8 h-8 rounded-full text-sm font-bold transition-all transform hover:scale-110';
+        dot.textContent = item.ch || item.word?.[0] || item.en?.[0] || (index + 1);
+        dot.onclick = () => goToItem(sectionName, index);
+        dotsContainer.appendChild(dot);
+      });
+
+      updateNavigationDots(sectionName, dataArray);
+    }
+
+    /* ===== Update Navigation Dots ===== */
+    function updateNavigationDots(sectionName, dataArray) {
+      const dots = document.querySelectorAll(`#${sectionName}-dots button`);
+      dots.forEach((dot, index) => {
+        if (index === gameState.currentIndex) {
+          dot.className = 'w-8 h-8 rounded-full text-sm font-bold bg-blue-500 text-white shadow-lg transition-all transform scale-110';
+        } else {
+          dot.className = 'w-8 h-8 rounded-full text-sm font-bold bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all transform hover:scale-110';
+        }
+      });
+    }
+
+    /* ===== Populate Grid ===== */
+    function populateGrid(sectionName, dataArray) {
+      const gridContainer = document.getElementById(`${sectionName}-grid-container`);
+      if (!gridContainer) return;
+
+      gridContainer.innerHTML = '';
+
+      dataArray.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'bg-gradient-to-br from-white to-gray-100 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 cursor-pointer text-center border-2 border-gray-200 hover:border-purple-300';
+        card.onclick = () => {
+          playItemSound(item, sectionName);
+        };
+
+        const displayText = item.ch || item.word || item.en;
+        const subText = item.name || item.reading || item.th;
+        const emoji = item.emoji || '🔊';
+
+        card.innerHTML = `
+          <div class="relative w-full h-16 mb-2 bg-white rounded-lg overflow-hidden flex items-center justify-center">
+            ${item.img ?
+              `<img src="${IMG_BASE}/${item.img}" alt="${displayText}" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+               <div class="text-2xl hidden">${emoji}</div>` :
+              `<div class="text-2xl">${emoji}</div>`
+            }
+            <div class="absolute bottom-0 right-0 bg-green-500 text-white rounded-full px-1 py-0.5 text-xs">🔊</div>
+          </div>
+          <div class="text-xl font-bold mb-1 text-purple-600">${displayText}</div>
+          <div class="text-xs text-gray-600 truncate">${subText}</div>
+        `;
+
+        gridContainer.appendChild(card);
+      });
+    }
+
+    /* ===== Sound Functions ===== */
+    let currentAudio = null;
+
+    function playCurrentSound(sectionName) {
+      const dataMap = {
+        'consonants': thaiConsonants,
+        'vowels': thaiVowels,
+        'numbers': thaiNumbers,
+        'tones': thaiToneMarks,
+        'thai-vocab': thaiVocabulary.animals,
+        'english-alphabet': englishAlphabet,
+        'english-vocab': englishVocabulary.animals
+      };
+
+      const data = dataMap[sectionName];
+      const item = data[gameState.currentIndex];
+      playItemSound(item, sectionName);
+    }
+
+    function playItemSound(item, sectionName) {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+
+      const displayText = item.name || item.reading || item.word || item.en || item.ch;
+
+      if (item.sound) {
+        const audioUrl = `${SOUND_BASE}/${item.sound}`;
+        const audio = new Audio(audioUrl);
+        currentAudio = audio;
+
+        audio.onloadstart = () => {
+          showSoundFeedback(`🔊 ${displayText}`, 'success');
+        };
+
+        audio.onended = () => {
+          currentAudio = null;
+        };
+
+        audio.onerror = () => {
+          currentAudio = null;
+          fallbackToTTS(displayText, sectionName);
+        };
+
+        audio.play().catch(() => {
+          fallbackToTTS(displayText, sectionName);
+        });
+      } else {
+        fallbackToTTS(displayText, sectionName);
+      }
+    }
+
+    function fallbackToTTS(text, sectionName) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+
+        if (sectionName.includes('english')) {
+          utterance.lang = 'en-US';
+        } else {
+          utterance.lang = 'th-TH';
+        }
+
+        utterance.rate = 0.8;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.8;
+
+        const voices = speechSynthesis.getVoices();
+        const voice = voices.find(v => v.lang.includes(utterance.lang.split('-')[0]));
+        if (voice) utterance.voice = voice;
+
+        utterance.onstart = () => {
+          showSoundFeedback(`🔊 ${text}`, 'success');
+        };
+
+        speechSynthesis.speak(utterance);
+      } else {
+        showSoundFeedback(`🔊 ${text}`, 'success');
+      }
+    }
+
+    function showSoundFeedback(text, type = 'success') {
+      const feedback = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+      feedback.className = `fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all transform`;
+      feedback.textContent = text;
+      document.body.appendChild(feedback);
+
+      setTimeout(() => feedback.classList.add('scale-110'), 50);
+      setTimeout(() => {
+        feedback.classList.add('opacity-0', 'scale-90');
+        setTimeout(() => feedback.remove(), 300);
+      }, 1500);
+    }
+
+    /* ===== Create Other Sections ===== */
+    function createVowelsSection() {
+      const section = document.getElementById('vowels-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-purple-300">
+          <h2 class="text-6xl font-bold text-purple-600 mb-8 text-center drop-shadow-lg animate-wiggle">🎵 สระไทย 🌸</h2>
+          <div class="text-center mb-6">
+            <button id="toggle-vowels" onclick="toggleView('vowels')" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="vowels-gallery" class="gallery-view">
+            ${createGalleryView('vowels', thaiVowels)}
+          </div>
+          <div id="vowels-grid" class="grid-view hidden">
+            ${createGridView('vowels', thaiVowels)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('vowels')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function createNumbersSection() {
+      const section = document.getElementById('numbers-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-green-100 via-yellow-100 to-orange-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-green-300">
+          <h2 class="text-6xl font-bold text-green-600 mb-8 text-center drop-shadow-lg animate-wiggle">🔢 ตัวเลขไทย 🎯</h2>
+          <div class="text-center mb-6">
+            <button id="toggle-numbers" onclick="toggleView('numbers')" class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="numbers-gallery" class="gallery-view">
+            ${createGalleryView('numbers', thaiNumbers)}
+          </div>
+          <div id="numbers-grid" class="grid-view hidden">
+            ${createGridView('numbers', thaiNumbers)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('numbers')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function createTonesSection() {
+      const section = document.getElementById('tones-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-orange-100 via-red-100 to-pink-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-orange-300">
+          <h2 class="text-6xl font-bold text-orange-600 mb-8 text-center drop-shadow-lg animate-wiggle">🎼 วรรณยุกต์ 🎶</h2>
+          <div class="text-center mb-6">
+            <button id="toggle-tones" onclick="toggleView('tones')" class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="tones-gallery" class="gallery-view">
+            ${createGalleryView('tones', thaiToneMarks)}
+          </div>
+          <div id="tones-grid" class="grid-view hidden">
+            ${createGridView('tones', thaiToneMarks)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('tones')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function createThaiVocabSection() {
+      const section = document.getElementById('thai-vocab-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-teal-100 via-cyan-100 to-blue-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-teal-300">
+          <h2 class="text-6xl font-bold text-teal-600 mb-8 text-center drop-shadow-lg animate-wiggle">📚 คำศัพท์ไทย 🌺</h2>
+          <div class="flex flex-wrap justify-center mb-8 gap-3">
+            <button onclick="showThaiCategory('animals')" class="thai-tab-btn bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-full font-bold hover:from-teal-500 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="animals">🐾 สัตว์</button>
+            <button onclick="showThaiCategory('fruits')" class="thai-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="fruits">🍎 ผลไม้</button>
+            <button onclick="showThaiCategory('colors')" class="thai-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="colors">🌈 สี</button>
+            <button onclick="showThaiCategory('body')" class="thai-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="body">👤 ร่างกาย</button>
+            <button onclick="showThaiCategory('food')" class="thai-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="food">🍕 อาหาร</button>
+          </div>
+          <div class="text-center mb-6">
+            <button id="toggle-thai-vocab" onclick="toggleView('thai-vocab')" class="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="thai-vocab-gallery" class="gallery-view">
+            ${createGalleryView('thai-vocab', thaiVocabulary.animals)}
+          </div>
+          <div id="thai-vocab-grid" class="grid-view hidden">
+            ${createGridView('thai-vocab', thaiVocabulary.animals)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('thai-vocab')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function createEnglishAlphabetSection() {
+      const section = document.getElementById('english-alphabet-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-indigo-100 via-blue-100 to-cyan-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-indigo-300">
+          <h2 class="text-6xl font-bold text-indigo-600 mb-8 text-center drop-shadow-lg animate-wiggle">🔤 ตัวอักษรภาษาอังกฤษ A-Z 🌟</h2>
+          <div class="text-center mb-6">
+            <button id="toggle-english-alphabet" onclick="toggleView('english-alphabet')" class="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="english-alphabet-gallery" class="gallery-view">
+            ${createGalleryView('english-alphabet', englishAlphabet)}
+          </div>
+          <div id="english-alphabet-grid" class="grid-view hidden">
+            ${createGridView('english-alphabet', englishAlphabet)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('english-alphabet')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function createEnglishVocabSection() {
+      const section = document.getElementById('english-vocab-section');
+      section.innerHTML = `
+        <div class="bg-gradient-to-br from-red-100 via-pink-100 to-rose-100 rounded-3xl shadow-2xl p-8 mb-8 border-4 border-red-300">
+          <h2 class="text-6xl font-bold text-red-600 mb-8 text-center drop-shadow-lg animate-wiggle">🌟 คำศัพท์ภาษาอังกฤษ 🎈</h2>
+          <div class="flex flex-wrap justify-center mb-8 gap-3">
+            <button onclick="showEnglishCategory('animals')" class="english-tab-btn bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full font-bold hover:from-red-500 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="animals">🐾 สัตว์</button>
+            <button onclick="showEnglishCategory('fruits')" class="english-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="fruits">🍎 ผลไม้</button>
+            <button onclick="showEnglishCategory('colors')" class="english-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white" data-category="colors">🌈 สี</button>
+          </div>
+          <div class="text-center mb-6">
+            <button id="toggle-english-vocab" onclick="toggleView('english-vocab')" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-xl transition-all transform hover:scale-110 border-4 border-white text-xl">
+              📋 ดูแบบตาราง ✨
+            </button>
+          </div>
+          <div id="english-vocab-gallery" class="gallery-view">
+            ${createGalleryView('english-vocab', englishVocabulary.animals)}
+          </div>
+          <div id="english-vocab-grid" class="grid-view hidden">
+            ${createGridView('english-vocab', englishVocabulary.animals)}
+          </div>
+          <div class="text-center mt-8">
+            <button onclick="startGame('english-vocab')" class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-2xl transition-all transform hover:scale-110 border-4 border-white animate-bounce-slow">
+              🎮 เล่นเกมทดสอบ! 🏆
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ===== Category Functions ===== */
+    function showThaiCategory(category) {
+      document.querySelectorAll('.thai-tab-btn').forEach(btn => {
+        if (btn.dataset.category === category) {
+          btn.className = 'thai-tab-btn bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-full font-bold hover:from-teal-500 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white';
+        } else {
+          btn.className = 'thai-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white';
+        }
+      });
+
+      gameState.currentIndex = 0;
+      const data = thaiVocabulary[category];
+      updateDisplay('thai-vocab', data);
+      createNavigationDots('thai-vocab', data);
+      populateGrid('thai-vocab', data);
+    }
+
+    function showEnglishCategory(category) {
+      document.querySelectorAll('.english-tab-btn').forEach(btn => {
+        if (btn.dataset.category === category) {
+          btn.className = 'english-tab-btn bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full font-bold hover:from-red-500 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white';
+        } else {
+          btn.className = 'english-tab-btn bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 px-6 py-3 rounded-full font-bold hover:from-gray-400 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white';
+        }
+      });
+
+      gameState.currentIndex = 0;
+      const data = englishVocabulary[category];
+      updateDisplay('english-vocab', data);
+      createNavigationDots('english-vocab', data);
+      populateGrid('english-vocab', data);
+    }
+
+    /* ===== Game System ===== */
+    function startGame(sectionName) {
+      gameState.gameActive = true;
+      gameState.gameScore = 0;
+      gameState.questionNumber = 1;
+      gameState.timeLeft = 30;
+
+      document.getElementById('game-modal').classList.remove('hidden');
+      document.getElementById('game-title').textContent = `🎮 เกมทดสอบ${getSectionTitle(sectionName)} 🏆`;
+
+      generateGameQuestion(sectionName);
+      startGameTimer();
+    }
+
+    function getSectionTitle(sectionName) {
+      const titles = {
+        'consonants': 'พยัญชนะไทย',
+        'vowels': 'สระไทย',
+        'numbers': 'ตัวเลขไทย',
+        'tones': 'วรรณยุกต์',
+        'thai-vocab': 'คำศัพท์ไทย',
+        'english-alphabet': 'A-Z อังกฤษ',
+        'english-vocab': 'คำศัพท์อังกฤษ'
+      };
+      return titles[sectionName] || '';
+    }
+
+    function generateGameQuestion(sectionName) {
+      const dataMap = {
+        'consonants': thaiConsonants,
+        'vowels': thaiVowels,
+        'numbers': thaiNumbers,
+        'tones': thaiToneMarks,
+        'thai-vocab': thaiVocabulary.animals,
+        'english-alphabet': englishAlphabet,
+        'english-vocab': englishVocabulary.animals
+      };
+
+      const data = dataMap[sectionName];
+      const correctAnswer = data[Math.floor(Math.random() * data.length)];
+      const wrongAnswers = data.filter(item => item !== correctAnswer).sort(() => 0.5 - Math.random()).slice(0, 3);
+      const allAnswers = [correctAnswer, ...wrongAnswers].sort(() => 0.5 - Math.random());
+
+      const gameContent = document.getElementById('game-content');
+      gameContent.innerHTML = `
+        <div class="mb-8">
+          <div class="text-center mb-6">
+            <div class="text-8xl mb-4">${correctAnswer.emoji || '🎯'}</div>
+            <div class="text-4xl font-bold text-purple-600 mb-4">
+              ${correctAnswer.img ? `<img src="${IMG_BASE}/${correctAnswer.img}" alt="question" class="w-32 h-32 mx-auto object-contain bg-white rounded-2xl shadow-lg p-2" />` : ''}
+            </div>
+            <div class="text-2xl font-bold text-gray-700">
+              ${getQuestionText(sectionName, correctAnswer)}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            ${allAnswers.map((answer, index) => `
+              <button onclick="selectAnswer('${sectionName}', ${allAnswers.indexOf(correctAnswer) === index}, '${getAnswerText(sectionName, answer)}')"
+                      class="bg-gradient-to-r from-blue-400 to-purple-500 hover:from-blue-500 hover:to-purple-600 text-white font-bold py-6 px-4 rounded-2xl text-xl shadow-xl transition-all transform hover:scale-105 border-4 border-white">
+                ${getAnswerText(sectionName, answer)}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('game-score').textContent = gameState.gameScore;
+      document.getElementById('question-number').textContent = gameState.questionNumber;
+    }
+
+    function getQuestionText(sectionName, item) {
+      switch(sectionName) {
+        case 'consonants': return `ตัวอักษรนี้อ่านว่าอะไร?`;
+        case 'vowels': return `สระนี้อ่านว่าอะไร?`;
+        case 'numbers': return `ตัวเลขนี้คือเลขอะไร?`;
+        case 'tones': return `วรรณยุกต์นี้คืออะไร?`;
+        case 'thai-vocab': return `คำนี้อ่านว่าอะไร?`;
+        case 'english-alphabet': return `ตัวอักษรนี้คืออะไร?`;
+        case 'english-vocab': return `คำนี้แปลว่าอะไร?`;
+        default: return `นี่คืออะไร?`;
+      }
+    }
+
+    function getAnswerText(sectionName, item) {
+      switch(sectionName) {
+        case 'consonants':
+        case 'vowels':
+        case 'tones':
+          return item.name;
+        case 'numbers':
+          return item.name;
+        case 'thai-vocab':
+          return item.reading;
+        case 'english-alphabet':
+          return item.ch;
+        case 'english-vocab':
+          return item.th;
+        default:
+          return item.name || item.ch || item.word;
+      }
+    }
+
+    function selectAnswer(sectionName, isCorrect) {
+      if (isCorrect) {
+        gameState.gameScore += 10;
+        currentPlayer.score += 10;
+        showGameFeedback('🎉 ถูกต้อง! +10 คะแนน', 'success');
+        playSuccessSound();
+      } else {
+        showGameFeedback('❌ ผิด! ลองใหม่นะ', 'error');
+        playErrorSound();
+      }
+
+      document.getElementById('game-score').textContent = gameState.gameScore;
+      document.getElementById('current-score').textContent = `คะแนน: ${currentPlayer.score}`;
+
+      setTimeout(() => {
+        if (gameState.questionNumber >= 10) {
+          endGame(sectionName);
+        } else {
+          gameState.questionNumber++;
+          gameState.timeLeft = 30;
+          generateGameQuestion(sectionName);
+        }
+      }, 1500);
+    }
+
+    function startGameTimer() {
+      gameState.gameTimer = setInterval(() => {
+        gameState.timeLeft--;
+        document.getElementById('timer').textContent = gameState.timeLeft;
+
+        if (gameState.timeLeft <= 0) {
+          selectAnswer(gameState.currentSection, false);
+        }
+      }, 1000);
+    }
+
+    function endGame(sectionName) {
+      clearInterval(gameState.gameTimer);
+      gameState.gameActive = false;
+
+      let medal = '🥉';
+      let medalText = 'เหรียญทองแดง';
+      if (gameState.gameScore >= 80) { medal = '🥇'; medalText = 'เหรียญทอง'; }
+      else if (gameState.gameScore >= 60) { medal = '🥈'; medalText = 'เหรียญเงิน'; }
+
+      const gameContent = document.getElementById('game-content');
+      gameContent.innerHTML = `
+        <div class="text-center">
+          <div class="text-8xl mb-4 animate-bounce">${medal}</div>
+          <h3 class="text-4xl font-bold text-purple-600 mb-4">เกมจบแล้ว!</h3>
+          <div class="text-6xl font-bold text-green-600 mb-4">${gameState.gameScore} คะแนน</div>
+          <div class="text-2xl text-gray-700 mb-6">${medalText}</div>
+          <div class="bg-white rounded-2xl p-6 shadow-lg mb-6">
+            <div class="text-xl font-bold text-purple-600 mb-2">สรุปผลการเล่น</div>
+            <div class="text-lg">ผู้เล่น: ${currentPlayer.name}</div>
+            <div class="text-lg">ทีม: ${currentPlayer.team}</div>
+            <div class="text-lg">คะแนนรวม: ${currentPlayer.score}</div>
+          </div>
+          <button onclick="saveScore('${sectionName}', ${gameState.gameScore}, '${medal}', '${medalText}')"
+                  class="bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-4 px-8 rounded-full text-xl shadow-xl transition-all transform hover:scale-105 mb-4">
+            💾 บันทึกคะแนน
+          </button>
+        </div>
+      `;
+
+      playVictorySound();
+    }
+
+    function closeGame() {
+      clearInterval(gameState.gameTimer);
+      gameState.gameActive = false;
+      document.getElementById('game-modal').classList.add('hidden');
+    }
+
+    /* ===== Sound Effects ===== */
+    function playSuccessSound() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    }
+
+    function playErrorSound() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    }
+
+    function playVictorySound() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.2);
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + index * 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.2 + 0.3);
+        oscillator.start(audioContext.currentTime + index * 0.2);
+        oscillator.stop(audioContext.currentTime + index * 0.2 + 0.3);
+      });
+    }
+
+    /* ===== Score Management ===== */
+    function saveScore(sectionName, gameScore, medal, medalText) {
+      const scoreData = {
+        name: currentPlayer.name,
+        team: currentPlayer.team,
+        section: getSectionTitle(sectionName),
+        score: gameScore,
+        totalScore: currentPlayer.score,
+        medal: medal,
+        medalText: medalText,
+        timestamp: new Date().toISOString()
+      };
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scoreData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showNotification('บันทึกคะแนนสำเร็จ! 🎉', 'success');
+          closeGame();
+        } else {
+          showNotification('เกิดข้อผิดพลาดในการบันทึก 😞', 'error');
+        }
+      })
+      .catch(() => {
+        showNotification('เกิดข้อผิดพลาดในการบันทึก 😞', 'error');
+      });
+    }
+
+    /* ===== Leaderboard ===== */
+    function showLeaderboard() {
+      document.getElementById('leaderboard-modal').classList.remove('hidden');
+      loadLeaderboard();
+    }
+
+    function loadLeaderboard() {
+      fetch(`${GOOGLE_SCRIPT_URL}?action=getScores`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            displayLeaderboard(data.scores);
+          } else {
+            showNotification('ไม่สามารถโหลดอันดับคะแนนได้ 😞', 'error');
+          }
+        })
+        .catch(() => {
+          showNotification('เกิดข้อผิดพลาดในการโหลดข้อมูล 😞', 'error');
+        });
+    }
+
+    function displayLeaderboard(scores) {
+      const leaderboardContent = document.getElementById('leaderboard-content');
+
+      if (!scores || scores.length === 0) {
+        leaderboardContent.innerHTML = '<div class="text-center text-2xl text-gray-600">ยังไม่มีคะแนน</div>';
+        return;
+      }
+
+      const teamScores = {};
+      scores.forEach(score => {
+        if (!teamScores[score.team]) {
+          teamScores[score.team] = { total: 0, players: [] };
+        }
+        teamScores[score.team].total += score.totalScore;
+        teamScores[score.team].players.push(score);
+      });
+
+      const sortedTeams = Object.entries(teamScores).sort(([,a], [,b]) => b.total - a.total);
+
+      let html = '<div class="mb-8"><h3 class="text-3xl font-bold text-center mb-6">🏆 อันดับทีม 🏆</h3>';
+
+      sortedTeams.forEach(([team, data], index) => {
+        const position = index + 1;
+        let positionEmoji = '🥉';
+        if (position === 1) positionEmoji = '🥇';
+        else if (position === 2) positionEmoji = '🥈';
+
+        html += `
+          <div class="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-6 mb-4 shadow-lg border-2 border-yellow-300">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="text-4xl">${positionEmoji}</div>
+                <div>
+                  <div class="text-2xl font-bold">${team}</div>
+                  <div class="text-lg text-gray-600">${data.players.length} คน</div>
+                </div>
+              </div>
+              <div class="text-3xl font-bold text-green-600">${data.total} คะแนน</div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      html += '<div><h3 class="text-3xl font-bold text-center mb-6">👤 อันดับบุคคล 👤</h3>';
+      const sortedIndividual = scores.sort((a, b) => b.totalScore - a.totalScore);
+
+      sortedIndividual.slice(0, 10).forEach((score, index) => {
+        const position = index + 1;
+        let positionEmoji = '🏅';
+        if (position === 1) positionEmoji = '🥇';
+        else if (position === 2) positionEmoji = '🥈';
+        else if (position === 3) positionEmoji = '🥉';
+
+        html += `
+          <div class="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-4 mb-3 shadow-lg border-2 border-blue-300">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="text-2xl">${positionEmoji}</div>
+                <div>
+                  <div class="text-xl font-bold">${score.name}</div>
+                  <div class="text-sm text-gray-600">${score.team}</div>
+                </div>
+              </div>
+              <div class="text-2xl font-bold text-green-600">${score.totalScore} คะแนน</div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      leaderboardContent.innerHTML = html;
+    }
+
+    function closeLeaderboard() {
+      document.getElementById('leaderboard-modal').classList.add('hidden');
+    }
+
+    /* ===== Utility Functions ===== */
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+      notification.className = `fixed top-4 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => notification.classList.add('opacity-0'), 3000);
+      setTimeout(() => notification.remove(), 3500);
+    }
+
+    /* ✅ Fixed: Game feedback function (replacing corrupted snippet) */
+    function showGameFeedback(message, type = 'success') {
+      const box = document.createElement('div');
+      const bg = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+      box.className = `fixed bottom-6 left-1/2 -translate-x-1/2 ${bg} text-white px-6 py-3 rounded-xl shadow-2xl z-50 transition transform`;
+      box.textContent = message;
+      document.body.appendChild(box);
+      setTimeout(() => box.classList.add('scale-105'), 50);
+      setTimeout(() => {
+        box.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => box.remove(), 250);
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
