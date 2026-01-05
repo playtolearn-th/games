@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป (Final - Quiz & Max Size)</title>
+    <title>บทที่ 9 เกือบไป (Final - Toggle Swap & Safe Emojis)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Base Settings */
         body { 
-            font-family: 'Sarabun', sans-serif; 
+            font-family: 'Sarabun', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif; 
             overflow: hidden; 
             touch-action: none; 
             user-select: none; 
@@ -230,9 +233,9 @@
              
              <div class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0">
                 <div class="flex gap-[4vmin] w-full justify-center">
-                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🦁 กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-red-100 hover:bg-red-200 text-red-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-red-300 active:scale-90 transition shadow-lg">+</button></div></div>
-                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐯 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-green-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
-                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐼 กลุ่ม 3</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-blue-600 w-[8vmin] text-center" id="s-g3">0</span><button onclick="addScore(3)" class="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-blue-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">❤️ กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-red-100 hover:bg-red-200 text-red-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-red-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💚 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-green-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💙 กลุ่ม 3</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-blue-600 w-[8vmin] text-center" id="s-g3">0</span><button onclick="addScore(3)" class="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-blue-300 active:scale-90 transition shadow-lg">+</button></div></div>
                 </div>
                 <button onclick="g2NextQ()" class="bg-gray-800 hover:bg-black text-white px-[4vmin] py-[2vmin] rounded-full font-bold text-[3vmin] shadow-xl transition transform hover:scale-105 border-b-[0.8vmin] border-gray-600 ml-[2vmin] w-[20vmin]">ถัดไป ▶</button>
              </div>
@@ -426,7 +429,7 @@
         function g1Next() { if(g1Idx<9){g1Idx++; loadG1Q();} else navigate(1); }
         function g1Prev() { if(g1Idx>0){g1Idx--; loadG1Q();} else navigate(-1); }
 
-        // --- Lesson (Modified 12-13 for Quiz) ---
+        // --- Lesson ---
         let lsIdx = 1;
         function renderLesson() {
             const c = document.getElementById('lesson-content');
@@ -459,65 +462,85 @@
             else if(lsIdx===10) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ','ล้าง','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p></div>`;
             else if(lsIdx===11) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน','กริยา','กรรม', 'scale-[1.8]')}</div><div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
             
-            // 12/13: QUIZ
+            // 12/13: Question 1
             else if(lsIdx===12) c.innerHTML=`
-                <h1 class="text-[6vmin] font-bold mb-[4vmin] text-gray-700">ขบวนสั้น หรือ ขบวนยาว?</h1>
-                <div class="text-[12vmin] font-extrabold text-blue-600 drop-shadow-md mb-[6vmin]">ฉัน ดีใจ</div>
+                <h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1>
+                <div class="text-[12vmin] font-extrabold text-blue-600 mb-[8vmin] drop-shadow-md">ฉัน ดีใจ</div>
                 <div class="flex gap-[4vmin]">
-                    <button class="bg-green-500 text-white px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button>
-                    <button class="bg-gray-200 text-gray-600 px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button>
+                    <button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button>
+                    <button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button>
                 </div>`;
             
-            // 13/13: QUIZ
+            // 13/13: Question 2
             else if(lsIdx===13) c.innerHTML=`
-                <h1 class="text-[6vmin] font-bold mb-[4vmin] text-gray-700">ขบวนสั้น หรือ ขบวนยาว?</h1>
-                <div class="text-[12vmin] font-extrabold text-red-600 drop-shadow-md mb-[6vmin]">หมา ไล่ แมว</div>
+                <h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1>
+                <div class="text-[12vmin] font-extrabold text-red-600 mb-[8vmin] drop-shadow-md">หมา ไล่ แมว</div>
                 <div class="flex gap-[4vmin]">
-                    <button class="bg-gray-200 text-gray-600 px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button>
-                    <button class="bg-green-500 text-white px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button>
+                    <button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button>
+                    <button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button>
                 </div>`;
         }
         function showTrainAnswer(el) { el.innerHTML = '<h2 class="text-green-600 font-bold text-[6vmin]">รถไฟ! ✅</h2>'; playSound('s-correct'); }
         function revealWord(el, word) { el.className = 'car body-car-2'; el.style.padding='0.4em'; el.innerHTML = `<div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${word}`; playSound('s-click'); }
         function checkTrainAnswer(isCorrect, btn) {
-            if(isCorrect) { btn.className = 'bg-green-500 text-white px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-green-700 active:scale-95'; showFeedback('correct'); }
+            if(isCorrect) { 
+                showFeedback('correct'); 
+                if(btn.classList.contains('bg-gray-200')) {
+                    btn.className = 'bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95';
+                }
+            }
             else { showFeedback('wrong'); }
         }
         function lessonNext(){ if(lsIdx<13){lsIdx++; renderLesson(); playSound('s-click');} else navigate(1); }
         function lessonPrev(){ if(lsIdx>1){lsIdx--; renderLesson(); playSound('s-click');} else navigate(-1); }
 
-        // --- Swap (Maximized Size & No Overlap) ---
+        // --- Swap (Continuous Toggle & Bigger Text) ---
         let swIdx = 2; 
+        
+        // Track state for toggle: false=original, true=swapped
+        let swapStates = {2: false, 3: false, 4: false};
+
         function renderSwap() {
             const c = document.getElementById('swap-content');
             document.getElementById('swap-indicator').innerText = `${swIdx-1}/3`;
             
-            // Using large font-size and padding instead of scale to respect layout flow
-            const box = (txt, col) => `<div class="word-card ${col} text-white text-[8vmin] px-[4vmin] py-[2vmin] m-[1vmin] shadow-xl">${txt}</div>`; 
+            // Helper to render current state based on swapStates
+            const box = (txt, col) => `<div class="word-card ${col} text-white text-[8vmin] px-[5vmin] py-[2vmin] m-[1vmin] rounded-[2vmin] shadow-xl">${txt}</div>`; 
             const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
+            const containerClass = "flex flex-wrap justify-center content-center w-full h-[60vh] gap-[2vmin]";
             
-            const containerClass = "flex flex-wrap justify-center items-center content-center w-full h-[60vh] gap-[3vmin]";
-            
+            let btnText = swapStates[swIdx] ? 'สลับกลับ' : '🔀 ลองสลับ';
+            let contentHtml = '';
+
+            // Define content based on state
             if(swIdx===2) {
-                 c.innerHTML = `<div id="swap-container-2" class="${containerClass}">${box('ภูผา',cols.b)}${box('ไปหา',cols.r)}${box('แม่',cols.g)}</div><button class="mt-[4vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(2, this)">🔀 ลองสลับ</button>`;
+                if(!swapStates[2]) contentHtml = `${box('ภูผา',cols.b)}${box('ไปหา',cols.r)}${box('แม่',cols.g)}`;
+                else contentHtml = `${box('แม่',cols.g)}${box('ไปหา',cols.r)}${box('ภูผา',cols.b)}`;
+                
+                c.innerHTML = `<div id="swap-container-2" class="${containerClass}">${contentHtml}</div><button id="swap-btn-2" class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(2)">${btnText}</button>`;
             } else if(swIdx===3) {
-                 c.innerHTML = `<div id="swap-container-3" class="${containerClass}">${box('ครู',cols.b)}${box('รัก',cols.r)}${box('เด็กๆ',cols.g)}</div><button class="mt-[4vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(3, this)">🔀 ลองสลับ</button>`;
+                if(!swapStates[3]) contentHtml = `${box('ครู',cols.b)}${box('รัก',cols.r)}${box('เด็กๆ',cols.g)}`;
+                else contentHtml = `${box('เด็กๆ',cols.g)}${box('รัก',cols.r)}${box('ครู',cols.b)}`;
+
+                c.innerHTML = `<div id="swap-container-3" class="${containerClass}">${contentHtml}</div><button id="swap-btn-3" class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(3)">${btnText}</button>`;
             } else {
-                 c.innerHTML = `<div id="swap-container-4" class="${containerClass}">${box('พ่อ',cols.b)}${box('ไป',cols.r)}${box('ป่า',cols.g)}</div><button class="mt-[4vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(4, this)">🔀 สลับ</button>`;
+                if(!swapStates[4]) contentHtml = `${box('พ่อ',cols.b)}${box('ไป',cols.r)}${box('ป่า',cols.g)}`;
+                else contentHtml = `${box('ป่า',cols.g)}${box('ไป',cols.r)}${box('พ่อ',cols.b)}`;
+
+                c.innerHTML = `<div id="swap-container-4" class="${containerClass}">${contentHtml}</div><button id="swap-btn-4" class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(4)">${btnText}</button>`;
             }
         }
-        function performSwap(id, btn) {
+
+        function performSwap(id) {
             playSound('s-click');
-            const box = (txt, col) => `<div class="word-card ${col} text-white text-[8vmin] px-[4vmin] py-[2vmin] m-[1vmin] shadow-xl">${txt}</div>`;
-            const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
-            if(id===2) { document.getElementById('swap-container-2').innerHTML = `${box('แม่',cols.g)}${box('ไปหา',cols.r)}${box('ภูผา',cols.b)}`; btn.innerText = 'ความหมายเปลี่ยน!'; }
-            else if(id===3) { document.getElementById('swap-container-3').innerHTML = `${box('เด็กๆ',cols.g)}${box('รัก',cols.r)}${box('ครู',cols.b)}`; btn.innerText = 'ความหมายเปลี่ยน!'; }
-            else { document.getElementById('swap-container-4').innerHTML = `${box('ป่า',cols.g)}${box('ไป',cols.r)}${box('พ่อ',cols.b)}`; btn.innerText = 'ตลกจัง!'; }
+            swapStates[id] = !swapStates[id]; // Toggle State
+            renderSwap(); // Re-render to show change
         }
+
         function swapNext(){ if(swIdx<4){swIdx++; renderSwap(); playSound('s-click');} else navigate(1); }
         function swapPrev(){ if(swIdx>2){swIdx--; renderSwap(); playSound('s-click');} else navigate(-1); }
 
-        // --- Game 2 (No Changes) ---
+        // --- Game 2 ---
         const g2Qs = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
         let g2Idx = 0;
         let g2Scores = {1:0, 2:0, 3:0};
@@ -540,7 +563,7 @@
         }
         function g2BackToGame(){ document.getElementById('g2-interface').style.display='flex'; document.getElementById('g2-podium').style.display='none'; }
 
-        // --- Picker (No Changes) ---
+        // --- Picker ---
         function startPicker() {
             playSound('s-shuffle');
             document.getElementById('picker-placeholder').classList.add('hidden');
@@ -562,7 +585,7 @@
                         document.getElementById('s-shuffle').pause(); 
                         playSound('s-success');
                         createConfetti();
-                        createFireworks();
+                        createFireworks(); 
                         img.classList.add('zoom-in-out');
                         document.getElementById('picker-btn').disabled=false; 
                     }
