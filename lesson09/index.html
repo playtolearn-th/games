@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>บทที่ 9 เกือบไป (Big Screen - CSS Train Intro)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base Settings */
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            overflow: hidden; 
+            touch-action: none; 
+            user-select: none; 
+            background-color: #f0f9ff; 
+            margin: 0; padding: 0;
+        }
+        
+        /* Orientation Warning System */
+        #orientation-warning {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 9999;
+            flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+        }
+        @media (orientation: portrait) {
+            #orientation-warning { display: flex; }
+            .section { display: none !important; }
+            .ui-controls { display: none !important; }
+        }
+
+        /* Layout & Sections */
+        .section { 
+            display: none; 
+            height: 100vh; width: 100vw; 
+            flex-direction: column; 
+            align-items: center; justify-content: center; 
+            position: relative; 
+            animation: fadeIn 0.5s; 
+            padding: 2vmin;
+            box-sizing: border-box;
+        }
+        .section.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Drawing Layer */
+        #drawing-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; }
+        .drawing-active { pointer-events: auto !important; cursor: crosshair; background-color: rgba(0,0,0,0.05); }
+
+        /* Responsive UI Elements */
+        .nav-btn { 
+            font-weight: 800;
+            padding: 1.5vmin 4vmin;
+            border-radius: 999px;
+            box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.2);
+            font-size: 3vmin;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 1vmin;
+            border-bottom: 0.8vmin solid rgba(0,0,0,0.2);
+        }
+        .nav-btn:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
+
+        .word-card { 
+            cursor: pointer; 
+            background: white; 
+            border-bottom: 0.8vmin solid #cbd5e1; 
+            padding: 2vmin 4vmin; 
+            border-radius: 2vmin; 
+            font-weight: 800; 
+            font-size: 5vmin; /* Base size */
+            box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.1); 
+            transition: all 0.2s; 
+            white-space: nowrap; 
+            margin: 1vmin;
+        }
+        .word-card:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
+
+        /* --- Custom Word Sizes for Classroom Screen --- */
+        #g1-word-bank .word-card { font-size: 8vmin !important; padding: 3vmin 5vmin; border-width: 0.6vmin; }
+        #g1-drop-zone .word-card { font-size: 9vmin !important; padding: 2.5vmin 5vmin; border-width: 0.6vmin; }
+
+        /* Animations */
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2vmin); } }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-0.5vmin, 0, 0); } 20%, 80% { transform: translate3d(1vmin, 0, 0); } 30%, 50%, 70% { transform: translate3d(-2vmin, 0, 0); } 40%, 60% { transform: translate3d(2vmin, 0, 0); } }
+
+        /* Train Styles */
+        .train-wrapper { font-size: 1.5vmin; margin: 4vmin 0; display: flex; justify-content: center; }
+        @media (min-width: 1024px) { .train-wrapper { font-size: 2vmin; } }
+        .train-container { display: flex; align-items: flex-end; gap: 0.5em; }
+        .car { padding: 1em; border-radius: 1.5em; color: white; font-weight: 800; font-size: 2em; text-align: center; box-shadow: 0 0.5em 1em rgba(0,0,0,0.3); position: relative; min-width: 5em; min-height: 4em; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 0.2em solid rgba(255,255,255,0.4); }
+        .car:not(:last-child)::after { content: ''; position: absolute; right: -1em; bottom: 1.5em; width: 1em; height: 0.5em; background: #333; z-index: -1; border-radius: 0.2em; }
+        .car-wheels { position: absolute; bottom: -1em; left: 50%; transform: translateX(-50%); width: 100%; height: 2em; pointer-events: none; }
+        .wheel { width: 2em; height: 2em; background: #2d2d2d; border-radius: 50%; border: 0.3em solid #555; position: absolute; bottom: 0; box-shadow: 0.2em 0.2em 0.4em rgba(0,0,0,0.4); }
+        .wheel-left { left: 0.5em; }
+        .wheel-right { right: 0.5em; }
+        .head-car { background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 3em 1em 1em 1em; border-bottom: 0.5em solid #1e3a8a; }
+        .body-car-1 { background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); border-bottom: 0.5em solid #7f1d1d; }
+        .body-car-2 { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); border-bottom: 0.5em solid #14532d; }
+        .chimney { position: absolute; top: -1.5em; left: 1em; width: 1em; height: 2em; background: #333; border-top: 0.3em solid #777; }
+        .smoke { animation: floatUp 2s infinite; position: absolute; top: -3em; left: 0.5em; opacity: 0; font-size: 2em; }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.5); opacity: 0.8; } 100% { transform: translateY(-2em) scale(2); opacity: 0; } }
+
+        /* Confetti */
+        .confetti { position: absolute; width: 1.5vmin; height: 1.5vmin; animation: confetti-fall linear forwards; z-index: 999; pointer-events: none; }
+        @keyframes confetti-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+        
+        #feedback-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 90; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        #feedback-content { font-size: 25vmin; }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800">
+
+    <div id="orientation-warning">
+        <div class="text-[10vmin] mb-4">📱🔄</div>
+        <h1 class="text-[5vmin] font-bold">กรุณาหมุนหน้าจอเป็นแนวนอน</h1>
+    </div>
+
+    <audio id="s-click" src="sound/click.mp3"></audio>
+    <audio id="s-correct" src="sound/correct.mp3"></audio>
+    <audio id="s-wrong" src="sound/wrong.mp3"></audio>
+    <audio id="s-shuffle" src="sound/shuffle.mp3" loop></audio>
+    <audio id="s-success" src="sound/success.mp3"></audio>
+
+    <canvas id="drawing-canvas"></canvas>
+    <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[80] flex gap-[2vmin]">
+        <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center">✏️</button>
+        <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[3vmin] w-[8vmin] h-[8vmin] items-center justify-center">🗑️</button>
+    </div>
+    
+    <div class="ui-controls fixed top-[2vmin] right-[2vmin] bg-white/90 backdrop-blur px-[3vmin] py-[1vmin] rounded-full shadow border-[0.3vmin] border-gray-200 z-[80] text-[3vmin] font-bold text-blue-600">
+        หน้า <span id="page-indicator-top">1</span>
+    </div>
+    
+    <div id="feedback-overlay"><div id="feedback-content" class="animate-bounce drop-shadow-2xl"></div></div>
+
+    <div id="sec-cover" class="section bg-blue-100 active">
+        <div class="z-10 text-center w-full h-full flex flex-col justify-center items-center">
+            <h1 class="text-[6vmin] font-bold text-blue-800 drop-shadow-md mb-[2vmin]">ภาษาพาที บทที่ 9</h1>
+            <h2 class="text-[15vmin] font-extrabold text-red-600 drop-shadow-2xl animate-float leading-tight mb-[4vmin]">เกือบไป</h2>
+            <div class="bg-white/90 backdrop-blur-sm p-[4vmin] rounded-[4vmin] shadow-2xl border-[1vmin] border-white flex flex-col items-center max-w-[80vw]">
+                <img src="img/01.png" alt="เกือบไป" class="h-[30vh] w-auto object-contain drop-shadow-xl rounded-2xl mb-[4vmin]">
+                <button onclick="navigate(1)" class="bg-green-500 hover:bg-green-600 text-white text-[5vmin] font-bold py-[2vmin] px-[8vmin] rounded-full shadow-2xl transform hover:scale-105 transition animate-pulse border-b-[1vmin] border-green-800">
+                    เข้าสู่บทเรียน ▶
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sec-braingym" class="section bg-yellow-50">
+        <div class="flex flex-row items-center justify-center w-full h-full flex-1 gap-[5vmin] px-[5vmin]">
+            <div id="bg-icon" class="w-1/2 h-[70vh] flex items-center justify-center transition hover:scale-105 cursor-pointer"></div>
+            <div class="w-1/2 flex flex-col items-center justify-center">
+                <h1 id="bg-word" class="text-[15vmin] font-extrabold drop-shadow-xl mb-[2vmin] text-gray-800 leading-none text-center"></h1>
+                <p id="bg-sound" class="text-[6vmin] font-bold opacity-80 text-gray-600 text-center"></p>
+            </div>
+        </div>
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-yellow-100/90 backdrop-blur z-20 shrink-0 absolute bottom-0">
+            <button onclick="bgPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
+            <span class="text-[4vmin] font-bold text-yellow-800 bg-white/80 px-[4vmin] py-[1vmin] rounded-full shadow-inner" id="bg-indicator">1 / 11</span>
+            <button onclick="bgNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
+        </div>
+    </div>
+
+    <div id="sec-game1" class="section bg-indigo-50">
+        <div class="w-full flex items-center gap-[4vmin] px-[4vmin] pt-[2vmin] pb-[2vmin] justify-start pl-[12vmin]"> 
+            <h2 class="text-[5vmin] font-bold text-indigo-700 whitespace-nowrap">🎮 เรียงประโยค</h2>
+            <div class="flex gap-[2vmin]">
+                <span id="g1-score" class="bg-yellow-300 text-yellow-900 px-[3vmin] py-[1vmin] rounded-full font-extrabold text-[3vmin] shadow-lg border-[0.5vmin] border-yellow-500">คะแนน: 0</span>
+                <span id="g1-indicator" class="bg-indigo-200 text-indigo-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] border-[0.5vmin] border-indigo-300">ข้อ 1/10</span>
+            </div>
+        </div>
+
+        <div class="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto px-[2vmin]">
+            <div id="g1-drop-zone" class="w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner">
+                <span class="text-gray-300 text-[5vmin] pointer-events-none font-bold">วางคำตอบที่นี่</span>
+            </div>
+            <div id="g1-word-bank" class="flex justify-center gap-[2vmin] mb-[4vmin] flex-wrap w-full px-[2vmin]"></div>
+        </div>
+        
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-indigo-100/90 backdrop-blur z-20 shrink-0">
+            <button onclick="g1Prev()" class="bg-gray-400 text-white nav-btn border-gray-600 w-[20vmin] justify-center">◀ ย้อนกลับ</button>
+            <button onclick="g1Check()" id="g1-check-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-[4vmin] py-[1.5vmin] rounded-full font-bold text-[4vmin] shadow-2xl transition transform hover:scale-105 border-b-[0.8vmin] border-indigo-900 flex-1 mx-[4vmin] max-w-[40vmin]">
+                ตรวจคำตอบ
+            </button>
+            <button onclick="g1Next()" id="g1-next-btn" class="bg-green-500 text-white nav-btn border-green-700 opacity-50 cursor-not-allowed w-[20vmin] justify-center">ถัดไป ▶</button>
+        </div>
+    </div>
+
+    <div id="sec-lesson" class="section bg-blue-50">
+        <div id="lesson-content" class="flex flex-col items-center justify-center w-full h-full p-[2vmin] flex-1 overflow-hidden"></div>
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-blue-100/90 backdrop-blur z-20 shrink-0">
+            <button onclick="lessonPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
+            <span id="lesson-page-indicator" class="text-[4vmin] text-blue-800 font-bold">1 / 13</span>
+            <button onclick="lessonNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
+        </div>
+    </div>
+
+    <div id="sec-swap" class="section bg-pink-50">
+        <div id="swap-content" class="w-full max-w-[95vw] flex flex-col items-center justify-center h-full flex-1"></div>
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-pink-100/90 backdrop-blur z-20 shrink-0">
+            <button onclick="swapPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
+            <span id="swap-indicator" class="text-[4vmin] text-pink-800 font-bold">1 / 3</span>
+            <button onclick="swapNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
+        </div>
+    </div>
+
+    <div id="sec-game2" class="section bg-fuchsia-50">
+        <div id="g2-interface" class="w-full h-full flex flex-col items-center justify-between pb-[2vmin] px-[2vmin]">
+             <div class="w-full flex justify-between items-center mt-[1vmin]">
+                 <span id="g2-q-num" class="bg-fuchsia-200 text-fuchsia-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] shadow-md">ข้อ 1/10</span>
+                 <button onclick="g2Finish()" class="bg-red-500 hover:bg-red-600 text-white px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] transition shadow-xl border-b-[0.5vmin] border-red-800">🏁 จบเกม</button>
+             </div>
+             <div class="flex-1 w-full flex items-center justify-center my-[2vmin] relative overflow-hidden">
+                <div class="bg-white p-[2vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-white h-[50vh] w-auto aspect-video flex items-center justify-center relative">
+                    <img id="g2-img" src="" class="h-full w-full object-contain rounded-[2vmin]">
+                    <button onclick="g2ShowAnswer()" id="g2-reveal-btn" class="absolute bottom-[2vmin] right-[2vmin] bg-blue-500 text-white px-[3vmin] py-[1vmin] rounded-[1vmin] text-[3vmin] font-bold shadow-lg opacity-80 hover:opacity-100">👁️ เฉลย</button>
+                    <div id="g2-answer-text" class="hidden absolute bottom-[2vmin] left-1/2 transform -translate-x-1/2 bg-green-100 text-green-800 px-[4vmin] py-[2vmin] rounded-[2vmin] text-[4vmin] font-bold shadow-xl border-[0.5vmin] border-green-400 whitespace-nowrap z-10"></div>
+                </div>
+             </div>
+             <div class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0">
+                <div class="flex gap-[4vmin] w-full justify-center">
+                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🦁 กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐯 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-blue-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐼 กลุ่ม 3</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-yellow-600 w-[8vmin] text-center" id="s-g3">0</span><button onclick="addScore(3)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                </div>
+                <button onclick="g2NextQ()" class="bg-gray-800 hover:bg-black text-white px-[4vmin] py-[2vmin] rounded-full font-bold text-[3vmin] shadow-xl transition transform hover:scale-105 border-b-[0.8vmin] border-gray-600 ml-[2vmin]">ถัดไป ▶</button>
+             </div>
+        </div>
+        <div id="g2-podium" class="hidden absolute top-0 left-0 w-full h-full bg-fuchsia-50 z-30 flex-col items-center justify-center">
+            <h1 class="text-[8vmin] font-extrabold text-yellow-600 mb-[4vmin] drop-shadow-md">🏆 สรุปคะแนน 🏆</h1>
+            <div id="podium-bars" class="flex items-end gap-[4vmin] h-[40vh] mb-[4vmin]"></div>
+            <div class="flex gap-[4vmin]">
+                <button onclick="g2BackToGame()" class="bg-gray-400 text-white nav-btn border-gray-600">กลับไปเล่นต่อ</button>
+                <button onclick="navigate(1)" class="bg-blue-600 text-white nav-btn border-blue-800 text-[4vmin] px-[6vmin] py-[2vmin]">ไปกิจกรรมต่อไป ▶</button>
+            </div>
+        </div>
+        <div class="fixed bottom-[1vmin] left-[1vmin] z-10 pointer-events-none">
+             <button onclick="navigate(-1)" class="bg-gray-400 text-white px-[3vmin] py-[1vmin] rounded-full text-[2vmin] pointer-events-auto opacity-50 hover:opacity-100">◀ ย้อนกลับ</button>
+        </div>
+    </div>
+
+    <div id="sec-notebook" class="section bg-orange-50">
+        <div class="text-[10vmin] mb-[2vmin] animate-bounce">📝</div>
+        <div class="bg-white p-[5vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-orange-300 w-[90vw] max-w-[80vw] text-center min-h-[50vh] flex flex-col justify-center" style="background-image: linear-gradient(#e5e7eb 1px, transparent 1px); background-size: 100% 3em;">
+            <h2 class="text-[5vmin] font-bold text-gray-800 mb-[4vmin] leading-normal">ให้นักเรียนแต่งประโยคจากคำที่เรียนมา</h2>
+            <p class="text-[10vmin] text-blue-600 font-extrabold mb-[4vmin]">5 ประโยค</p>
+            <p class="text-[4vmin] text-gray-600">ลงในสมุดของตนเองให้สวยงาม</p>
+        </div>
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 shrink-0">
+            <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
+            <button onclick="navigate(1)" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
+        </div>
+    </div>
+
+    <div id="sec-picker" class="section bg-purple-50">
+        <h1 class="text-[8vmin] font-extrabold text-purple-900 mb-[4vmin]">ใครจะเป็นผู้โชคดี?</h1>
+        <div class="bg-white p-[2vmin] rounded-[5vmin] shadow-2xl border-[2vmin] border-purple-300 w-[50vmin] h-[50vmin] flex items-center justify-center overflow-hidden relative">
+            <div id="picker-placeholder" class="text-[20vmin] text-purple-200">❓</div>
+            <img id="picker-img" src="" class="hidden w-full h-full object-cover rounded-[3vmin]">
+        </div>
+        <button onclick="startPicker()" id="picker-btn" class="mt-[6vmin] bg-purple-500 hover:bg-purple-600 text-white text-[6vmin] font-bold py-[2vmin] px-[8vmin] rounded-full shadow-2xl border-b-[1.5vmin] border-purple-800 animate-bounce transition">🎰 กดสุ่ม</button>
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-0">
+            <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
+            <button onclick="navigate(1)" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
+        </div>
+    </div>
+
+    <div id="sec-end" class="section bg-cyan-50 text-center">
+        <div class="mb-[6vmin] relative animate-bounce">
+            <div class="text-[20vmin]">🎉</div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[12vmin]">🏆</div>
+        </div>
+        <h1 class="text-[8vmin] font-extrabold text-cyan-900 mb-[2vmin] drop-shadow-md">ยินดีด้วย!</h1>
+        <h2 class="text-[6vmin] font-bold text-cyan-700 mb-[8vmin]">นักเรียนเก่งมากครับ</h2>
+        <button onclick="playSound('s-success'); createConfetti()" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-[5vmin] font-bold py-[3vmin] px-[10vmin] rounded-full shadow-2xl animate-pulse border-b-[1.5vmin] border-yellow-600 transform hover:scale-105 transition">🔊 รับเสียงปรบมือ</button>
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-0">
+            <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
+            <button onclick="navigate(-(sections.length-1))" class="bg-green-600 text-white nav-btn border-green-800">🏠 กลับหน้าแรก</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Navigation ---
+        const sections = [
+            'sec-cover', 'sec-braingym',
+            'sec-game1', 'sec-lesson', 'sec-swap',
+            'sec-game2', 'sec-notebook',
+            'sec-picker', 'sec-end'
+        ];
+        let curSec = 0;
+
+        function navigate(dir) {
+            playSound('s-click');
+            let next = curSec + dir;
+            if(next >= 0 && next < sections.length) {
+                document.getElementById(sections[curSec]).classList.remove('active');
+                curSec = next;
+                document.getElementById(sections[curSec]).classList.add('active');
+                document.getElementById('page-indicator-top').innerText = curSec + 1;
+                if(sections[curSec]==='sec-braingym') renderBgCard();
+                if(sections[curSec]==='sec-game1') loadG1Q();
+                if(sections[curSec]==='sec-lesson') renderLesson();
+                if(sections[curSec]==='sec-swap') renderSwap();
+                if(sections[curSec]==='sec-game2') loadG2Q();
+                if(sections[curSec]==='sec-end') createConfetti();
+            }
+        }
+
+        function playSound(id) { const s=document.getElementById(id); if(s){ s.currentTime=0; s.play().catch(()=>{}); } }
+
+        function showFeedback(type) {
+            const overlay = document.getElementById('feedback-overlay');
+            const content = document.getElementById('feedback-content');
+            overlay.style.display = 'flex';
+            if(type === 'correct') {
+                content.innerHTML = '✅';
+                playSound('s-correct');
+                createConfetti();
+            } else {
+                content.innerHTML = '<span class="text-red-600 text-[20vmin]">❌</span>';
+                playSound('s-wrong');
+                document.body.classList.add('shake');
+                setTimeout(()=>document.body.classList.remove('shake'), 500);
+            }
+            setTimeout(() => { overlay.style.display = 'none'; }, 1000);
+        }
+
+        // --- Brain Gym (Updated Data) ---
+        const bgCards = [
+            { icon: "<img src='l/01.png' class='h-full w-full object-contain'>", word: "เกาะ", sound: "", color: "text-amber-700" },
+            { icon: "<img src='l/02.png' class='h-full w-full object-contain'>", word: "ขวาง", sound: "หยุดนะ!", color: "text-red-600" },
+            { icon: "<img src='l/03.png' class='h-full w-full object-contain'>", word: "ขี่", sound: "ฮึบ! ฮึบ!", color: "text-blue-600" },
+            { icon: "<img src='l/04.png' class='h-full w-full object-contain'>", word: "ต้นไม้", sound: "", color: "text-green-700" },
+            { icon: "<img src='l/05.png' class='h-full w-full object-contain'>", word: "แผ่แม่เบี้ย", sound: "ฟ่อ... ฟ่อ...", color: "text-gray-700" },
+            { icon: "<img src='l/06.png' class='h-full w-full object-contain'>", word: "ฝน", sound: "ซ่า... ซ่า...", color: "text-blue-400" },
+            { icon: "<img src='l/07.png' class='h-full w-full object-contain'>", word: "ป่า", sound: "", color: "text-green-800" },
+            { icon: "<img src='l/08.png' class='h-full w-full object-contain'>", word: "ตก", sound: "ตุ๊บ!", color: "text-blue-500" },
+            { icon: "<img src='l/09.png' class='h-full w-full object-contain'>", word: "แกว่ง", sound: "ไปมา... ไปมา...", color: "text-pink-600" },
+            { icon: "<img src='l/10.png' class='h-full w-full object-contain'>", word: "ถนน", sound: "", color: "text-gray-600" },
+            { icon: "<img src='l/11.png' class='h-full w-full object-contain'>", word: "ลาก", sound: "ฮึบ!", color: "text-orange-600" }
+        ];
+        let bgIndex = 0;
+        function renderBgCard() {
+            const c = bgCards[bgIndex];
+            document.getElementById('bg-icon').innerHTML = c.icon;
+            document.getElementById('bg-word').innerText = c.word;
+            document.getElementById('bg-word').className = `text-[15vmin] font-extrabold drop-shadow-2xl mb-[2vmin] ${c.color}`;
+            document.getElementById('bg-sound').innerText = c.sound;
+            document.getElementById('bg-indicator').innerText = `${bgIndex+1} / ${bgCards.length}`;
+        }
+        function bgNext() { if(bgIndex<bgCards.length-1){bgIndex++; renderBgCard(); playSound('s-click');} else navigate(1); }
+        function bgPrev() { if(bgIndex>0){bgIndex--; renderBgCard(); playSound('s-click');} else navigate(-1); }
+
+        // --- Game 1: Sorting (Adjusted) ---
+        const g1Qs = [
+            { a:[["ฝน","ตก","หนัก"]], s:["หนัก","ฝน","ตก"] },
+            { a:[["พ่อ","ลาก","ต้นไม้"]], s:["ต้นไม้","พ่อ","ลาก"] },
+            { a:[["ภูผา","ขี่","คอ","ช้าง"]], s:["ช้าง","คอ","ภูผา","ขี่"] },
+            { a:[["งู","สีดำ","ตัวใหญ่"],["งู","ตัวใหญ่","สีดำ"]], s:["ตัวใหญ่","งู","สีดำ"] },
+            { a:[["งู","เลื้อย","มา"]], s:["มา","งู","เลื้อย"] },
+            { a:[["งู","แผ่","แม่เบี้ย"]], s:["แม่เบี้ย","แผ่","งู"] },
+            { a:[["งู","จ้อง","ช้าง"],["ช้าง","จ้อง","งู"]], s:["ช้าง","จ้อง","งู"] },
+            { a:[["ช้าง","ตกใจ","กลัว"]], s:["กลัว","ช้าง","ตกใจ"] },
+            { a:[["ใบโบก","เกาะ","หาง"]], s:["หาง","ใบโบก","เกาะ"] },
+            { a:[["ใบโบก","เกือบ","ถูก","งู","กัด"]], s:["ถูก","งู","ใบโบก","กัด","เกือบ"] }
+        ];
+        let g1Idx = 0;
+        let g1Score = 0;
+        const g1Cols = ["bg-red-500 text-white", "bg-blue-500 text-white", "bg-green-500 text-white", "bg-yellow-400 text-black", "bg-purple-500 text-white"];
+        
+        function loadG1Q() {
+            const q = g1Qs[g1Idx];
+            document.getElementById('g1-indicator').innerText = `ข้อ ${g1Idx+1}/10`;
+            const drop = document.getElementById('g1-drop-zone');
+            drop.innerHTML = '<span class="text-gray-300 text-[5vmin] pointer-events-none font-bold">วางคำตอบที่นี่</span>';
+            drop.className = "w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner";
+            const bank = document.getElementById('g1-word-bank');
+            bank.innerHTML = '';
+            q.s.forEach((w,i)=>{
+                const el = document.createElement('div');
+                el.className = `word-card ${g1Cols[i%g1Cols.length]}`;
+                el.innerText = w;
+                el.onclick = ()=>moveWordG1(el);
+                bank.appendChild(el);
+            });
+            document.getElementById('g1-check-btn').style.display='block';
+            document.getElementById('g1-next-btn').classList.add('opacity-50','cursor-not-allowed');
+        }
+        function moveWordG1(el) {
+            const drop = document.getElementById('g1-drop-zone');
+            const bank = document.getElementById('g1-word-bank');
+            if(el.parentElement===drop) { bank.appendChild(el); if(drop.children.length<=1) drop.querySelector('span').style.display='block'; }
+            else { drop.querySelector('span').style.display='none'; drop.appendChild(el); }
+            playSound('s-click');
+        }
+        function g1Check() {
+            const drop = document.getElementById('g1-drop-zone');
+            const curr = Array.from(drop.children).filter(e=>e.tagName==='DIV').map(e=>e.innerText);
+            const isMatch = g1Qs[g1Idx].a.some(ans => JSON.stringify(curr) === JSON.stringify(ans));
+            if(isMatch) {
+                showFeedback('correct'); g1Score++; document.getElementById('g1-score').innerText = `คะแนน: ${g1Score}`;
+                drop.className = "w-[90vw] min-h-[30vh] bg-green-50 border-[0.8vmin] border-green-500 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin]";
+                document.getElementById('g1-check-btn').style.display='none';
+                document.getElementById('g1-next-btn').classList.remove('opacity-50','cursor-not-allowed');
+            } else {
+                showFeedback('wrong'); drop.classList.add('bg-red-50', 'border-red-300', 'shake');
+                setTimeout(()=>{ drop.classList.remove('bg-red-50', 'border-red-300', 'shake'); }, 1000);
+            }
+        }
+        function g1Next() { if(g1Idx<9){g1Idx++; loadG1Q();} else navigate(1); }
+        function g1Prev() { if(g1Idx>0){g1Idx--; loadG1Q();} else navigate(-1); }
+
+        // --- Lesson ---
+        let lsIdx = 1;
+        function renderLesson() {
+            const c = document.getElementById('lesson-content');
+            document.getElementById('lesson-page-indicator').innerText = `${lsIdx}/13`;
+            const train = (t1, t2, t3='') => `
+                <div class="train-wrapper">
+                    <div class="train-container">
+                        <div class="car head-car"><div class="chimney"></div><div class="smoke">💨</div><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t1}</div>
+                        <div class="car body-car-1"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t2}</div>
+                        ${t3 ? `<div class="car body-car-2"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t3}</div>` : ''}
+                    </div>
+                </div>`;
+            if(lsIdx===1) c.innerHTML=`${train('','','')}<h1 class="text-[6vmin] font-bold mb-[4vmin] mt-[4vmin]">นี่คือรูปอะไรครับเด็กๆ?</h1><div class="bg-white px-[6vmin] py-[2vmin] rounded-[3vmin] shadow-2xl cursor-pointer border-[1vmin] border-gray-100 text-[4vmin] font-bold" onclick="showTrainAnswer(this)">แตะดูเฉลย</div>`;
+            else if(lsIdx===2) c.innerHTML=`${train('พ่อ','ขี่','ม้า')}<p class="text-[6vmin] font-bold mt-[8vmin] text-blue-800">"พ่อ" อยู่หัวขบวน</p>`;
+            else if(lsIdx===3) c.innerHTML=`${train('พ่อ','ขี่','ม้า')}<div class="grid grid-cols-2 gap-[4vmin] mt-[6vmin] w-full max-w-[80vw]"><div class="bg-blue-100 p-[2vmin] rounded-[3vmin] text-blue-800 font-bold text-[4vmin] text-center border-[0.5vmin] border-blue-300">หัวขบวน<br>ประธาน (ใคร)</div><div class="bg-red-100 p-[2vmin] rounded-[3vmin] text-red-800 font-bold text-[4vmin] text-center border-[0.5vmin] border-red-300">ตู้ตาม<br>กริยา (ทำอะไร)</div></div>`;
+            else if(lsIdx===4) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin]">รถไฟมี 2 แบบ</h2><div class="space-y-[4vmin] w-full max-w-[80vw]"><div class="bg-white p-[3vmin] rounded-[3vmin] shadow-2xl flex items-center gap-[4vmin]"><span class="text-[8vmin] font-black text-gray-300">1</span> <div><h3 class="text-[4vmin] font-bold text-purple-600">ขบวนสั้น (2 ตู้)</h3><div class="text-[6vmin] mt-[1vmin]">🚂🚃</div></div></div><div class="bg-white p-[3vmin] rounded-[3vmin] shadow-2xl flex items-center gap-[4vmin]"><span class="text-[8vmin] font-black text-gray-300">2</span> <div><h3 class="text-[4vmin] font-bold text-orange-600">ขบวนยาว (3 ตู้)</h3><div class="text-[6vmin] mt-[1vmin]">🚂🚃🚃</div></div></div></div>`;
+            else if(lsIdx===5) c.innerHTML=`<div class="text-[10vmin] mb-[2vmin]">🕊️</div>${train('นก','บิน')}<p class="mt-[4vmin] text-[5vmin] font-bold text-purple-700">ขบวนสั้น: รู้เรื่องเลย!</p>`;
+            else if(lsIdx===6) c.innerHTML=`<div class="text-[10vmin] mb-[2vmin]">🌧️</div>${train('ฝน','ตก')}<p class="mt-[4vmin] text-[5vmin] font-bold text-purple-700">ขบวนสั้น: เปียกแน่ๆ</p>`;
+            else if(lsIdx===7) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-purple-800">สรุปขบวนสั้น</h2>${train('ประธาน','กริยา')}<div class="text-[5vmin] bg-purple-100 px-[6vmin] py-[2vmin] rounded-full mt-[6vmin] border-[1vmin] border-purple-300 font-bold text-purple-900">ใคร + ทำอะไร</div>`;
+            else if(lsIdx===8) c.innerHTML=`${train('ฉัน','กิน','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'ข้าว\')">?</span>')}<p class="mt-[6vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: กินอะไร?</p>`;
+            else if(lsIdx===9) c.innerHTML=`${train('แมว','ไล่','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'หนู\')">?</span>')}<p class="mt-[6vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ไล่อะไร?</p>`;
+            else if(lsIdx===10) c.innerHTML=`${train('พ่อ','ล้าง','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>')}<p class="mt-[6vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p>`;
+            else if(lsIdx===11) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2>${train('ประธาน','กริยา','กรรม')}<div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mt-[6vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
+            else if(lsIdx===12) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin]">ทดสอบ 1</h2><div class="text-[12vmin] mb-[6vmin]">🕊️💨</div><div class="flex gap-[4vmin]"><button class="bg-gray-200 px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button><button class="bg-gray-200 px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button></div>`;
+            else if(lsIdx===13) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin]">ทดสอบ 2</h2><div class="text-[12vmin] mb-[6vmin]">🐕💨🐈</div><div class="flex gap-[4vmin]"><button class="bg-gray-200 px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button><button class="bg-gray-200 px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button></div>`;
+        }
+        function showTrainAnswer(el) { el.innerHTML = '<h2 class="text-green-600 font-bold text-[6vmin]">รถไฟ! ✅</h2>'; playSound('s-correct'); }
+        function revealWord(el, word) { el.className = 'car body-car-2'; el.innerHTML = `<div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${word}`; playSound('s-click'); }
+        function checkTrainAnswer(isCorrect, btn) {
+            if(isCorrect) { btn.className = 'bg-green-500 text-white px-[6vmin] py-[2vmin] rounded-[3vmin] text-[4vmin] font-bold shadow-2xl border-b-[0.8vmin] border-green-700'; showFeedback('correct'); }
+            else { showFeedback('wrong'); }
+        }
+        function lessonNext(){ if(lsIdx<13){lsIdx++; renderLesson(); playSound('s-click');} else navigate(1); }
+        function lessonPrev(){ if(lsIdx>1){lsIdx--; renderLesson(); playSound('s-click');} else navigate(-1); }
+
+        // --- Swap ---
+        let swIdx = 2; // Skip title slide
+        function renderSwap() {
+            const c = document.getElementById('swap-content');
+            document.getElementById('swap-indicator').innerText = `${swIdx-1}/3`;
+            const box = (txt, col) => `<div class="word-card ${col} text-white scale-[1.2] mx-[1vmin] text-[4vmin]">${txt}</div>`;
+            const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
+            
+            if(swIdx===2) {
+                 c.innerHTML = `<h3 class="text-[6vmin] font-bold mb-[6vmin] text-gray-700">ภูผา ไปหา แม่</h3><div id="swap-container-2" class="flex gap-[2vmin] justify-center my-[4vmin] flex-wrap">${box('ภูผา',cols.b)}${box('ไปหา',cols.r)}${box('แม่',cols.g)}</div><button class="mt-[6vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(2, this)">🔀 ลองสลับ</button>`;
+            } else if(swIdx===3) {
+                 c.innerHTML = `<h3 class="text-[6vmin] font-bold mb-[6vmin] text-gray-700">ครู รัก เด็กๆ</h3><div id="swap-container-3" class="flex gap-[2vmin] justify-center my-[4vmin] flex-wrap">${box('ครู',cols.b)}${box('รัก',cols.r)}${box('เด็กๆ',cols.g)}</div><button class="mt-[6vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(3, this)">🔀 ลองสลับ</button>`;
+            } else {
+                 c.innerHTML = `<h3 class="text-[6vmin] font-bold mb-[6vmin] text-gray-700">พ่อ ไป ป่า</h3><div id="swap-container-4" class="flex gap-[2vmin] justify-center my-[4vmin] flex-wrap">${box('พ่อ',cols.b)}${box('ไป',cols.r)}${box('ป่า',cols.g)}</div><button class="mt-[6vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(4, this)">🔀 สลับ</button>`;
+            }
+        }
+        function performSwap(id, btn) {
+            playSound('s-click');
+            const box = (txt, col) => `<div class="word-card ${col} text-white scale-[1.2] mx-[1vmin] text-[4vmin]">${txt}</div>`;
+            const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
+            if(id===2) { document.getElementById('swap-container-2').innerHTML = `${box('แม่',cols.g)}${box('ไปหา',cols.r)}${box('ภูผา',cols.b)}`; btn.innerText = 'ความหมายเปลี่ยน!'; }
+            else if(id===3) { document.getElementById('swap-container-3').innerHTML = `${box('เด็กๆ',cols.g)}${box('รัก',cols.r)}${box('ครู',cols.b)}`; btn.innerText = 'ความหมายเปลี่ยน!'; }
+            else { document.getElementById('swap-container-4').innerHTML = `${box('ป่า',cols.g)}${box('ไป',cols.r)}${box('พ่อ',cols.b)}`; btn.innerText = 'ตลกจัง!'; }
+        }
+        function swapNext(){ if(swIdx<4){swIdx++; renderSwap(); playSound('s-click');} else navigate(1); }
+        function swapPrev(){ if(swIdx>2){swIdx--; renderSwap(); playSound('s-click');} else navigate(-1); }
+
+        // --- Game 2 ---
+        const g2Qs = ["img/01.png", "img/02.png", "img/03.png", "img/04.png", "img/05.png", "img/06.png", "img/07.png", "img/08.png", "img/09.png", "img/10.png"];
+        const g2Ans = ["ฝน ตก หนัก", "พ่อ ลาก ต้นไม้", "ภูผา ขี่ คอ ช้าง", "งู สีดำ ตัวใหญ่", "งู เลื้อย มา", "งู แผ่ แม่เบี้ย", "งู จ้อง หน้า ช้าง", "ช้าง ตกใจ กลัว", "ใบโบก เกาะ หาง", "ใบโบก เกือบ ถูก งู กัด"];
+        let g2Idx = 0;
+        let g2Scores = {1:0, 2:0, 3:0};
+        function loadG2Q() { 
+            document.getElementById('g2-img').src = g2Qs[g2Idx]; 
+            document.getElementById('g2-q-num').innerText = `ข้อ ${g2Idx+1}/10`;
+            document.getElementById('g2-reveal-btn').classList.remove('hidden');
+            document.getElementById('g2-answer-text').classList.add('hidden');
+            document.getElementById('g2-answer-text').innerText = g2Ans[g2Idx];
+        }
+        function g2ShowAnswer() {
+            document.getElementById('g2-reveal-btn').classList.add('hidden');
+            document.getElementById('g2-answer-text').classList.remove('hidden');
+            playSound('s-correct');
+        }
+        function addScore(g){ g2Scores[g]++; document.getElementById(`s-g${g}`).innerText = g2Scores[g]; playSound('s-click'); }
+        function g2NextQ(){ if(g2Idx<9){ g2Idx++; loadG2Q(); } else { g2Finish(); } }
+        function g2Finish(){ 
+            document.getElementById('g2-interface').style.display='none'; 
+            document.getElementById('g2-podium').style.display='flex';
+            playSound('s-success'); createConfetti();
+            const hScale = 5;
+            document.getElementById('podium-bars').innerHTML = `
+                <div class="w-[15vmin] bg-gray-400 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-gray-300" style="height: ${g2Scores[2]*hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div>
+                <div class="w-[15vmin] bg-yellow-400 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-yellow-300 z-10" style="height: ${g2Scores[1]*hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div>
+                <div class="w-[15vmin] bg-orange-400 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-orange-300" style="height: ${g2Scores[3]*hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>
+            `;
+        }
+        function g2BackToGame(){ document.getElementById('g2-interface').style.display='flex'; document.getElementById('g2-podium').style.display='none'; }
+
+        // --- Picker ---
+        function startPicker() {
+            playSound('s-shuffle');
+            document.getElementById('picker-placeholder').classList.add('hidden');
+            const img = document.getElementById('picker-img');
+            img.classList.remove('hidden');
+            document.getElementById('picker-btn').disabled=true;
+            const interval = setInterval(()=>{ const r = Math.floor(Math.random()*13)+1; img.src = `s/${String(r).padStart(2,'0')}.jpg`; }, 100);
+            setTimeout(()=>{ clearInterval(interval); document.getElementById('s-shuffle').pause(); playSound('s-success'); document.getElementById('picker-btn').disabled=false; }, 3000);
+        }
+
+        // --- Drawing ---
+        const cvs = document.getElementById('drawing-canvas');
+        const cx = cvs.getContext('2d');
+        let isDraw = false, drawMode = false;
+        function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; cx.strokeStyle="#ef4444"; cx.lineWidth=5; cx.lineCap="round"; }
+        window.addEventListener('resize', resizeCvs); resizeCvs();
+        function toggleDrawing() {
+            drawMode = !drawMode;
+            document.getElementById('toggle-draw-btn').classList.toggle('bg-yellow-100');
+            cvs.classList.toggle('drawing-active');
+            document.getElementById('clear-draw-btn').classList.toggle('hidden');
+        }
+        function clearCanvas() { cx.clearRect(0,0,cvs.width, cvs.height); }
+        function startD(e) { if(!drawMode) return; isDraw=true; drawD(e); }
+        function endD() { isDraw=false; cx.beginPath(); }
+        function drawD(e) {
+            if(!isDraw || !drawMode) return;
+            e.preventDefault();
+            let x, y;
+            if(e.type.includes('touch')) { x=e.touches[0].clientX; y=e.touches[0].clientY; }
+            else { x=e.clientX; y=e.clientY; }
+            cx.lineTo(x,y); cx.stroke(); cx.beginPath(); cx.moveTo(x,y);
+        }
+        cvs.addEventListener('mousedown', startD); cvs.addEventListener('mouseup', endD); cvs.addEventListener('mousemove', drawD);
+        cvs.addEventListener('touchstart', startD, {passive:false}); cvs.addEventListener('touchend', endD); cvs.addEventListener('touchmove', drawD, {passive:false});
+
+        function createConfetti() {
+            const c = ['#FFD700', '#FF4500', '#32CD32', '#1E90FF', '#FF69B4'];
+            for(let i=0; i<80; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti';
+                el.style.left = Math.random()*100+'vw';
+                el.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
+                el.style.animationDuration = (Math.random()*2+2)+'s';
+                el.style.width = Math.random()*1.5+0.5+'vmin';
+                el.style.height = Math.random()*1.5+0.5+'vmin';
+                document.body.appendChild(el);
+            }
+        }
+    </script>
+</body>
+</html>
