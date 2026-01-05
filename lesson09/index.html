@@ -32,7 +32,6 @@
             #orientation-warning { display: flex; }
             .section { display: none !important; }
             .ui-controls { display: none !important; }
-            /* ซ่อนปุ่มสุ่มใหม่ในแนวตั้งด้วย */
             #global-random-bar { display: none !important; } 
         }
 
@@ -46,7 +45,6 @@
             animation: fadeIn 0.5s; 
             padding: 2vmin;
             box-sizing: border-box;
-            padding-bottom: 8vmin; /* เว้นที่ด้านล่างสำหรับปุ่มสุ่ม */
         }
         .section.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -78,10 +76,10 @@
             font-weight: 800; 
             font-size: 5vmin; 
             box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.1); 
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s; /* Add smooth transition for FLIP */
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s; 
             white-space: nowrap; 
             margin: 1vmin;
-            will-change: transform; /* Performance optimization */
+            will-change: transform; 
         }
         .word-card:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
 
@@ -142,7 +140,10 @@
     <audio id="s-success" src="sound/success.mp3"></audio>
 
     <canvas id="drawing-canvas"></canvas>
+
     <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[80] flex gap-[2vmin]">
+        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">🎲</button>
+
         <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center">✏️</button>
         <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[3vmin] w-[8vmin] h-[8vmin] items-center justify-center">🗑️</button>
     </div>
@@ -153,16 +154,10 @@
     
     <div id="feedback-overlay"><div id="feedback-content" class="animate-bounce drop-shadow-2xl"></div></div>
 
-    <div id="global-random-bar" class="fixed bottom-0 left-0 w-full z-[100] flex justify-center pointer-events-none">
-        <button onclick="startGlobalRandom()" class="pointer-events-auto bg-amber-500 hover:bg-amber-600 text-white font-bold py-[1vmin] px-[5vmin] rounded-t-[2vmin] shadow-[0_-0.5vmin_1vmin_rgba(0,0,0,0.15)] border-t-[0.5vmin] border-x-[0.5vmin] border-amber-300 text-[3.5vmin] transition transform hover:-translate-y-1 active:translate-y-0 flex items-center gap-2">
-            🎲 สุ่มนักเรียน
-        </button>
-    </div>
-
     <div id="global-random-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/95 z-[200] flex-col items-center justify-center">
         <button onclick="closeGlobalRandom()" class="absolute top-[3vmin] right-[3vmin] text-white text-[5vmin] font-bold hover:text-red-500 transition z-[201]">✖</button>
         <div class="relative w-[90vw] h-[80vh] flex items-center justify-center">
-            <img id="global-student-img" src="s/01.png" class="max-w-full max-h-full object-contain rounded-[2vmin] border-[1vmin] border-white shadow-[0_0_5vmin_rgba(255,255,255,0.3)]">
+            <img id="global-student-img" src="s/01.jpg" class="max-w-full max-h-full object-contain rounded-[2vmin] border-[1vmin] border-white shadow-[0_0_5vmin_rgba(255,255,255,0.3)]">
         </div>
     </div>
     <div id="sec-cover" class="section bg-blue-100 active">
@@ -186,7 +181,7 @@
                 <p id="bg-sound" class="text-[6vmin] font-bold opacity-80 text-gray-600 text-center"></p>
             </div>
         </div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-yellow-100/90 backdrop-blur z-20 shrink-0 absolute bottom-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-yellow-100/90 backdrop-blur z-20 shrink-0 absolute bottom-[2vmin]">
             <button onclick="bgPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <span class="text-[4vmin] font-bold text-yellow-800 bg-white/80 px-[4vmin] py-[1vmin] rounded-full shadow-inner" id="bg-indicator">1 / 11</span>
             <button onclick="bgNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
@@ -207,7 +202,7 @@
             </div>
             <div id="g1-word-bank" class="flex justify-center gap-[2vmin] mb-[4vmin] flex-wrap w-full px-[2vmin]"></div>
         </div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-indigo-100/90 backdrop-blur z-20 shrink-0 mb-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-indigo-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
             <button onclick="g1Prev()" class="bg-gray-400 text-white nav-btn border-gray-600 w-[20vmin] justify-center">◀ ย้อนกลับ</button>
             <button onclick="g1Check()" id="g1-check-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-[4vmin] py-[1.5vmin] rounded-full font-bold text-[4vmin] shadow-2xl transition transform hover:scale-105 border-b-[0.8vmin] border-indigo-900 flex-1 mx-[4vmin] max-w-[40vmin]">
                 ตรวจคำตอบ
@@ -218,7 +213,7 @@
 
     <div id="sec-lesson" class="section bg-blue-50">
         <div id="lesson-content" class="flex flex-col items-center justify-center w-full h-full p-[2vmin] flex-1 overflow-hidden"></div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-blue-100/90 backdrop-blur z-20 shrink-0 mb-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-blue-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
             <button onclick="lessonPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <span id="lesson-page-indicator" class="text-[4vmin] text-blue-800 font-bold">1 / 13</span>
             <button onclick="lessonNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
@@ -227,7 +222,7 @@
 
     <div id="sec-swap" class="section bg-pink-50">
         <div id="swap-content" class="w-full max-w-[95vw] flex flex-col items-center justify-center h-full flex-1"></div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-pink-100/90 backdrop-blur z-20 shrink-0 mb-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-pink-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
             <button onclick="swapPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <span id="swap-indicator" class="text-[4vmin] text-pink-800 font-bold">1 / 3</span>
             <button onclick="swapNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
@@ -247,7 +242,7 @@
                 </div>
              </div>
              
-             <div class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0 mb-[8vmin]">
+             <div class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0 mb-[2vmin]">
                 <div class="flex gap-[4vmin] w-full justify-center">
                     <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">❤️ กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-red-100 hover:bg-red-200 text-red-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-red-300 active:scale-90 transition shadow-lg">+</button></div></div>
                     <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💚 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-green-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
@@ -266,7 +261,7 @@
             </div>
         </div>
         
-        <div class="fixed bottom-[1vmin] left-[1vmin] z-10 pointer-events-none mb-[8vmin]">
+        <div class="fixed bottom-[1vmin] left-[1vmin] z-10 pointer-events-none mb-[2vmin]">
              <button onclick="navigate(-1)" class="bg-gray-400 text-white px-[3vmin] py-[1vmin] rounded-full text-[2vmin] pointer-events-auto opacity-50 hover:opacity-100 w-[20vmin]">◀ ย้อนกลับ</button>
         </div>
     </div>
@@ -278,7 +273,7 @@
             <p class="text-[10vmin] text-blue-600 font-extrabold mb-[4vmin]">5 ประโยค</p>
             <p class="text-[4vmin] text-gray-600">ลงในสมุดของตนเองให้สวยงาม</p>
         </div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 shrink-0 mb-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 shrink-0 mb-[2vmin]">
             <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <button onclick="navigate(1)" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
         </div>
@@ -295,7 +290,7 @@
                 <button onclick="startPicker()" id="picker-btn" class="bg-purple-500 hover:bg-purple-600 text-white text-[5vmin] font-bold py-[3vmin] px-[6vmin] rounded-full shadow-2xl border-b-[1.5vmin] border-purple-800 animate-bounce transition w-full">🎰 กดสุ่ม</button>
             </div>
         </div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-[2vmin]">
             <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <button onclick="navigate(1)" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
         </div>
@@ -309,7 +304,7 @@
         <h1 class="text-[8vmin] font-extrabold text-cyan-900 mb-[2vmin] drop-shadow-md">ยินดีด้วย!</h1>
         <h2 class="text-[6vmin] font-bold text-cyan-700 mb-[8vmin]">นักเรียนเก่งมากครับ</h2>
         <button onclick="playSound('s-success'); createConfetti()" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-[5vmin] font-bold py-[3vmin] px-[10vmin] rounded-full shadow-2xl animate-pulse border-b-[1.5vmin] border-yellow-600 transform hover:scale-105 transition">🔊 รับเสียงปรบมือ</button>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-[8vmin]">
+        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-[2vmin]">
             <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <button onclick="navigate(-(sections.length-1))" class="bg-green-600 text-white nav-btn border-green-800">🏠 กลับหน้าแรก</button>
         </div>
@@ -715,8 +710,9 @@
         }
 
         // --- Global Random Student (New Feature) ---
+        // แก้ไขให้นามสกุลเป็น .jpg
         const globalStudentImages = [];
-        for(let i=1; i<=13; i++) globalStudentImages.push(`s/${String(i).padStart(2,'0')}.png`);
+        for(let i=1; i<=13; i++) globalStudentImages.push(`s/${String(i).padStart(2,'0')}.jpg`);
         
         let globalInterval = null;
         let globalTimeouts = [];
