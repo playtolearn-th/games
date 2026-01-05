@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป (Final - Custom Layouts)</title>
+    <title>บทที่ 9 เกือบไป (Final - Train & Colors)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -107,10 +107,16 @@
         .smoke { animation: floatUp 2s infinite; position: absolute; top: -2.5em; left: 0.4em; opacity: 0; font-size: 1.6em; }
         @keyframes floatUp { 0% { transform: translateY(0) scale(0.5); opacity: 0.8; } 100% { transform: translateY(-1.5em) scale(2); opacity: 0; } }
 
-        /* Confetti */
+        /* Fireworks & Confetti */
         .confetti { position: absolute; width: 1.5vmin; height: 1.5vmin; animation: confetti-fall linear forwards; z-index: 999; pointer-events: none; }
         @keyframes confetti-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
         
+        .firework { position: absolute; width: 2vmin; height: 2vmin; border-radius: 50%; animation: firework-pop ease-out forwards; z-index: 1000; pointer-events: none; }
+        @keyframes firework-pop { 
+            0% { transform: scale(1); opacity: 1; } 
+            100% { transform: scale(6); opacity: 0; box-shadow: 0 0 20px 10px currentColor; } 
+        }
+
         #feedback-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 90; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
         #feedback-content { font-size: 25vmin; }
     </style>
@@ -219,14 +225,14 @@
              <div class="flex-1 w-full flex items-center justify-center my-[2vmin] relative overflow-hidden">
                 <div class="bg-white p-[2vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-white h-[60vh] w-auto aspect-video flex items-center justify-center relative">
                     <img id="g2-img" src="" class="h-full w-full object-contain rounded-[2vmin]">
-                    </div>
+                </div>
              </div>
              
              <div class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0">
                 <div class="flex gap-[4vmin] w-full justify-center">
-                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🦁 กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
-                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐯 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-blue-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
-                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐼 กลุ่ม 3</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-yellow-600 w-[8vmin] text-center" id="s-g3">0</span><button onclick="addScore(3)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🦁 กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-red-100 hover:bg-red-200 text-red-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-red-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐯 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-green-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[2vmin] font-bold text-gray-500">🐼 กลุ่ม 3</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-blue-600 w-[8vmin] text-center" id="s-g3">0</span><button onclick="addScore(3)" class="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-blue-300 active:scale-90 transition shadow-lg">+</button></div></div>
                 </div>
                 <button onclick="g2NextQ()" class="bg-gray-800 hover:bg-black text-white px-[4vmin] py-[2vmin] rounded-full font-bold text-[3vmin] shadow-xl transition transform hover:scale-105 border-b-[0.8vmin] border-gray-600 ml-[2vmin] w-[20vmin]">ถัดไป ▶</button>
              </div>
@@ -265,7 +271,6 @@
                 <div id="picker-placeholder" class="text-[20vmin] text-purple-200">❓</div>
                 <img id="picker-img" src="" class="hidden w-full h-full object-cover rounded-[3vmin]">
             </div>
-            
             <div class="w-1/3 flex flex-col items-center justify-center pl-[5vmin]">
                 <h1 class="text-[6vmin] font-extrabold text-purple-900 mb-[4vmin] text-center">ใครจะเป็น<br>ผู้โชคดี?</h1>
                 <button onclick="startPicker()" id="picker-btn" class="bg-purple-500 hover:bg-purple-600 text-white text-[5vmin] font-bold py-[3vmin] px-[6vmin] rounded-full shadow-2xl border-b-[1.5vmin] border-purple-800 animate-bounce transition w-full">🎰 กดสุ่ม</button>
@@ -337,7 +342,7 @@
             setTimeout(() => { overlay.style.display = 'none'; }, 1000);
         }
 
-        // --- Brain Gym (No changes) ---
+        // --- Brain Gym ---
         const bgCards = [
             { icon: "<img src='l/01.png' class='h-full w-full object-contain'>", word: "เกาะ", sound: "", color: "text-amber-700" },
             { icon: "<img src='l/02.png' class='h-full w-full object-contain'>", word: "ขวาง", sound: "หยุดนะ!", color: "text-red-600" },
@@ -421,18 +426,21 @@
         function g1Next() { if(g1Idx<9){g1Idx++; loadG1Q();} else navigate(1); }
         function g1Prev() { if(g1Idx>0){g1Idx--; loadG1Q();} else navigate(-1); }
 
-        // --- Lesson (Major Logic Update) ---
+        // --- Lesson (Modified) ---
         let lsIdx = 1;
         function renderLesson() {
             const c = document.getElementById('lesson-content');
             document.getElementById('lesson-page-indicator').innerText = `${lsIdx}/13`;
             
-            // Train Rendering Function
-            const renderTrain = (t1, t2, t3=null, isBig=false) => {
-                const baseSize = isBig ? '3vmin' : '1.8vmin';
-                const padding = isBig ? '0.4em' : '1em';
+            // Scalable Train Component
+            const renderTrain = (t1, t2, t3=null, scaleClass='') => {
+                // scaleClass handles the "Full Area" requirement
+                const style = scaleClass ? '' : 'font-size: 1.8vmin;';
+                const wrapperClass = scaleClass ? `train-wrapper transform origin-center ${scaleClass}` : 'train-wrapper';
+                const padding = scaleClass ? '0.4em' : '1em';
+                
                 return `
-                <div class="train-wrapper" style="font-size: ${baseSize}; margin-top: 0; margin-bottom: 0;">
+                <div class="${wrapperClass}" style="${style}">
                     <div class="train-container">
                         <div class="car head-car" style="padding: ${padding};"><div class="chimney"></div><div class="smoke">💨</div><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t1}</div>
                         <div class="car body-car-1" style="padding: ${padding};"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t2}</div>
@@ -443,32 +451,27 @@
 
             if(lsIdx===1) c.innerHTML=`${renderTrain('','','')}<h1 class="text-[6vmin] font-bold mb-[4vmin] mt-[4vmin]">นี่คือรูปอะไรครับเด็กๆ?</h1><div class="bg-white px-[6vmin] py-[2vmin] rounded-[3vmin] shadow-2xl cursor-pointer border-[1vmin] border-gray-100 text-[4vmin] font-bold" onclick="showTrainAnswer(this)">แตะดูเฉลย</div>`;
             
-            // 2/13: Resize to fit, remove bottom text
-            else if(lsIdx===2) c.innerHTML=`<div class="scale-150 transform origin-center">${renderTrain('พ่อ','ขี่','ม้า', true)}</div>`;
+            // 2/13: Full scale
+            else if(lsIdx===2) c.innerHTML=`<div class="w-full h-full flex items-center justify-center">${renderTrain('พ่อ','ขี่','ม้า', 'scale-[2]')}</div>`;
             
-            // 3/13: New labels
-            else if(lsIdx===3) c.innerHTML=`${renderTrain('พ่อ','ขี่','ม้า', true)}<div class="grid grid-cols-2 gap-[4vmin] mt-[6vmin] w-full max-w-[90vw]"><div class="bg-blue-100 p-[2vmin] rounded-[3vmin] text-blue-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-blue-300">ภาคประธาน (ใคร)</div><div class="bg-red-100 p-[2vmin] rounded-[3vmin] text-red-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-red-300">ภาคแสดง (ทำอะไร)</div></div>`;
+            // 3/13: Full scale, New Labels
+            else if(lsIdx===3) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ','ขี่','ม้า', 'scale-[1.8]')}<div class="grid grid-cols-2 gap-[10vmin] mt-[10vmin] w-full max-w-[90vw]"><div class="bg-blue-100 p-[2vmin] rounded-[3vmin] text-blue-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-blue-300">ภาคประธาน (ใคร)</div><div class="bg-red-100 p-[2vmin] rounded-[3vmin] text-red-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-red-300">ภาคแสดง (ทำอะไร)</div></div></div>`;
             
-            // 4/13: Text Left, Train Right (Big)
-            else if(lsIdx===4) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin]">รถไฟมี 2 แบบ</h2><div class="flex flex-col gap-[4vmin] w-full max-w-[95vw]"><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-purple-600">1. ขบวนสั้น</h3></div>${renderTrain('','', null, true)}</div><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-orange-600">2. ขบวนยาว</h3></div>${renderTrain('','','', true)}</div></div>`;
+            // 4/13: Text Left, Train Right
+            else if(lsIdx===4) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin]">รถไฟมี 2 แบบ</h2><div class="flex flex-col gap-[4vmin] w-full max-w-[95vw]"><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-purple-600">1. ขบวนสั้น</h3></div>${renderTrain('','', null, 'scale-[1.2]')}</div><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-orange-600">2. ขบวนยาว</h3></div>${renderTrain('','','', 'scale-[1.2]')}</div></div>`;
             
-            // 5/13: Title Top, Train Big, No bottom text
-            else if(lsIdx===5) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น (2 ตู้)</h2><div class="scale-[1.3] transform origin-center mt-[4vmin]">${renderTrain('นก','บิน', null, true)}</div>`;
+            // 5/13 - 11/13: FULL SCALE TRAINS
+            else if(lsIdx===5) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น</h2><div class="w-full h-full flex items-center justify-center">${renderTrain('นก','บิน', null, 'scale-[2.2]')}</div>`;
+            else if(lsIdx===6) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น</h2><div class="w-full h-full flex items-center justify-center">${renderTrain('ฝน','ตก', null, 'scale-[2.2]')}</div>`;
+            else if(lsIdx===7) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-purple-800">สรุปขบวนสั้น</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน','กริยา', null, 'scale-[2]')}</div><div class="text-[5vmin] bg-purple-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-purple-300 font-bold text-purple-900">ใคร + ทำอะไร</div>`;
+            else if(lsIdx===8) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('ฉัน','กิน','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'ข้าว\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: กินอะไร?</p></div>`;
+            else if(lsIdx===9) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('แมว','ไล่','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'หนู\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ไล่อะไร?</p></div>`;
+            else if(lsIdx===10) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ','ล้าง','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p></div>`;
+            else if(lsIdx===11) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน','กริยา','กรรม', 'scale-[1.8]')}</div><div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
             
-            // 6/13: Title Top, Train Big, No bottom text
-            else if(lsIdx===6) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น (2 ตู้)</h2><div class="scale-[1.3] transform origin-center mt-[4vmin]">${renderTrain('ฝน','ตก', null, true)}</div>`;
-            
-            else if(lsIdx===7) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-purple-800">สรุปขบวนสั้น</h2>${renderTrain('ประธาน','กริยา', null, true)}<div class="text-[5vmin] bg-purple-100 px-[6vmin] py-[2vmin] rounded-full mt-[6vmin] border-[1vmin] border-purple-300 font-bold text-purple-900">ใคร + ทำอะไร</div>`;
-            else if(lsIdx===8) c.innerHTML=`${renderTrain('ฉัน','กิน','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'ข้าว\')">?</span>', true)}<p class="mt-[6vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: กินอะไร?</p>`;
-            else if(lsIdx===9) c.innerHTML=`${renderTrain('แมว','ไล่','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'หนู\')">?</span>', true)}<p class="mt-[6vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ไล่อะไร?</p>`;
-            else if(lsIdx===10) c.innerHTML=`${renderTrain('พ่อ','ล้าง','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>', true)}<p class="mt-[6vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p>`;
-            else if(lsIdx===11) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2>${renderTrain('ประธาน','กริยา','กรรม', true)}<div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mt-[6vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
-            
-            // 12/13: Custom Text
-            else if(lsIdx===12) c.innerHTML=`<h1 class="text-[15vmin] font-extrabold text-blue-600 drop-shadow-md">ฉัน ดีใจ</h1>`;
-            
-            // 13/13: Custom Text
-            else if(lsIdx===13) c.innerHTML=`<h1 class="text-[15vmin] font-extrabold text-red-600 drop-shadow-md">หมา ไล่ แมว</h1>`;
+            // 12/13 & 13/13: New Question Text
+            else if(lsIdx===12) c.innerHTML=`<h1 class="text-[15vmin] font-extrabold text-blue-600 drop-shadow-md">ขบวนสั้นหรือยาว</h1>`;
+            else if(lsIdx===13) c.innerHTML=`<h1 class="text-[15vmin] font-extrabold text-red-600 drop-shadow-md">ขบวนสั้นหรือยาว</h1>`;
         }
         function showTrainAnswer(el) { el.innerHTML = '<h2 class="text-green-600 font-bold text-[6vmin]">รถไฟ! ✅</h2>'; playSound('s-correct'); }
         function revealWord(el, word) { el.className = 'car body-car-2'; el.style.padding='0.4em'; el.innerHTML = `<div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${word}`; playSound('s-click'); }
@@ -479,25 +482,28 @@
         function lessonNext(){ if(lsIdx<13){lsIdx++; renderLesson(); playSound('s-click');} else navigate(1); }
         function lessonPrev(){ if(lsIdx>1){lsIdx--; renderLesson(); playSound('s-click');} else navigate(-1); }
 
-        // --- Swap (Modified: No Title, Big Text) ---
+        // --- Swap (Fix overlapping) ---
         let swIdx = 2; 
         function renderSwap() {
             const c = document.getElementById('swap-content');
             document.getElementById('swap-indicator').innerText = `${swIdx-1}/3`;
-            const box = (txt, col) => `<div class="word-card ${col} text-white scale-[1.5] mx-[1.5vmin] text-[5vmin] px-[3vmin] py-[1.5vmin]">${txt}</div>`; // Increased scale
+            const box = (txt, col) => `<div class="word-card ${col} text-white text-[5vmin] px-[3vmin] py-[1.5vmin]">${txt}</div>`; 
             const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
             
+            // Use flex-wrap and standard gaps instead of negative margins to prevent overlap
+            const containerClass = "flex flex-row flex-wrap justify-center gap-[3vmin] w-full items-center content-center h-[50vh]";
+            
             if(swIdx===2) {
-                 c.innerHTML = `<div id="swap-container-2" class="flex gap-[2vmin] justify-center my-[4vmin] flex-wrap mt-[-5vmin]">${box('ภูผา',cols.b)}${box('ไปหา',cols.r)}${box('แม่',cols.g)}</div><button class="mt-[10vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(2, this)">🔀 ลองสลับ</button>`;
+                 c.innerHTML = `<div id="swap-container-2" class="${containerClass}">${box('ภูผา',cols.b)}${box('ไปหา',cols.r)}${box('แม่',cols.g)}</div><button class="mt-[4vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(2, this)">🔀 ลองสลับ</button>`;
             } else if(swIdx===3) {
-                 c.innerHTML = `<div id="swap-container-3" class="flex gap-[2vmin] justify-center my-[4vmin] flex-wrap mt-[-5vmin]">${box('ครู',cols.b)}${box('รัก',cols.r)}${box('เด็กๆ',cols.g)}</div><button class="mt-[10vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(3, this)">🔀 ลองสลับ</button>`;
+                 c.innerHTML = `<div id="swap-container-3" class="${containerClass}">${box('ครู',cols.b)}${box('รัก',cols.r)}${box('เด็กๆ',cols.g)}</div><button class="mt-[4vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(3, this)">🔀 ลองสลับ</button>`;
             } else {
-                 c.innerHTML = `<div id="swap-container-4" class="flex gap-[2vmin] justify-center my-[4vmin] flex-wrap mt-[-5vmin]">${box('พ่อ',cols.b)}${box('ไป',cols.r)}${box('ป่า',cols.g)}</div><button class="mt-[10vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(4, this)">🔀 สลับ</button>`;
+                 c.innerHTML = `<div id="swap-container-4" class="${containerClass}">${box('พ่อ',cols.b)}${box('ไป',cols.r)}${box('ป่า',cols.g)}</div><button class="mt-[4vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(4, this)">🔀 สลับ</button>`;
             }
         }
         function performSwap(id, btn) {
             playSound('s-click');
-            const box = (txt, col) => `<div class="word-card ${col} text-white scale-[1.5] mx-[1.5vmin] text-[5vmin] px-[3vmin] py-[1.5vmin]">${txt}</div>`;
+            const box = (txt, col) => `<div class="word-card ${col} text-white text-[5vmin] px-[3vmin] py-[1.5vmin]">${txt}</div>`;
             const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
             if(id===2) { document.getElementById('swap-container-2').innerHTML = `${box('แม่',cols.g)}${box('ไปหา',cols.r)}${box('ภูผา',cols.b)}`; btn.innerText = 'ความหมายเปลี่ยน!'; }
             else if(id===3) { document.getElementById('swap-container-3').innerHTML = `${box('เด็กๆ',cols.g)}${box('รัก',cols.r)}${box('ครู',cols.b)}`; btn.innerText = 'ความหมายเปลี่ยน!'; }
@@ -506,17 +512,14 @@
         function swapNext(){ if(swIdx<4){swIdx++; renderSwap(); playSound('s-click');} else navigate(1); }
         function swapPrev(){ if(swIdx>2){swIdx--; renderSwap(); playSound('s-click');} else navigate(-1); }
 
-        // --- Game 2 (Root path logic) ---
-        // Array uses root path 01.png etc.
+        // --- Game 2 (Update Colors) ---
         const g2Qs = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
         let g2Idx = 0;
         let g2Scores = {1:0, 2:0, 3:0};
         function loadG2Q() { 
             document.getElementById('g2-img').src = g2Qs[g2Idx]; 
             document.getElementById('g2-q-num').innerText = `ข้อ ${g2Idx+1}/10`;
-            // Reveal buttons hidden
         }
-        // Deleted g2ShowAnswer function as it's not needed
         function addScore(g){ g2Scores[g]++; document.getElementById(`s-g${g}`).innerText = g2Scores[g]; playSound('s-click'); }
         function g2NextQ(){ if(g2Idx<9){ g2Idx++; loadG2Q(); } else { g2Finish(); } }
         function g2Finish(){ 
@@ -524,15 +527,16 @@
             document.getElementById('g2-podium').style.display='flex';
             playSound('s-success'); createConfetti();
             const hScale = 5;
+            // Updated Podium Colors to Match G1(Red), G2(Green), G3(Blue)
             document.getElementById('podium-bars').innerHTML = `
-                <div class="w-[15vmin] bg-gray-400 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-gray-300" style="height: ${g2Scores[2]*hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div>
-                <div class="w-[15vmin] bg-yellow-400 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-yellow-300 z-10" style="height: ${g2Scores[1]*hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div>
-                <div class="w-[15vmin] bg-orange-400 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-orange-300" style="height: ${g2Scores[3]*hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>
+                <div class="w-[15vmin] bg-green-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-green-300" style="height: ${g2Scores[2]*hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div>
+                <div class="w-[15vmin] bg-red-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-red-300 z-10" style="height: ${g2Scores[1]*hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div>
+                <div class="w-[15vmin] bg-blue-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-blue-300" style="height: ${g2Scores[3]*hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>
             `;
         }
         function g2BackToGame(){ document.getElementById('g2-interface').style.display='flex'; document.getElementById('g2-podium').style.display='none'; }
 
-        // --- Picker (Modified Logic: 7s + 3s) ---
+        // --- Picker (Enhanced Finale) ---
         function startPicker() {
             playSound('s-shuffle');
             document.getElementById('picker-placeholder').classList.add('hidden');
@@ -540,15 +544,10 @@
             img.classList.remove('hidden');
             document.getElementById('picker-btn').disabled=true;
             
-            // 7 Seconds Fast
-            const fastInterval = setInterval(()=>{ 
-                const r = Math.floor(Math.random()*13)+1; 
-                img.src = `s/${String(r).padStart(2,'0')}.jpg`; 
-            }, 50);
+            const fastInterval = setInterval(()=>{ const r = Math.floor(Math.random()*13)+1; img.src = `s/${String(r).padStart(2,'0')}.jpg`; }, 50);
 
             setTimeout(()=>{ 
                 clearInterval(fastInterval);
-                // 3 Seconds Slow (3 images)
                 let slowCount = 0;
                 const slowInterval = setInterval(() => {
                     const r = Math.floor(Math.random()*13)+1; 
@@ -558,15 +557,19 @@
                         clearInterval(slowInterval);
                         document.getElementById('s-shuffle').pause(); 
                         playSound('s-success');
+                        
+                        // Grand Finale Effects
                         createConfetti();
-                        img.classList.add('zoom-in-out'); // Add effect
+                        createFireworks(); // Add Fireworks
+                        img.classList.add('zoom-in-out');
+                        
                         document.getElementById('picker-btn').disabled=false; 
                     }
                 }, 1000);
             }, 7000);
         }
 
-        // --- Drawing ---
+        // --- Drawing & Effects ---
         const cvs = document.getElementById('drawing-canvas');
         const cx = cvs.getContext('2d');
         let isDraw = false, drawMode = false;
@@ -594,7 +597,7 @@
 
         function createConfetti() {
             const c = ['#FFD700', '#FF4500', '#32CD32', '#1E90FF', '#FF69B4'];
-            for(let i=0; i<80; i++) {
+            for(let i=0; i<100; i++) {
                 const el = document.createElement('div');
                 el.className = 'confetti';
                 el.style.left = Math.random()*100+'vw';
@@ -603,6 +606,22 @@
                 el.style.width = Math.random()*1.5+0.5+'vmin';
                 el.style.height = Math.random()*1.5+0.5+'vmin';
                 document.body.appendChild(el);
+            }
+        }
+
+        // New Fireworks Function
+        function createFireworks() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            for(let i=0; i<20; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'firework';
+                    el.style.left = (Math.random() * 80 + 10) + 'vw';
+                    el.style.top = (Math.random() * 80 + 10) + 'vh';
+                    el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 1000);
+                }, i * 200);
             }
         }
     </script>
