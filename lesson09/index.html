@@ -142,7 +142,8 @@
     <canvas id="drawing-canvas"></canvas>
 
     <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[80] flex gap-[2vmin]">
-        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">🎲</button>
+        
+        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">🎲</button>
 
         <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center">✏️</button>
         <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[3vmin] w-[8vmin] h-[8vmin] items-center justify-center">🗑️</button>
@@ -356,7 +357,7 @@
             setTimeout(() => { overlay.style.display = 'none'; }, 1000);
         }
 
-        // --- Brain Gym ---
+        // --- Brain Gym (ยังคงใช้ .png จาก l/) ---
         const bgCards = [
             { icon: "<img src='l/01.png' class='h-full w-full object-contain'>", word: "เกาะ", sound: "", color: "text-amber-700" },
             { icon: "<img src='l/02.png' class='h-full w-full object-contain'>", word: "ขวาง", sound: "หยุดนะ!", color: "text-red-600" },
@@ -601,7 +602,7 @@
         function swapNext(){ if(swIdx<4){swIdx++; renderSwap(); playSound('s-click');} else navigate(1); }
         function swapPrev(){ if(swIdx>2){swIdx--; renderSwap(); playSound('s-click');} else navigate(-1); }
 
-        // --- Game 2 ---
+        // --- Game 2 (ยังคงใช้ .png จาก Root) ---
         const g2Qs = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
         let g2Idx = 0;
         let g2Scores = {1:0, 2:0, 3:0};
@@ -624,7 +625,7 @@
         }
         function g2BackToGame(){ document.getElementById('g2-interface').style.display='flex'; document.getElementById('g2-podium').style.display='none'; }
 
-        // --- Picker ---
+        // --- Picker (แก้ไข: ใช้ .jpg ตามที่ขอ) ---
         function startPicker() {
             playSound('s-shuffle');
             document.getElementById('picker-placeholder').classList.add('hidden');
@@ -632,6 +633,7 @@
             img.classList.remove('hidden');
             document.getElementById('picker-btn').disabled=true;
             
+            // จุดแก้ไข 3: ใช้ s/xx.jpg
             const fastInterval = setInterval(()=>{ const r = Math.floor(Math.random()*13)+1; img.src = `s/${String(r).padStart(2,'0')}.jpg`; }, 50);
 
             setTimeout(()=>{ 
@@ -639,6 +641,7 @@
                 let slowCount = 0;
                 const slowInterval = setInterval(() => {
                     const r = Math.floor(Math.random()*13)+1; 
+                    // จุดแก้ไข 4: ใช้ s/xx.jpg
                     img.src = `s/${String(r).padStart(2,'0')}.jpg`;
                     slowCount++;
                     if(slowCount >= 3) {
@@ -709,9 +712,9 @@
             }
         }
 
-        // --- Global Random Student (New Feature) ---
-        // แก้ไขให้นามสกุลเป็น .jpg
+        // --- Global Random Student (แก้ไข: ใช้ .jpg) ---
         const globalStudentImages = [];
+        // จุดแก้ไข 5: สร้าง Array รูปนามสกุล .jpg
         for(let i=1; i<=13; i++) globalStudentImages.push(`s/${String(i).padStart(2,'0')}.jpg`);
         
         let globalInterval = null;
