@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป (Final - Animated Shuffle)</title>
+    <title>บทที่ 9 เกือบไป (No Lock - Number Picker)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
@@ -20,20 +20,6 @@
             margin: 0; padding: 0;
         }
         
-        /* Orientation Warning */
-        #orientation-warning {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; color: #fff; z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center;
-            text-align: center;
-        }
-        @media (orientation: portrait) {
-            #orientation-warning { display: flex; }
-            .section { display: none !important; }
-            .ui-controls { display: none !important; }
-        }
-
         /* Layout */
         .section { 
             display: none; 
@@ -75,10 +61,10 @@
             font-weight: 800; 
             font-size: 5vmin; 
             box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.1); 
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s; /* Add smooth transition for FLIP */
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s; 
             white-space: nowrap; 
             margin: 1vmin;
-            will-change: transform; /* Performance optimization */
+            will-change: transform; 
         }
         .word-card:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
 
@@ -127,11 +113,6 @@
 </head>
 <body class="bg-slate-50 text-gray-800">
 
-    <div id="orientation-warning">
-        <div class="text-[10vmin] mb-4">📱🔄</div>
-        <h1 class="text-[5vmin] font-bold">กรุณาหมุนหน้าจอเป็นแนวนอน</h1>
-    </div>
-
     <audio id="s-click" src="sound/click.mp3"></audio>
     <audio id="s-correct" src="sound/correct.mp3"></audio>
     <audio id="s-wrong" src="sound/wrong.mp3"></audio>
@@ -178,10 +159,12 @@
         </div>
     </div>
 
-    <div id="sec-game1" class="section bg-indigo-50">
+    <div id="sec-game1" class="section bg-indigo-50 relative">
         <div class="w-full flex items-center gap-[4vmin] px-[4vmin] pt-[2vmin] pb-[2vmin] justify-start pl-[12vmin]"> 
             <h2 class="text-[5vmin] font-bold text-indigo-700 whitespace-nowrap">🎮 เรียงประโยค</h2>
             <div class="flex gap-[2vmin]">
+                <button onclick="openStudentPicker()" class="bg-pink-500 hover:bg-pink-600 text-white px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] shadow-lg border-[0.5vmin] border-pink-700 active:scale-95 transition">🎲 สุ่มเลขที่</button>
+                
                 <span id="g1-score" class="bg-yellow-300 text-yellow-900 px-[3vmin] py-[1vmin] rounded-full font-extrabold text-[3vmin] shadow-lg border-[0.5vmin] border-yellow-500">คะแนน: 0</span>
                 <span id="g1-indicator" class="bg-indigo-200 text-indigo-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] border-[0.5vmin] border-indigo-300">ข้อ 1/10</span>
             </div>
@@ -198,6 +181,21 @@
                 ตรวจคำตอบ
             </button>
             <button onclick="g1Next()" id="g1-next-btn" class="bg-green-500 text-white nav-btn border-green-700 opacity-50 cursor-not-allowed w-[20vmin] justify-center">ถัดไป ▶</button>
+        </div>
+
+        <div id="g1-picker-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/90 z-50 flex flex-col items-center justify-center">
+            <button onclick="closeStudentPicker()" class="absolute top-[3vmin] right-[3vmin] bg-red-500 hover:bg-red-600 text-white px-[4vmin] py-[1vmin] rounded-full text-[4vmin] font-bold border-4 border-red-700 z-50">❌ ปิด</button>
+            
+            <div class="flex w-full h-full items-center justify-between px-[5vmin]">
+                <div class="w-2/3 h-[70vh] bg-white p-[2vmin] rounded-[5vmin] shadow-2xl border-[2vmin] border-purple-300 flex items-center justify-center overflow-hidden relative">
+                    <div id="mini-picker-display" class="text-[40vmin] font-black text-purple-600 drop-shadow-lg leading-none">?</div>
+                </div>
+                
+                <div class="w-1/3 flex flex-col items-center justify-center pl-[5vmin]">
+                    <h1 class="text-[6vmin] font-extrabold text-white mb-[4vmin] text-center drop-shadow-lg">สุ่มเลขที่</h1>
+                    <button onclick="runMiniPicker()" id="mini-picker-btn" class="bg-purple-500 hover:bg-purple-600 text-white text-[5vmin] font-bold py-[3vmin] px-[6vmin] rounded-full shadow-2xl border-b-[1.5vmin] border-purple-800 animate-bounce transition w-full">🎰 กดสุ่ม</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -430,6 +428,56 @@
         function g1Next() { if(g1Idx<9){g1Idx++; loadG1Q();} else navigate(1); }
         function g1Prev() { if(g1Idx>0){g1Idx--; loadG1Q();} else navigate(-1); }
 
+        // --- GAME 1 PICKER MODAL (Numbers 1-40) ---
+        let miniPickerInterval;
+        
+        function openStudentPicker() {
+            document.getElementById('g1-picker-modal').classList.remove('hidden');
+            document.getElementById('g1-picker-modal').classList.add('flex');
+            document.getElementById('mini-picker-display').innerText = '?';
+            document.getElementById('mini-picker-btn').disabled = false;
+        }
+
+        function closeStudentPicker() {
+            document.getElementById('g1-picker-modal').classList.add('hidden');
+            document.getElementById('g1-picker-modal').classList.remove('flex');
+            clearInterval(miniPickerInterval);
+            document.getElementById('s-shuffle').pause();
+        }
+
+        function runMiniPicker() {
+            playSound('s-shuffle');
+            document.getElementById('mini-picker-btn').disabled = true;
+            const display = document.getElementById('mini-picker-display');
+            
+            // Fast spin (Numbers 1-40)
+            const fastInterval = setInterval(()=>{ 
+                const r = Math.floor(Math.random()*40)+1; 
+                display.innerText = r;
+            }, 50);
+
+            miniPickerInterval = fastInterval;
+
+            setTimeout(()=>{ 
+                clearInterval(fastInterval);
+                let slowCount = 0;
+                const slowInterval = setInterval(() => {
+                    miniPickerInterval = slowInterval; 
+                    const r = Math.floor(Math.random()*40)+1; 
+                    display.innerText = r;
+                    slowCount++;
+                    if(slowCount >= 5) { // Slow down a bit more
+                        clearInterval(slowInterval);
+                        document.getElementById('s-shuffle').pause(); 
+                        playSound('s-success');
+                        createConfetti(); 
+                        display.classList.add('zoom-in-out');
+                        document.getElementById('mini-picker-btn').disabled = false; 
+                    }
+                }, 400);
+            }, 3000);
+        }
+
         // --- Lesson ---
         let lsIdx = 1;
         function renderLesson() {
@@ -440,7 +488,6 @@
                 const style = scaleClass ? '' : 'font-size: 1.8vmin;';
                 const wrapperClass = scaleClass ? `train-wrapper transform origin-center ${scaleClass}` : 'train-wrapper';
                 const padding = scaleClass ? '0.4em' : '1em';
-                
                 return `
                 <div class="${wrapperClass}" style="${style}">
                     <div class="train-container">
