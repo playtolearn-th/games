@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป (Final - Toggle Swap & Safe Emojis)</title>
+    <title>บทที่ 9 เกือบไป (Final - Animated Shuffle)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
@@ -75,9 +75,10 @@
             font-weight: 800; 
             font-size: 5vmin; 
             box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.1); 
-            transition: all 0.2s; 
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s; /* Add smooth transition for FLIP */
             white-space: nowrap; 
             margin: 1vmin;
+            will-change: transform; /* Performance optimization */
         }
         .word-card:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
 
@@ -461,24 +462,8 @@
             else if(lsIdx===9) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('แมว','ไล่','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'หนู\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ไล่อะไร?</p></div>`;
             else if(lsIdx===10) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ','ล้าง','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p></div>`;
             else if(lsIdx===11) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน','กริยา','กรรม', 'scale-[1.8]')}</div><div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
-            
-            // 12/13: Question 1
-            else if(lsIdx===12) c.innerHTML=`
-                <h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1>
-                <div class="text-[12vmin] font-extrabold text-blue-600 mb-[8vmin] drop-shadow-md">ฉัน ดีใจ</div>
-                <div class="flex gap-[4vmin]">
-                    <button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button>
-                    <button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button>
-                </div>`;
-            
-            // 13/13: Question 2
-            else if(lsIdx===13) c.innerHTML=`
-                <h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1>
-                <div class="text-[12vmin] font-extrabold text-red-600 mb-[8vmin] drop-shadow-md">หมา ไล่ แมว</div>
-                <div class="flex gap-[4vmin]">
-                    <button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button>
-                    <button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button>
-                </div>`;
+            else if(lsIdx===12) c.innerHTML=`<h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1><div class="text-[12vmin] font-extrabold text-blue-600 mb-[8vmin] drop-shadow-md">ฉัน ดีใจ</div><div class="flex gap-[4vmin]"><button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button><button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button></div>`;
+            else if(lsIdx===13) c.innerHTML=`<h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1><div class="text-[12vmin] font-extrabold text-red-600 mb-[8vmin] drop-shadow-md">หมา ไล่ แมว</div><div class="flex gap-[4vmin]"><button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button><button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button></div>`;
         }
         function showTrainAnswer(el) { el.innerHTML = '<h2 class="text-green-600 font-bold text-[6vmin]">รถไฟ! ✅</h2>'; playSound('s-correct'); }
         function revealWord(el, word) { el.className = 'car body-car-2'; el.style.padding='0.4em'; el.innerHTML = `<div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${word}`; playSound('s-click'); }
@@ -494,47 +479,113 @@
         function lessonNext(){ if(lsIdx<13){lsIdx++; renderLesson(); playSound('s-click');} else navigate(1); }
         function lessonPrev(){ if(lsIdx>1){lsIdx--; renderLesson(); playSound('s-click');} else navigate(-1); }
 
-        // --- Swap (Continuous Toggle & Bigger Text) ---
+        // --- Swap (Animation with FLIP) ---
         let swIdx = 2; 
         
-        // Track state for toggle: false=original, true=swapped
-        let swapStates = {2: false, 3: false, 4: false};
+        const swapData = {
+            2: [
+                {text: 'ภูผา', col: 'bg-blue-500'}, 
+                {text: 'ไปหา', col: 'bg-red-500'}, 
+                {text: 'แม่', col: 'bg-green-500'}
+            ],
+            3: [
+                {text: 'ครู', col: 'bg-blue-500'}, 
+                {text: 'รัก', col: 'bg-red-500'}, 
+                {text: 'เด็กๆ', col: 'bg-green-500'}
+            ],
+            4: [
+                {text: 'พ่อ', col: 'bg-blue-500'}, 
+                {text: 'ไป', col: 'bg-red-500'}, 
+                {text: 'ป่า', col: 'bg-green-500'}
+            ]
+        };
 
-        function renderSwap() {
+        // Track current permutation
+        let currentPermutations = { 2: [], 3: [], 4: [] };
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function renderSwap(updateOnly = false) {
             const c = document.getElementById('swap-content');
             document.getElementById('swap-indicator').innerText = `${swIdx-1}/3`;
             
-            // Helper to render current state based on swapStates
-            const box = (txt, col) => `<div class="word-card ${col} text-white text-[8vmin] px-[5vmin] py-[2vmin] m-[1vmin] rounded-[2vmin] shadow-xl">${txt}</div>`; 
-            const cols = {b:'bg-blue-500', r:'bg-red-500', g:'bg-green-500'};
+            if(currentPermutations[swIdx].length === 0) {
+                currentPermutations[swIdx] = [...swapData[swIdx]];
+            }
+
+            const box = (item) => `<div class="word-card ${item.col} text-white text-[8vmin] px-[5vmin] py-[2vmin] m-[1vmin] rounded-[2vmin] shadow-xl">${item.text}</div>`; 
             const containerClass = "flex flex-wrap justify-center content-center w-full h-[60vh] gap-[2vmin]";
             
-            let btnText = swapStates[swIdx] ? 'สลับกลับ' : '🔀 ลองสลับ';
-            let contentHtml = '';
-
-            // Define content based on state
-            if(swIdx===2) {
-                if(!swapStates[2]) contentHtml = `${box('ภูผา',cols.b)}${box('ไปหา',cols.r)}${box('แม่',cols.g)}`;
-                else contentHtml = `${box('แม่',cols.g)}${box('ไปหา',cols.r)}${box('ภูผา',cols.b)}`;
-                
-                c.innerHTML = `<div id="swap-container-2" class="${containerClass}">${contentHtml}</div><button id="swap-btn-2" class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(2)">${btnText}</button>`;
-            } else if(swIdx===3) {
-                if(!swapStates[3]) contentHtml = `${box('ครู',cols.b)}${box('รัก',cols.r)}${box('เด็กๆ',cols.g)}`;
-                else contentHtml = `${box('เด็กๆ',cols.g)}${box('รัก',cols.r)}${box('ครู',cols.b)}`;
-
-                c.innerHTML = `<div id="swap-container-3" class="${containerClass}">${contentHtml}</div><button id="swap-btn-3" class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(3)">${btnText}</button>`;
+            const contentHtml = currentPermutations[swIdx].map(item => box(item)).join('');
+            
+            if(updateOnly) {
+                const container = document.getElementById(`swap-container-${swIdx}`);
+                if(container) container.innerHTML = contentHtml;
             } else {
-                if(!swapStates[4]) contentHtml = `${box('พ่อ',cols.b)}${box('ไป',cols.r)}${box('ป่า',cols.g)}`;
-                else contentHtml = `${box('ป่า',cols.g)}${box('ไป',cols.r)}${box('พ่อ',cols.b)}`;
-
-                c.innerHTML = `<div id="swap-container-4" class="${containerClass}">${contentHtml}</div><button id="swap-btn-4" class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700" onclick="performSwap(4)">${btnText}</button>`;
+                c.innerHTML = `<div id="swap-container-${swIdx}" class="${containerClass}">${contentHtml}</div><button class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700 active:scale-95" onclick="performSwap(${swIdx})">🔀 สุ่มตำแหน่ง</button>`;
             }
         }
 
         function performSwap(id) {
             playSound('s-click');
-            swapStates[id] = !swapStates[id]; // Toggle State
-            renderSwap(); // Re-render to show change
+            
+            // 1. Get Old Positions
+            const container = document.getElementById(`swap-container-${id}`);
+            const oldElements = Array.from(container.children);
+            const positions = new Map();
+            
+            oldElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                positions.set(el.innerText.trim(), rect);
+            });
+
+            // 2. Logic: Shuffle
+            const originalJson = JSON.stringify(currentPermutations[id]);
+            let newArr = [...currentPermutations[id]];
+            
+            // Try to find a new permutation (limit attempts to avoid infinite loop on small sets)
+            let attempts = 0;
+            do {
+                shuffleArray(newArr);
+                attempts++;
+            } while (JSON.stringify(newArr) === originalJson && newArr.length > 1 && attempts < 10);
+            
+            currentPermutations[id] = newArr;
+
+            // 3. Render New DOM
+            renderSwap(true);
+
+            // 4. FLIP Animation
+            const newElements = Array.from(container.children);
+            
+            newElements.forEach(newEl => {
+                const text = newEl.innerText.trim();
+                const oldRect = positions.get(text);
+                
+                if (oldRect) {
+                    const newRect = newEl.getBoundingClientRect();
+                    const dx = oldRect.left - newRect.left;
+                    const dy = oldRect.top - newRect.top;
+
+                    // Invert
+                    newEl.style.transition = 'none';
+                    newEl.style.transform = `translate(${dx}px, ${dy}px)`;
+
+                    // Play
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            newEl.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                            newEl.style.transform = 'translate(0, 0)';
+                        });
+                    });
+                }
+            });
         }
 
         function swapNext(){ if(swIdx<4){swIdx++; renderSwap(); playSound('s-click');} else navigate(1); }
