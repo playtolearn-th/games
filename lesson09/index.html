@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป</title>
+    <title>บทที่ 9 เกือบไป (Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -134,36 +134,18 @@
     <canvas id="drawing-canvas"></canvas>
 
     <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[90] flex flex-col gap-[2vmin]">
-        
-        <button onclick="goHome()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-blue-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
-            🏠
-        </button>
-
-        <button onclick="toggleNav()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-indigo-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
-            ☰
-        </button>
-
-        <button onclick="toggleTimer()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-orange-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
-            ⏳
-        </button>
-
-        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">
-            🎲
-        </button>
-
-        <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center">
-            ✏️
-        </button>
-        <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[4vmin] w-[10vmin] h-[10vmin] items-center justify-center">
-            🗑️
-        </button>
+        <button onclick="goHome()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-blue-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">🏠</button>
+        <button onclick="toggleNav()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-indigo-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">☰</button>
+        <button onclick="toggleTimer()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-orange-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">⏳</button>
+        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">🎲</button>
+        <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center">✏️</button>
+        <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[4vmin] w-[10vmin] h-[10vmin] items-center justify-center">🗑️</button>
     </div>
 
     <div id="nav-modal" class="nav-modal">
         <div class="relative nav-grid animate-float">
             <button onclick="toggleNav()" class="absolute top-[-2vmin] right-[-2vmin] bg-red-500 text-white rounded-full w-[8vmin] h-[8vmin] font-bold text-[4vmin] border border-white shadow-xl">✕</button>
             <h2 class="col-span-3 text-center text-[4vmin] font-bold mb-[2vmin] text-gray-700">ไปยังหน้า...</h2>
-            
             <div class="nav-item" onclick="jumpTo(0)">🏠 หน้าแรก</div>
             <div class="nav-item" onclick="jumpTo(1)">🧠 Brain Gym</div>
             <div class="nav-item" onclick="jumpTo(2)">🎮 เรียงประโยค</div>
@@ -644,20 +626,92 @@
             }, 7000);
         }
 
-        // Drawing
+        // --- NEW OPTIMIZED DRAWING LOGIC ---
         const cvs = document.getElementById('drawing-canvas');
         const cx = cvs.getContext('2d');
-        let isDraw = false, drawMode = false;
-        function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; cx.strokeStyle = "#ef4444"; cx.lineWidth = 5; cx.lineCap = "round"; }
-        window.addEventListener('resize', resizeCvs); resizeCvs();
-        function toggleDrawing() { playSound('s-click'); drawMode = !drawMode; document.getElementById('toggle-draw-btn').classList.toggle('bg-yellow-100'); cvs.classList.toggle('drawing-active'); document.getElementById('clear-draw-btn').classList.toggle('hidden'); }
-        function clearCanvas() { playSound('s-click'); cx.clearRect(0, 0, cvs.width, cvs.height); }
-        function startD(e) { if (!drawMode) return; isDraw = true; playSound('s-click'); drawD(e); }
-        function endD() { isDraw = false; cx.beginPath(); }
-        function drawD(e) { if (!isDraw || !drawMode) return; e.preventDefault(); let x, y; if (e.type.includes('touch')) { x = e.touches[0].clientX; y = e.touches[0].clientY; } else { x = e.clientX; y = e.clientY; } cx.lineTo(x, y); cx.stroke(); cx.beginPath(); cx.moveTo(x, y); }
-        cvs.addEventListener('mousedown', startD); cvs.addEventListener('mouseup', endD); cvs.addEventListener('mousemove', drawD);
-        cvs.addEventListener('touchstart', startD, { passive: false }); cvs.addEventListener('touchend', endD); cvs.addEventListener('touchmove', drawD, { passive: false });
+        let isDraw = false;
+        let drawMode = false;
 
+        function resizeCvs() {
+            cvs.width = window.innerWidth;
+            cvs.height = window.innerHeight;
+            setContextStyle();
+        }
+
+        function setContextStyle() {
+            cx.strokeStyle = "#ef4444"; 
+            cx.lineWidth = 5;
+            cx.lineCap = "round";
+            cx.lineJoin = "round";
+        }
+
+        window.addEventListener('resize', resizeCvs);
+        resizeCvs();
+
+        function toggleDrawing() {
+            playSound('s-click');
+            drawMode = !drawMode;
+            const btn = document.getElementById('toggle-draw-btn');
+            const clearBtn = document.getElementById('clear-draw-btn');
+            
+            if (drawMode) {
+                btn.classList.add('bg-yellow-100');
+                cvs.classList.add('drawing-active');
+                clearBtn.classList.remove('hidden');
+            } else {
+                btn.classList.remove('bg-yellow-100');
+                cvs.classList.remove('drawing-active');
+                clearBtn.classList.add('hidden');
+                isDraw = false;
+            }
+        }
+
+        function clearCanvas() {
+            playSound('s-click');
+            cx.clearRect(0, 0, cvs.width, cvs.height);
+        }
+
+        function getCoords(e) {
+            if (e.touches && e.touches.length > 0) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
+        }
+
+        function startD(e) {
+            if (!drawMode) return;
+            isDraw = true;
+            const { x, y } = getCoords(e);
+            cx.beginPath();
+            cx.moveTo(x, y);
+            cx.lineTo(x, y); 
+            cx.stroke();
+        }
+
+        function drawD(e) {
+            if (!isDraw || !drawMode) return;
+            e.preventDefault(); 
+            const { x, y } = getCoords(e);
+            cx.lineTo(x, y);
+            cx.stroke();
+        }
+
+        function endD() {
+            if (!isDraw) return;
+            isDraw = false;
+            cx.closePath(); 
+        }
+
+        // Add Listeners
+        cvs.addEventListener('mousedown', startD);
+        window.addEventListener('mouseup', endD);
+        cvs.addEventListener('mousemove', drawD);
+
+        cvs.addEventListener('touchstart', startD, { passive: false });
+        window.addEventListener('touchend', endD);
+        cvs.addEventListener('touchmove', drawD, { passive: false });
+
+        // Effects
         function createConfetti() { const c = ['#FFD700', '#FF4500', '#32CD32', '#1E90FF', '#FF69B4']; for (let i = 0; i < 100; i++) { const el = document.createElement('div'); el.className = 'confetti'; el.style.left = Math.random() * 100 + 'vw'; el.style.backgroundColor = c[Math.floor(Math.random() * c.length)]; el.style.animationDuration = (Math.random() * 2 + 2) + 's'; el.style.width = Math.random() * 1.5 + 0.5 + 'vmin'; el.style.height = Math.random() * 1.5 + 0.5 + 'vmin'; document.body.appendChild(el); } }
         function createFireworks() { const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']; for (let i = 0; i < 20; i++) { setTimeout(() => { const el = document.createElement('div'); el.className = 'firework'; el.style.left = (Math.random() * 80 + 10) + 'vw'; el.style.top = (Math.random() * 80 + 10) + 'vh'; el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; document.body.appendChild(el); setTimeout(() => el.remove(), 1000); }, i * 200); } }
 
