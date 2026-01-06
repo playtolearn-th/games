@@ -1,173 +1,510 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป (Final - Animated Shuffle)</title>
+    <title>บทที่ 9 เกือบไป (Final - Full Audio Feedback)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
-    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
         /* Base Settings */
-        body { 
-            font-family: 'Sarabun', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif; 
-            overflow: hidden; 
-            touch-action: none; 
-            user-select: none; 
-            background-color: #f0f9ff; 
-            margin: 0; padding: 0;
-        }
-        
-        /* Orientation Warning */
-        #orientation-warning {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; color: #fff; z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center;
-            text-align: center;
-        }
-        @media (orientation: portrait) {
-            #orientation-warning { display: flex; }
-            .section { display: none !important; }
-            .ui-controls { display: none !important; }
-            #global-random-bar { display: none !important; } 
+        body {
+            font-family: 'Sarabun', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            background-color: #f0f9ff;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
         }
 
         /* Layout */
-        .section { 
-            display: none; 
-            height: 100vh; width: 100vw; 
-            flex-direction: column; 
-            align-items: center; justify-content: center; 
-            position: relative; 
-            animation: fadeIn 0.5s; 
+        .section {
+            display: none;
+            height: 100%;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: fadeIn 0.5s;
             padding: 2vmin;
             box-sizing: border-box;
+            overflow: hidden;
         }
-        .section.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
+
+        .section.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         /* Drawing */
-        #drawing-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; }
-        .drawing-active { pointer-events: auto !important; cursor: crosshair; background-color: rgba(0,0,0,0.05); }
+        #drawing-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .drawing-active {
+            pointer-events: auto !important;
+            cursor: crosshair;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
 
         /* UI Elements */
-        .nav-btn { 
+        .nav-btn {
             font-weight: 800;
             padding: 1.5vmin 4vmin;
             border-radius: 999px;
-            box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.2);
+            box-shadow: 0 1vmin 2vmin rgba(0, 0, 0, 0.2);
             font-size: 3vmin;
             transition: all 0.2s;
-            display: flex; align-items: center; gap: 1vmin;
-            border-bottom: 0.8vmin solid rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1vmin;
+            border-bottom: 0.8vmin solid rgba(0, 0, 0, 0.2);
             justify-content: center;
         }
-        .nav-btn:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
 
-        .word-card { 
-            cursor: pointer; 
-            background: white; 
-            border-bottom: 0.8vmin solid #cbd5e1; 
-            padding: 2vmin 4vmin; 
-            border-radius: 2vmin; 
-            font-weight: 800; 
-            font-size: 5vmin; 
-            box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.1); 
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s; 
-            white-space: nowrap; 
-            margin: 1vmin;
-            will-change: transform; 
+        .nav-btn:active {
+            transform: scale(0.95);
+            border-bottom-width: 0;
+            margin-top: 0.8vmin;
         }
-        .word-card:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
+
+        .word-card {
+            cursor: pointer;
+            background: white;
+            border-bottom: 0.8vmin solid #cbd5e1;
+            padding: 2vmin 4vmin;
+            border-radius: 2vmin;
+            font-weight: 800;
+            font-size: 5vmin;
+            box-shadow: 0 1vmin 2vmin rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s;
+            white-space: nowrap;
+            margin: 1vmin;
+            will-change: transform;
+        }
+
+        .word-card:active {
+            transform: scale(0.95);
+            border-bottom-width: 0;
+            margin-top: 0.8vmin;
+        }
 
         /* Custom Word Sizes */
-        #g1-word-bank .word-card { font-size: 8vmin !important; padding: 3vmin 5vmin; border-width: 0.6vmin; }
-        #g1-drop-zone .word-card { font-size: 9vmin !important; padding: 2.5vmin 5vmin; border-width: 0.6vmin; }
-
-        /* Animations */
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2vmin); } }
-        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-0.5vmin, 0, 0); } 20%, 80% { transform: translate3d(1vmin, 0, 0); } 30%, 50%, 70% { transform: translate3d(-2vmin, 0, 0); } 40%, 60% { transform: translate3d(2vmin, 0, 0); } }
-        
-        .zoom-in-out { animation: zoomEffect 0.5s ease-in-out; }
-        @keyframes zoomEffect { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-        /* Train Styles */
-        .train-wrapper { margin: 2vmin 0; display: flex; justify-content: center; transition: all 0.3s; }
-        .train-container { display: flex; align-items: flex-end; gap: 0.5em; }
-        .car { padding: 0.8em; border-radius: 1.2em; color: white; font-weight: 800; font-size: 2em; text-align: center; box-shadow: 0 0.5em 1em rgba(0,0,0,0.3); position: relative; min-width: 4.5em; min-height: 3.5em; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 0.15em solid rgba(255,255,255,0.4); }
-        .car:not(:last-child)::after { content: ''; position: absolute; right: -0.8em; bottom: 1.2em; width: 0.8em; height: 0.4em; background: #333; z-index: -1; border-radius: 0.1em; }
-        .car-wheels { position: absolute; bottom: -0.8em; left: 50%; transform: translateX(-50%); width: 100%; height: 1.6em; pointer-events: none; }
-        .wheel { width: 1.6em; height: 1.6em; background: #2d2d2d; border-radius: 50%; border: 0.25em solid #555; position: absolute; bottom: 0; box-shadow: 0.1em 0.1em 0.3em rgba(0,0,0,0.4); }
-        .wheel-left { left: 0.4em; }
-        .wheel-right { right: 0.4em; }
-        .head-car { background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 2.5em 0.8em 0.8em 0.8em; border-bottom: 0.4em solid #1e3a8a; }
-        .body-car-1 { background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); border-bottom: 0.4em solid #7f1d1d; }
-        .body-car-2 { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); border-bottom: 0.4em solid #14532d; }
-        .chimney { position: absolute; top: -1.2em; left: 0.8em; width: 0.8em; height: 1.6em; background: #333; border-top: 0.25em solid #777; }
-        .smoke { animation: floatUp 2s infinite; position: absolute; top: -2.5em; left: 0.4em; opacity: 0; font-size: 1.6em; }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(0.5); opacity: 0.8; } 100% { transform: translateY(-1.5em) scale(2); opacity: 0; } }
-
-        /* Fireworks & Confetti */
-        .confetti { position: absolute; width: 1.5vmin; height: 1.5vmin; animation: confetti-fall linear forwards; z-index: 999; pointer-events: none; }
-        @keyframes confetti-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
-        
-        .firework { position: absolute; width: 2vmin; height: 2vmin; border-radius: 50%; animation: firework-pop ease-out forwards; z-index: 1000; pointer-events: none; }
-        @keyframes firework-pop { 
-            0% { transform: scale(1); opacity: 1; } 
-            100% { transform: scale(6); opacity: 0; box-shadow: 0 0 20px 10px currentColor; } 
+        #g1-word-bank .word-card {
+            font-size: 8vmin !important;
+            padding: 3vmin 5vmin;
+            border-width: 0.6vmin;
         }
 
-        #feedback-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 90; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        #feedback-content { font-size: 25vmin; }
+        #g1-drop-zone .word-card {
+            font-size: 9vmin !important;
+            padding: 2.5vmin 5vmin;
+            border-width: 0.6vmin;
+        }
+
+        /* Animations */
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-2vmin);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-0.5vmin, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(1vmin, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-2vmin, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(2vmin, 0, 0);
+            }
+        }
+
+        .zoom-in-out {
+            animation: zoomEffect 0.5s ease-in-out;
+        }
+
+        @keyframes zoomEffect {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Train Styles */
+        .train-wrapper {
+            margin: 2vmin 0;
+            display: flex;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .train-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5em;
+        }
+
+        .car {
+            padding: 0.8em;
+            border-radius: 1.2em;
+            color: white;
+            font-weight: 800;
+            font-size: 2em;
+            text-align: center;
+            box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.3);
+            position: relative;
+            min-width: 4.5em;
+            min-height: 3.5em;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 0.15em solid rgba(255, 255, 255, 0.4);
+        }
+
+        .car:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -0.8em;
+            bottom: 1.2em;
+            width: 0.8em;
+            height: 0.4em;
+            background: #333;
+            z-index: -1;
+            border-radius: 0.1em;
+        }
+
+        .car-wheels {
+            position: absolute;
+            bottom: -0.8em;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 1.6em;
+            pointer-events: none;
+        }
+
+        .wheel {
+            width: 1.6em;
+            height: 1.6em;
+            background: #2d2d2d;
+            border-radius: 50%;
+            border: 0.25em solid #555;
+            position: absolute;
+            bottom: 0;
+            box-shadow: 0.1em 0.1em 0.3em rgba(0, 0, 0, 0.4);
+        }
+
+        .wheel-left {
+            left: 0.4em;
+        }
+
+        .wheel-right {
+            right: 0.4em;
+        }
+
+        .head-car {
+            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 2.5em 0.8em 0.8em 0.8em;
+            border-bottom: 0.4em solid #1e3a8a;
+        }
+
+        .body-car-1 {
+            background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+            border-bottom: 0.4em solid #7f1d1d;
+        }
+
+        .body-car-2 {
+            background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+            border-bottom: 0.4em solid #14532d;
+        }
+
+        .chimney {
+            position: absolute;
+            top: -1.2em;
+            left: 0.8em;
+            width: 0.8em;
+            height: 1.6em;
+            background: #333;
+            border-top: 0.25em solid #777;
+        }
+
+        .smoke {
+            animation: floatUp 2s infinite;
+            position: absolute;
+            top: -2.5em;
+            left: 0.4em;
+            opacity: 0;
+            font-size: 1.6em;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-1.5em) scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Effects */
+        .confetti {
+            position: absolute;
+            width: 1.5vmin;
+            height: 1.5vmin;
+            animation: confetti-fall linear forwards;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .firework {
+            position: absolute;
+            width: 2vmin;
+            height: 2vmin;
+            border-radius: 50%;
+            animation: firework-pop ease-out forwards;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes firework-pop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(6);
+                opacity: 0;
+                box-shadow: 0 0 20px 10px currentColor;
+            }
+        }
+
+        #feedback-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 90;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        #feedback-content {
+            font-size: 25vmin;
+        }
+
+        /* Timer Popup Styles */
+        #timer-popup {
+            resize: both;
+            overflow: hidden;
+            min-width: 25vmin;
+            min-height: 15vmin;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid #f97316;
+            background: white;
+            border-radius: 2vmin;
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            top: 20%;
+            left: 30%;
+            z-index: 100;
+        }
+
+        #timer-header {
+            background: #f97316;
+            color: white;
+            padding: 1vmin;
+            cursor: move;
+            font-weight: bold;
+            font-size: 2.5vmin;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #timer-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1vmin;
+            background: #fff7ed;
+        }
+
+        .timer-display {
+            font-size: 8vmin;
+            font-weight: bold;
+            font-variant-numeric: tabular-nums;
+            color: #c2410c;
+            line-height: 1;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 text-gray-800">
 
-    <div id="orientation-warning">
-        <div class="text-[10vmin] mb-4">📱🔄</div>
-        <h1 class="text-[5vmin] font-bold">กรุณาหมุนหน้าจอเป็นแนวนอน</h1>
-    </div>
-
-    <audio id="s-click" src="sound/click.mp3"></audio>
-    <audio id="s-correct" src="sound/correct.mp3"></audio>
-    <audio id="s-wrong" src="sound/wrong.mp3"></audio>
-    <audio id="s-shuffle" src="sound/shuffle.mp3" loop></audio>
-    <audio id="s-success" src="sound/success.mp3"></audio>
+    <audio id="s-click" src="sound/mouse-click.mp3" preload="auto"></audio>
+    <audio id="s-correct" src="sound/win.mp3" preload="auto"></audio>
+    <audio id="s-wrong" src="sound/wrong.mp3" preload="auto"></audio>
+    <audio id="s-shuffle" src="sound/shuffle.mp3" loop preload="auto"></audio>
+    <audio id="s-success" src="sound/win.mp3" preload="auto"></audio>
+    <audio id="s-alarm" src="sound/stop.mp3" preload="auto"></audio>
 
     <canvas id="drawing-canvas"></canvas>
 
-    <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[80] flex gap-[2vmin]">
-        
-        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">🎲</button>
-
-        <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[3vmin] w-[8vmin] h-[8vmin] flex items-center justify-center">✏️</button>
-        <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold p-[2vmin] rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[3vmin] w-[8vmin] h-[8vmin] items-center justify-center">🗑️</button>
+    <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[90] flex flex-col gap-[2vmin]">
+        <button onclick="toggleTimer()"
+            class="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-orange-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
+            ⏳
+        </button>
+        <button onclick="startGlobalRandom()"
+            class="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">
+            🎲
+        </button>
+        <button id="toggle-draw-btn" onclick="toggleDrawing()"
+            class="bg-white hover:bg-yellow-100 text-gray-700 font-bold rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center">
+            ✏️
+        </button>
+        <button id="clear-draw-btn" onclick="clearCanvas()"
+            class="hidden bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[4vmin] w-[10vmin] h-[10vmin] items-center justify-center">
+            🗑️
+        </button>
     </div>
-    
-    <div class="ui-controls fixed top-[2vmin] right-[2vmin] bg-white/90 backdrop-blur px-[3vmin] py-[1vmin] rounded-full shadow border-[0.3vmin] border-gray-200 z-[80] text-[3vmin] font-bold text-blue-600">
-        หน้า <span id="page-indicator-top">1</span>
-    </div>
-    
-    <div id="feedback-overlay"><div id="feedback-content" class="animate-bounce drop-shadow-2xl"></div></div>
 
-    <div id="global-random-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/95 z-[200] flex-col items-center justify-center">
-        <button onclick="closeGlobalRandom()" class="absolute top-[3vmin] right-[3vmin] text-white text-[5vmin] font-bold hover:text-red-500 transition z-[201]">✖</button>
-        <div class="relative w-[90vw] h-[80vh] flex items-center justify-center">
-            <img id="global-student-img" src="s/01.jpg" class="max-w-full max-h-full object-contain rounded-[2vmin] border-[1vmin] border-white shadow-[0_0_5vmin_rgba(255,255,255,0.3)]">
+    <div id="timer-popup">
+        <div id="timer-header">
+            <span>&nbsp;⏱️ จับเวลา</span>
+            <span onclick="toggleTimer()" class="cursor-pointer text-white hover:text-black px-2">✖</span>
+        </div>
+        <div id="timer-body" class="w-full h-full">
+            <div id="timer-display" class="timer-display">00:00</div>
+            <div class="flex gap-[1vmin] mt-[1vmin] w-full justify-center">
+                <input type="number" id="t-min" placeholder="น."
+                    class="w-[8vmin] text-[2.5vmin] text-center border rounded p-1" min="0" value="1">
+                <input type="number" id="t-sec" placeholder="วิ."
+                    class="w-[8vmin] text-[2.5vmin] text-center border rounded p-1" min="0" max="59" value="00">
+            </div>
+            <div class="flex gap-[1vmin] mt-[1vmin]">
+                <button onclick="startTimer()"
+                    class="bg-green-500 text-white px-[2vmin] py-[0.5vmin] rounded text-[2.5vmin] font-bold">เริ่ม</button>
+                <button onclick="stopTimer()"
+                    class="bg-red-500 text-white px-[2vmin] py-[0.5vmin] rounded text-[2.5vmin] font-bold">หยุด</button>
+                <button onclick="resetTimer()"
+                    class="bg-gray-500 text-white px-[2vmin] py-[0.5vmin] rounded text-[2.5vmin] font-bold">รีเซ็ต</button>
+            </div>
         </div>
     </div>
+
+    <div
+        class="ui-controls fixed top-[2vmin] right-[2vmin] bg-white/90 backdrop-blur px-[3vmin] py-[1vmin] rounded-full shadow border-[0.3vmin] border-gray-200 z-[80] text-[3vmin] font-bold text-blue-600">
+        หน้า <span id="page-indicator-top">1</span>
+    </div>
+
+    <div id="feedback-overlay">
+        <div id="feedback-content" class="animate-bounce drop-shadow-2xl"></div>
+    </div>
+
+    <div id="global-random-modal"
+        class="hidden fixed top-0 left-0 w-full h-full bg-black/95 z-[200] flex-col items-center justify-center">
+        <button onclick="closeGlobalRandom()"
+            class="absolute top-[3vmin] right-[3vmin] text-white text-[5vmin] font-bold hover:text-red-500 transition z-[201]">✖</button>
+        <div class="relative w-[90vw] h-[80vh] flex items-center justify-center">
+            <img id="global-student-img" src="s/01.jpg"
+                class="max-w-full max-h-full object-contain rounded-[2vmin] border-[1vmin] border-white shadow-[0_0_5vmin_rgba(255,255,255,0.3)]">
+        </div>
+    </div>
+
     <div id="sec-cover" class="section bg-blue-100 active">
         <div class="z-10 text-center w-full h-full flex flex-col justify-center items-center">
             <h1 class="text-[6vmin] font-bold text-blue-800 drop-shadow-md mb-[2vmin]">ภาษาพาที บทที่ 9</h1>
-            <h2 class="text-[15vmin] font-extrabold text-red-600 drop-shadow-2xl animate-float leading-tight mb-[4vmin]">เกือบไป</h2>
-            <div class="bg-white/90 backdrop-blur-sm p-[4vmin] rounded-[4vmin] shadow-2xl border-[1vmin] border-white flex flex-col items-center max-w-[80vw]">
-                <img src="01.png" alt="เกือบไป" class="h-[30vh] w-auto object-contain drop-shadow-xl rounded-2xl mb-[4vmin]">
-                <button onclick="navigate(1)" class="bg-green-500 hover:bg-green-600 text-white text-[5vmin] font-bold py-[2vmin] px-[8vmin] rounded-full shadow-2xl transform hover:scale-105 transition animate-pulse border-b-[1vmin] border-green-800">
+            <h2
+                class="text-[15vmin] font-extrabold text-red-600 drop-shadow-2xl animate-float leading-tight mb-[4vmin]">
+                เกือบไป</h2>
+            <div
+                class="bg-white/90 backdrop-blur-sm p-[4vmin] rounded-[4vmin] shadow-2xl border-[1vmin] border-white flex flex-col items-center max-w-[80vw]">
+                <img src="01.png" alt="เกือบไป"
+                    class="h-[30vh] w-auto object-contain drop-shadow-xl rounded-2xl mb-[4vmin]">
+                <button onclick="navigate(1)"
+                    class="bg-green-500 hover:bg-green-600 text-white text-[5vmin] font-bold py-[2vmin] px-[8vmin] rounded-full shadow-2xl transform hover:scale-105 transition animate-pulse border-b-[1vmin] border-green-800">
                     เข้าสู่บทเรียน ▶
                 </button>
             </div>
@@ -176,45 +513,61 @@
 
     <div id="sec-braingym" class="section bg-yellow-50">
         <div class="flex flex-row items-center justify-center w-full h-full flex-1 gap-[5vmin] px-[5vmin]">
-            <div id="bg-icon" class="w-1/2 h-[70vh] flex items-center justify-center transition hover:scale-105 cursor-pointer"></div>
+            <div id="bg-icon"
+                class="w-1/2 h-[60vh] flex items-center justify-center transition hover:scale-105 cursor-pointer"></div>
             <div class="w-1/2 flex flex-col items-center justify-center">
-                <h1 id="bg-word" class="text-[15vmin] font-extrabold drop-shadow-xl mb-[2vmin] text-gray-800 leading-none text-center"></h1>
+                <h1 id="bg-word"
+                    class="text-[15vmin] font-extrabold drop-shadow-xl mb-[2vmin] text-gray-800 leading-none text-center">
+                </h1>
                 <p id="bg-sound" class="text-[6vmin] font-bold opacity-80 text-gray-600 text-center"></p>
             </div>
         </div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-yellow-100/90 backdrop-blur z-20 shrink-0 absolute bottom-[2vmin]">
+        <div
+            class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-yellow-100/90 backdrop-blur z-20 shrink-0 absolute bottom-[2vmin]">
             <button onclick="bgPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
-            <span class="text-[4vmin] font-bold text-yellow-800 bg-white/80 px-[4vmin] py-[1vmin] rounded-full shadow-inner" id="bg-indicator">1 / 11</span>
+            <span
+                class="text-[4vmin] font-bold text-yellow-800 bg-white/80 px-[4vmin] py-[1vmin] rounded-full shadow-inner"
+                id="bg-indicator">1 / 11</span>
             <button onclick="bgNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
         </div>
     </div>
 
     <div id="sec-game1" class="section bg-indigo-50">
-        <div class="w-full flex items-center gap-[4vmin] px-[4vmin] pt-[2vmin] pb-[2vmin] justify-start pl-[12vmin]"> 
+        <div class="w-full flex items-center gap-[4vmin] px-[4vmin] pt-[2vmin] pb-[2vmin] justify-start pl-[15vmin]">
             <h2 class="text-[5vmin] font-bold text-indigo-700 whitespace-nowrap">🎮 เรียงประโยค</h2>
             <div class="flex gap-[2vmin]">
-                <span id="g1-score" class="bg-yellow-300 text-yellow-900 px-[3vmin] py-[1vmin] rounded-full font-extrabold text-[3vmin] shadow-lg border-[0.5vmin] border-yellow-500">คะแนน: 0</span>
-                <span id="g1-indicator" class="bg-indigo-200 text-indigo-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] border-[0.5vmin] border-indigo-300">ข้อ 1/10</span>
+                <span id="g1-score"
+                    class="bg-yellow-300 text-yellow-900 px-[3vmin] py-[1vmin] rounded-full font-extrabold text-[3vmin] shadow-lg border-[0.5vmin] border-yellow-500">คะแนน:
+                    0</span>
+                <span id="g1-indicator"
+                    class="bg-indigo-200 text-indigo-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] border-[0.5vmin] border-indigo-300">ข้อ
+                    1/10</span>
             </div>
         </div>
         <div class="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto px-[2vmin]">
-            <div id="g1-drop-zone" class="w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner">
+            <div id="g1-drop-zone"
+                class="w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner">
                 <span class="text-gray-300 text-[5vmin] pointer-events-none font-bold">วางคำตอบที่นี่</span>
             </div>
             <div id="g1-word-bank" class="flex justify-center gap-[2vmin] mb-[4vmin] flex-wrap w-full px-[2vmin]"></div>
         </div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-indigo-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
-            <button onclick="g1Prev()" class="bg-gray-400 text-white nav-btn border-gray-600 w-[20vmin] justify-center">◀ ย้อนกลับ</button>
-            <button onclick="g1Check()" id="g1-check-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-[4vmin] py-[1.5vmin] rounded-full font-bold text-[4vmin] shadow-2xl transition transform hover:scale-105 border-b-[0.8vmin] border-indigo-900 flex-1 mx-[4vmin] max-w-[40vmin]">
-                ตรวจคำตอบ
-            </button>
-            <button onclick="g1Next()" id="g1-next-btn" class="bg-green-500 text-white nav-btn border-green-700 opacity-50 cursor-not-allowed w-[20vmin] justify-center">ถัดไป ▶</button>
+        <div
+            class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-indigo-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
+            <button onclick="g1Prev()"
+                class="bg-gray-400 text-white nav-btn border-gray-600 w-[20vmin] justify-center">◀ ย้อนกลับ</button>
+            <button onclick="g1Check()" id="g1-check-btn"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-[4vmin] py-[1.5vmin] rounded-full font-bold text-[4vmin] shadow-2xl transition transform hover:scale-105 border-b-[0.8vmin] border-indigo-900 flex-1 mx-[4vmin] max-w-[40vmin]">ตรวจคำตอบ</button>
+            <button onclick="g1Next()" id="g1-next-btn"
+                class="bg-green-500 text-white nav-btn border-green-700 opacity-50 cursor-not-allowed w-[20vmin] justify-center">ถัดไป
+                ▶</button>
         </div>
     </div>
 
     <div id="sec-lesson" class="section bg-blue-50">
-        <div id="lesson-content" class="flex flex-col items-center justify-center w-full h-full p-[2vmin] flex-1 overflow-hidden"></div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-blue-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
+        <div id="lesson-content"
+            class="flex flex-col items-center justify-center w-full h-full p-[2vmin] flex-1 overflow-hidden"></div>
+        <div
+            class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-blue-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
             <button onclick="lessonPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <span id="lesson-page-indicator" class="text-[4vmin] text-blue-800 font-bold">1 / 13</span>
             <button onclick="lessonNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
@@ -222,8 +575,10 @@
     </div>
 
     <div id="sec-swap" class="section bg-pink-50">
-        <div id="swap-content" class="w-full max-w-[95vw] flex flex-col items-center justify-center h-full flex-1"></div>
-        <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-pink-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
+        <div id="swap-content" class="w-full max-w-[95vw] flex flex-col items-center justify-center h-full flex-1">
+        </div>
+        <div
+            class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-pink-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
             <button onclick="swapPrev()" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
             <span id="swap-indicator" class="text-[4vmin] text-pink-800 font-bold">1 / 3</span>
             <button onclick="swapNext()" class="bg-blue-600 text-white nav-btn border-blue-800">ถัดไป ▶</button>
@@ -232,45 +587,78 @@
 
     <div id="sec-game2" class="section bg-fuchsia-50">
         <div id="g2-interface" class="w-full h-full flex flex-col items-center justify-between pb-[2vmin] px-[2vmin]">
-             <div class="w-full flex items-center justify-start mt-[1vmin] gap-[4vmin] pl-[12vmin]">
-                 <span id="g2-q-num" class="bg-fuchsia-200 text-fuchsia-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] shadow-md">ข้อ 1/10</span>
-                 <button onclick="g2Finish()" class="bg-red-500 hover:bg-red-600 text-white px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] transition shadow-xl border-b-[0.5vmin] border-red-800">🏁 จบเกม</button>
-             </div>
-             
-             <div class="flex-1 w-full flex items-center justify-center my-[2vmin] relative overflow-hidden">
-                <div class="bg-white p-[2vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-white h-[60vh] w-auto aspect-video flex items-center justify-center relative">
+            <div class="w-full flex items-center justify-start mt-[1vmin] gap-[4vmin] pl-[15vmin]">
+                <span id="g2-q-num"
+                    class="bg-fuchsia-200 text-fuchsia-900 px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] shadow-md">ข้อ
+                    1/10</span>
+                <button onclick="g2Finish()"
+                    class="bg-red-500 hover:bg-red-600 text-white px-[3vmin] py-[1vmin] rounded-full font-bold text-[3vmin] transition shadow-xl border-b-[0.5vmin] border-red-800">🏁
+                    จบเกม</button>
+            </div>
+            <div class="flex-1 w-full flex items-center justify-center my-[2vmin] relative overflow-hidden">
+                <div
+                    class="bg-white p-[2vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-white h-[50vh] w-auto aspect-video flex items-center justify-center relative">
                     <img id="g2-img" src="" class="h-full w-full object-contain rounded-[2vmin]">
                 </div>
-             </div>
-             
-             <div class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0 mb-[2vmin]">
-                <div class="flex gap-[4vmin] w-full justify-center">
-                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">❤️ กลุ่ม 1</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-red-600 w-[8vmin] text-center" id="s-g1">0</span><button onclick="addScore(1)" class="bg-red-100 hover:bg-red-200 text-red-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-red-300 active:scale-90 transition shadow-lg">+</button></div></div>
-                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💚 กลุ่ม 2</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-green-600 w-[8vmin] text-center" id="s-g2">0</span><button onclick="addScore(2)" class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button></div></div>
-                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💙 กลุ่ม 3</span><div class="flex items-center gap-[2vmin]"><span class="text-[5vmin] font-black text-blue-600 w-[8vmin] text-center" id="s-g3">0</span><button onclick="addScore(3)" class="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-blue-300 active:scale-90 transition shadow-lg">+</button></div></div>
+            </div>
+            <div
+                class="w-full max-w-full bg-white/95 backdrop-blur px-[2vmin] py-[2vmin] rounded-t-[3vmin] shadow-2xl flex justify-between items-center border-[0.5vmin] border-fuchsia-200 shrink-0 mb-[2vmin]">
+                <div class="flex gap-[2vmin] w-full justify-center">
+                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">❤️
+                            กลุ่ม 1</span>
+                        <div class="flex items-center gap-[1vmin]"><span
+                                class="text-[5vmin] font-black text-red-600 w-[6vmin] text-center"
+                                id="s-g1">0</span><button onclick="addScore(1)"
+                                class="bg-red-100 hover:bg-red-200 text-red-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-red-300 active:scale-90 transition shadow-lg">+</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💚
+                            กลุ่ม 2</span>
+                        <div class="flex items-center gap-[1vmin]"><span
+                                class="text-[5vmin] font-black text-green-600 w-[6vmin] text-center"
+                                id="s-g2">0</span><button onclick="addScore(2)"
+                                class="bg-green-100 hover:bg-green-200 text-green-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-green-300 active:scale-90 transition shadow-lg">+</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center gap-1"><span class="text-[3vmin] font-bold text-gray-500">💙
+                            กลุ่ม 3</span>
+                        <div class="flex items-center gap-[1vmin]"><span
+                                class="text-[5vmin] font-black text-blue-600 w-[6vmin] text-center"
+                                id="s-g3">0</span><button onclick="addScore(3)"
+                                class="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full w-[8vmin] h-[8vmin] flex items-center justify-center text-[4vmin] font-bold border-[0.5vmin] border-blue-300 active:scale-90 transition shadow-lg">+</button>
+                        </div>
+                    </div>
                 </div>
-                <button onclick="g2NextQ()" class="bg-gray-800 hover:bg-black text-white px-[4vmin] py-[2vmin] rounded-full font-bold text-[3vmin] shadow-xl transition transform hover:scale-105 border-b-[0.8vmin] border-gray-600 ml-[2vmin] w-[20vmin]">ถัดไป ▶</button>
-             </div>
+                <button onclick="g2NextQ()"
+                    class="bg-gray-800 hover:bg-black text-white px-[4vmin] py-[2vmin] rounded-full font-bold text-[3vmin] shadow-xl transition transform hover:scale-105 border-b-[0.8vmin] border-gray-600 ml-[2vmin] w-[20vmin]">ถัดไป
+                    ▶</button>
+            </div>
         </div>
-        
-        <div id="g2-podium" class="hidden absolute top-0 left-0 w-full h-full bg-fuchsia-50 z-30 flex-col items-center justify-center">
+        <div id="g2-podium"
+            class="hidden absolute top-0 left-0 w-full h-full bg-fuchsia-50 z-30 flex-col items-center justify-center">
             <h1 class="text-[8vmin] font-extrabold text-yellow-600 mb-[4vmin] drop-shadow-md">🏆 สรุปคะแนน 🏆</h1>
             <div id="podium-bars" class="flex items-end gap-[4vmin] h-[40vh] mb-[4vmin]"></div>
             <div class="flex gap-[4vmin]">
-                <button onclick="g2BackToGame()" class="bg-gray-400 text-white nav-btn border-gray-600">กลับไปเล่นต่อ</button>
-                <button onclick="navigate(1)" class="bg-blue-600 text-white nav-btn border-blue-800 text-[4vmin] px-[6vmin] py-[2vmin]">ไปกิจกรรมต่อไป ▶</button>
+                <button onclick="g2BackToGame()"
+                    class="bg-gray-400 text-white nav-btn border-gray-600">กลับไปเล่นต่อ</button>
+                <button onclick="navigate(1)"
+                    class="bg-blue-600 text-white nav-btn border-blue-800 text-[4vmin] px-[6vmin] py-[2vmin]">ไปกิจกรรมต่อไป
+                    ▶</button>
             </div>
         </div>
-        
         <div class="fixed bottom-[1vmin] left-[1vmin] z-10 pointer-events-none mb-[2vmin]">
-             <button onclick="navigate(-1)" class="bg-gray-400 text-white px-[3vmin] py-[1vmin] rounded-full text-[2vmin] pointer-events-auto opacity-50 hover:opacity-100 w-[20vmin]">◀ ย้อนกลับ</button>
+            <button onclick="navigate(-1)"
+                class="bg-gray-400 text-white px-[3vmin] py-[1vmin] rounded-full text-[2vmin] pointer-events-auto opacity-50 hover:opacity-100 w-[20vmin]">◀
+                ย้อนกลับ</button>
         </div>
     </div>
 
     <div id="sec-notebook" class="section bg-orange-50">
         <div class="text-[10vmin] mb-[2vmin] animate-bounce">📝</div>
-        <div class="bg-white p-[5vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-orange-300 w-[90vw] max-w-[80vw] text-center min-h-[50vh] flex flex-col justify-center" style="background-image: linear-gradient(#e5e7eb 1px, transparent 1px); background-size: 100% 3em;">
-            <h2 class="text-[5vmin] font-bold text-gray-800 mb-[4vmin] leading-normal">ให้นักเรียนแต่งประโยคจากคำที่เรียนมา</h2>
+        <div class="bg-white p-[5vmin] rounded-[3vmin] shadow-2xl border-[1vmin] border-orange-300 w-[90vw] max-w-[80vw] text-center min-h-[50vh] flex flex-col justify-center"
+            style="background-image: linear-gradient(#e5e7eb 1px, transparent 1px); background-size: 100% 3em;">
+            <h2 class="text-[5vmin] font-bold text-gray-800 mb-[4vmin] leading-normal">
+                ให้นักเรียนแต่งประโยคจากคำที่เรียนมา</h2>
             <p class="text-[10vmin] text-blue-600 font-extrabold mb-[4vmin]">5 ประโยค</p>
             <p class="text-[4vmin] text-gray-600">ลงในสมุดของตนเองให้สวยงาม</p>
         </div>
@@ -281,14 +669,18 @@
     </div>
 
     <div id="sec-picker" class="section bg-purple-50">
-        <div class="flex w-full h-full items-center justify-between px-[5vmin]">
-            <div class="w-2/3 h-[70vh] bg-white p-[2vmin] rounded-[5vmin] shadow-2xl border-[2vmin] border-purple-300 flex items-center justify-center overflow-hidden relative">
+        <div class="flex flex-col md:flex-row w-full h-full items-center justify-between px-[5vmin]">
+            <div
+                class="w-full md:w-2/3 h-[50vh] md:h-[70vh] bg-white p-[2vmin] rounded-[5vmin] shadow-2xl border-[2vmin] border-purple-300 flex items-center justify-center overflow-hidden relative mb-[2vmin] md:mb-0">
                 <div id="picker-placeholder" class="text-[20vmin] text-purple-200">❓</div>
                 <img id="picker-img" src="" class="hidden w-full h-full object-cover rounded-[3vmin]">
             </div>
-            <div class="w-1/3 flex flex-col items-center justify-center pl-[5vmin]">
-                <h1 class="text-[6vmin] font-extrabold text-purple-900 mb-[4vmin] text-center">ใครจะเป็น<br>ผู้โชคดี?</h1>
-                <button onclick="startPicker()" id="picker-btn" class="bg-purple-500 hover:bg-purple-600 text-white text-[5vmin] font-bold py-[3vmin] px-[6vmin] rounded-full shadow-2xl border-b-[1.5vmin] border-purple-800 animate-bounce transition w-full">🎰 กดสุ่ม</button>
+            <div class="w-full md:w-1/3 flex flex-col items-center justify-center pl-[5vmin]">
+                <h1 class="text-[6vmin] font-extrabold text-purple-900 mb-[4vmin] text-center">ใครจะเป็น<br>ผู้โชคดี?
+                </h1>
+                <button onclick="startPicker()" id="picker-btn"
+                    class="bg-purple-500 hover:bg-purple-600 text-white text-[5vmin] font-bold py-[3vmin] px-[6vmin] rounded-full shadow-2xl border-b-[1.5vmin] border-purple-800 animate-bounce transition w-full">🎰
+                    กดสุ่ม</button>
             </div>
         </div>
         <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-[2vmin]">
@@ -304,47 +696,54 @@
         </div>
         <h1 class="text-[8vmin] font-extrabold text-cyan-900 mb-[2vmin] drop-shadow-md">ยินดีด้วย!</h1>
         <h2 class="text-[6vmin] font-bold text-cyan-700 mb-[8vmin]">นักเรียนเก่งมากครับ</h2>
-        <button onclick="playSound('s-success'); createConfetti()" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-[5vmin] font-bold py-[3vmin] px-[10vmin] rounded-full shadow-2xl animate-pulse border-b-[1.5vmin] border-yellow-600 transform hover:scale-105 transition">🔊 รับเสียงปรบมือ</button>
+        <button onclick="playSound('s-success'); createConfetti()"
+            class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-[5vmin] font-bold py-[3vmin] px-[10vmin] rounded-full shadow-2xl animate-pulse border-b-[1.5vmin] border-yellow-600 transform hover:scale-105 transition">🔊
+            รับเสียงปรบมือ</button>
         <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center z-20 absolute bottom-[2vmin]">
             <button onclick="navigate(-1)" class="bg-gray-400 text-white nav-btn border-gray-600">◀ ย้อนกลับ</button>
-            <button onclick="navigate(-(sections.length-1))" class="bg-green-600 text-white nav-btn border-green-800">🏠 กลับหน้าแรก</button>
+            <button onclick="navigate(-(sections.length-1))" class="bg-green-600 text-white nav-btn border-green-800">🏠
+                กลับหน้าแรก</button>
         </div>
     </div>
 
     <script>
+        function preloadAllAudio() {
+            const ids = ['s-click', 's-correct', 's-wrong', 's-shuffle', 's-success', 's-alarm'];
+            ids.forEach(id => { const a = document.getElementById(id); if (a) a.load(); });
+        }
+        window.addEventListener('load', preloadAllAudio);
+
+        function playSound(id) { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(() => { }); } }
+
         // --- Navigation ---
         const sections = [
-            'sec-cover', 'sec-braingym',
-            'sec-game1', 'sec-lesson', 'sec-swap',
-            'sec-game2', 'sec-notebook',
-            'sec-picker', 'sec-end'
+            'sec-cover', 'sec-braingym', 'sec-game1', 'sec-lesson', 'sec-swap',
+            'sec-game2', 'sec-notebook', 'sec-picker', 'sec-end'
         ];
         let curSec = 0;
 
         function navigate(dir) {
             playSound('s-click');
             let next = curSec + dir;
-            if(next >= 0 && next < sections.length) {
+            if (next >= 0 && next < sections.length) {
                 document.getElementById(sections[curSec]).classList.remove('active');
                 curSec = next;
                 document.getElementById(sections[curSec]).classList.add('active');
                 document.getElementById('page-indicator-top').innerText = curSec + 1;
-                if(sections[curSec]==='sec-braingym') renderBgCard();
-                if(sections[curSec]==='sec-game1') loadG1Q();
-                if(sections[curSec]==='sec-lesson') renderLesson();
-                if(sections[curSec]==='sec-swap') renderSwap();
-                if(sections[curSec]==='sec-game2') loadG2Q();
-                if(sections[curSec]==='sec-end') createConfetti();
+                if (sections[curSec] === 'sec-braingym') renderBgCard();
+                if (sections[curSec] === 'sec-game1') loadG1Q();
+                if (sections[curSec] === 'sec-lesson') renderLesson();
+                if (sections[curSec] === 'sec-swap') renderSwap();
+                if (sections[curSec] === 'sec-game2') loadG2Q();
+                if (sections[curSec] === 'sec-end') createConfetti();
             }
         }
-
-        function playSound(id) { const s=document.getElementById(id); if(s){ s.currentTime=0; s.play().catch(()=>{}); } }
 
         function showFeedback(type) {
             const overlay = document.getElementById('feedback-overlay');
             const content = document.getElementById('feedback-content');
             overlay.style.display = 'flex';
-            if(type === 'correct') {
+            if (type === 'correct') {
                 content.innerHTML = '✅';
                 playSound('s-correct');
                 createConfetti();
@@ -352,12 +751,12 @@
                 content.innerHTML = '<span class="text-red-600 text-[20vmin]">❌</span>';
                 playSound('s-wrong');
                 document.body.classList.add('shake');
-                setTimeout(()=>document.body.classList.remove('shake'), 500);
+                setTimeout(() => document.body.classList.remove('shake'), 500);
             }
             setTimeout(() => { overlay.style.display = 'none'; }, 1000);
         }
 
-        // --- Brain Gym (ยังคงใช้ .png จาก l/) ---
+        // --- Brain Gym ---
         const bgCards = [
             { icon: "<img src='l/01.png' class='h-full w-full object-contain'>", word: "เกาะ", sound: "", color: "text-amber-700" },
             { icon: "<img src='l/02.png' class='h-full w-full object-contain'>", word: "ขวาง", sound: "หยุดนะ!", color: "text-red-600" },
@@ -378,80 +777,80 @@
             document.getElementById('bg-word').innerText = c.word;
             document.getElementById('bg-word').className = `text-[15vmin] font-extrabold drop-shadow-2xl mb-[2vmin] ${c.color}`;
             document.getElementById('bg-sound').innerText = c.sound;
-            document.getElementById('bg-indicator').innerText = `${bgIndex+1} / ${bgCards.length}`;
+            document.getElementById('bg-indicator').innerText = `${bgIndex + 1} / ${bgCards.length}`;
         }
-        function bgNext() { if(bgIndex<bgCards.length-1){bgIndex++; renderBgCard(); playSound('s-click');} else navigate(1); }
-        function bgPrev() { if(bgIndex>0){bgIndex--; renderBgCard(); playSound('s-click');} else navigate(-1); }
+        function bgNext() { if (bgIndex < bgCards.length - 1) { bgIndex++; renderBgCard(); playSound('s-click'); } else navigate(1); }
+        function bgPrev() { if (bgIndex > 0) { bgIndex--; renderBgCard(); playSound('s-click'); } else navigate(-1); }
 
         // --- Game 1 ---
         const g1Qs = [
-            { a:[["ฝน","ตก","หนัก"]], s:["หนัก","ฝน","ตก"] },
-            { a:[["พ่อ","ลาก","ต้นไม้"]], s:["ต้นไม้","พ่อ","ลาก"] },
-            { a:[["ภูผา","ขี่","คอ","ช้าง"]], s:["ช้าง","คอ","ภูผา","ขี่"] },
-            { a:[["งู","สีดำ","ตัวใหญ่"],["งู","ตัวใหญ่","สีดำ"]], s:["ตัวใหญ่","งู","สีดำ"] },
-            { a:[["งู","เลื้อย","มา"]], s:["มา","งู","เลื้อย"] },
-            { a:[["งู","แผ่","แม่เบี้ย"]], s:["แม่เบี้ย","แผ่","งู"] },
-            { a:[["งู","จ้อง","ช้าง"],["ช้าง","จ้อง","งู"]], s:["ช้าง","จ้อง","งู"] },
-            { a:[["ช้าง","ตกใจ","กลัว"]], s:["กลัว","ช้าง","ตกใจ"] },
-            { a:[["ใบโบก","เกาะ","หาง"]], s:["หาง","ใบโบก","เกาะ"] },
-            { a:[["ใบโบก","เกือบ","ถูก","งู","กัด"]], s:["ถูก","งู","ใบโบก","กัด","เกือบ"] }
+            { a: [["ฝน", "ตก", "หนัก"]], s: ["หนัก", "ฝน", "ตก"] },
+            { a: [["พ่อ", "ลาก", "ต้นไม้"]], s: ["ต้นไม้", "พ่อ", "ลาก"] },
+            { a: [["ภูผา", "ขี่", "คอ", "ช้าง"]], s: ["ช้าง", "คอ", "ภูผา", "ขี่"] },
+            { a: [["งู", "สีดำ", "ตัวใหญ่"], ["งู", "ตัวใหญ่", "สีดำ"]], s: ["ตัวใหญ่", "งู", "สีดำ"] },
+            { a: [["งู", "เลื้อย", "มา"]], s: ["มา", "งู", "เลื้อย"] },
+            { a: [["งู", "แผ่", "แม่เบี้ย"]], s: ["แม่เบี้ย", "แผ่", "งู"] },
+            { a: [["งู", "จ้อง", "ช้าง"], ["ช้าง", "จ้อง", "งู"]], s: ["ช้าง", "จ้อง", "งู"] },
+            { a: [["ช้าง", "ตกใจ", "กลัว"]], s: ["กลัว", "ช้าง", "ตกใจ"] },
+            { a: [["ใบโบก", "เกาะ", "หาง"]], s: ["หาง", "ใบโบก", "เกาะ"] },
+            { a: [["ใบโบก", "เกือบ", "ถูก", "งู", "กัด"]], s: ["ถูก", "งู", "ใบโบก", "กัด", "เกือบ"] }
         ];
         let g1Idx = 0;
         let g1Score = 0;
         const g1Cols = ["bg-red-500 text-white", "bg-blue-500 text-white", "bg-green-500 text-white", "bg-yellow-400 text-black", "bg-purple-500 text-white"];
         function loadG1Q() {
             const q = g1Qs[g1Idx];
-            document.getElementById('g1-indicator').innerText = `ข้อ ${g1Idx+1}/10`;
+            document.getElementById('g1-indicator').innerText = `ข้อ ${g1Idx + 1}/10`;
             const drop = document.getElementById('g1-drop-zone');
             drop.innerHTML = '<span class="text-gray-300 text-[5vmin] pointer-events-none font-bold">วางคำตอบที่นี่</span>';
             drop.className = "w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner";
             const bank = document.getElementById('g1-word-bank');
             bank.innerHTML = '';
-            q.s.forEach((w,i)=>{
+            q.s.forEach((w, i) => {
                 const el = document.createElement('div');
-                el.className = `word-card ${g1Cols[i%g1Cols.length]}`;
+                el.className = `word-card ${g1Cols[i % g1Cols.length]}`;
                 el.innerText = w;
-                el.onclick = ()=>moveWordG1(el);
+                el.onclick = () => moveWordG1(el);
                 bank.appendChild(el);
             });
-            document.getElementById('g1-check-btn').style.display='block';
-            document.getElementById('g1-next-btn').classList.add('opacity-50','cursor-not-allowed');
+            document.getElementById('g1-check-btn').style.display = 'block';
+            document.getElementById('g1-next-btn').classList.add('opacity-50', 'cursor-not-allowed');
         }
         function moveWordG1(el) {
             const drop = document.getElementById('g1-drop-zone');
             const bank = document.getElementById('g1-word-bank');
-            if(el.parentElement===drop) { bank.appendChild(el); if(drop.children.length<=1) drop.querySelector('span').style.display='block'; }
-            else { drop.querySelector('span').style.display='none'; drop.appendChild(el); }
+            if (el.parentElement === drop) { bank.appendChild(el); if (drop.children.length <= 1) drop.querySelector('span').style.display = 'block'; }
+            else { drop.querySelector('span').style.display = 'none'; drop.appendChild(el); }
             playSound('s-click');
         }
         function g1Check() {
+            playSound('s-click');
             const drop = document.getElementById('g1-drop-zone');
-            const curr = Array.from(drop.children).filter(e=>e.tagName==='DIV').map(e=>e.innerText);
+            const curr = Array.from(drop.children).filter(e => e.tagName === 'DIV').map(e => e.innerText);
             const isMatch = g1Qs[g1Idx].a.some(ans => JSON.stringify(curr) === JSON.stringify(ans));
-            if(isMatch) {
+            if (isMatch) {
                 showFeedback('correct'); g1Score++; document.getElementById('g1-score').innerText = `คะแนน: ${g1Score}`;
                 drop.className = "w-[90vw] min-h-[30vh] bg-green-50 border-[0.8vmin] border-green-500 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin]";
-                document.getElementById('g1-check-btn').style.display='none';
-                document.getElementById('g1-next-btn').classList.remove('opacity-50','cursor-not-allowed');
+                document.getElementById('g1-check-btn').style.display = 'none';
+                document.getElementById('g1-next-btn').classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
                 showFeedback('wrong'); drop.classList.add('bg-red-50', 'border-red-300', 'shake');
-                setTimeout(()=>{ drop.classList.remove('bg-red-50', 'border-red-300', 'shake'); }, 1000);
+                setTimeout(() => { drop.classList.remove('bg-red-50', 'border-red-300', 'shake'); }, 1000);
             }
         }
-        function g1Next() { if(g1Idx<9){g1Idx++; loadG1Q();} else navigate(1); }
-        function g1Prev() { if(g1Idx>0){g1Idx--; loadG1Q();} else navigate(-1); }
+        function g1Next() { if (g1Idx < 9) { g1Idx++; loadG1Q(); } else navigate(1); }
+        function g1Prev() { if (g1Idx > 0) { g1Idx--; loadG1Q(); } else navigate(-1); }
 
         // --- Lesson ---
         let lsIdx = 1;
         function renderLesson() {
             const c = document.getElementById('lesson-content');
             document.getElementById('lesson-page-indicator').innerText = `${lsIdx}/13`;
-            
-            const renderTrain = (t1, t2, t3=null, scaleClass='') => {
+
+            const renderTrain = (t1, t2, t3 = null, scaleClass = '') => {
                 const style = scaleClass ? '' : 'font-size: 1.8vmin;';
                 const wrapperClass = scaleClass ? `train-wrapper transform origin-center ${scaleClass}` : 'train-wrapper';
                 const padding = scaleClass ? '0.4em' : '1em';
-                
                 return `
                 <div class="${wrapperClass}" style="${style}">
                     <div class="train-container">
@@ -461,57 +860,40 @@
                     </div>
                 </div>`;
             }
-
-            if(lsIdx===1) c.innerHTML=`${renderTrain('','','')}<h1 class="text-[6vmin] font-bold mb-[4vmin] mt-[4vmin]">นี่คือรูปอะไรครับเด็กๆ?</h1><div class="bg-white px-[6vmin] py-[2vmin] rounded-[3vmin] shadow-2xl cursor-pointer border-[1vmin] border-gray-100 text-[4vmin] font-bold" onclick="showTrainAnswer(this)">แตะดูเฉลย</div>`;
-            else if(lsIdx===2) c.innerHTML=`<div class="w-full h-full flex items-center justify-center">${renderTrain('พ่อ','ขี่','ม้า', 'scale-[2]')}</div>`;
-            else if(lsIdx===3) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ','ขี่','ม้า', 'scale-[1.8]')}<div class="grid grid-cols-2 gap-[10vmin] mt-[10vmin] w-full max-w-[90vw]"><div class="bg-blue-100 p-[2vmin] rounded-[3vmin] text-blue-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-blue-300">ภาคประธาน (ใคร)</div><div class="bg-red-100 p-[2vmin] rounded-[3vmin] text-red-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-red-300">ภาคแสดง (ทำอะไร)</div></div></div>`;
-            else if(lsIdx===4) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin]">รถไฟมี 2 แบบ</h2><div class="flex flex-col gap-[4vmin] w-full max-w-[95vw]"><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-purple-600">1. ขบวนสั้น</h3></div>${renderTrain('','', null, 'scale-[1.2]')}</div><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-orange-600">2. ขบวนยาว</h3></div>${renderTrain('','','', 'scale-[1.2]')}</div></div>`;
-            else if(lsIdx===5) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น</h2><div class="w-full h-full flex items-center justify-center">${renderTrain('นก','บิน', null, 'scale-[2.2]')}</div>`;
-            else if(lsIdx===6) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น</h2><div class="w-full h-full flex items-center justify-center">${renderTrain('ฝน','ตก', null, 'scale-[2.2]')}</div>`;
-            else if(lsIdx===7) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-purple-800">สรุปขบวนสั้น</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน','กริยา', null, 'scale-[2]')}</div><div class="text-[5vmin] bg-purple-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-purple-300 font-bold text-purple-900">ใคร + ทำอะไร</div>`;
-            else if(lsIdx===8) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('ฉัน','กิน','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'ข้าว\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: กินอะไร?</p></div>`;
-            else if(lsIdx===9) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('แมว','ไล่','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'หนู\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ไล่อะไร?</p></div>`;
-            else if(lsIdx===10) c.innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ','ล้าง','<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p></div>`;
-            else if(lsIdx===11) c.innerHTML=`<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน','กริยา','กรรม', 'scale-[1.8]')}</div><div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
-            else if(lsIdx===12) c.innerHTML=`<h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1><div class="text-[12vmin] font-extrabold text-blue-600 mb-[8vmin] drop-shadow-md">ฉัน ดีใจ</div><div class="flex gap-[4vmin]"><button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button><button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button></div>`;
-            else if(lsIdx===13) c.innerHTML=`<h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1><div class="text-[12vmin] font-extrabold text-red-600 mb-[8vmin] drop-shadow-md">หมา ไล่ แมว</div><div class="flex gap-[4vmin]"><button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button><button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button></div>`;
+            if (lsIdx === 1) c.innerHTML = `${renderTrain('', '', '')}<h1 class="text-[6vmin] font-bold mb-[4vmin] mt-[4vmin]">นี่คือรูปอะไรครับเด็กๆ?</h1><div class="bg-white px-[6vmin] py-[2vmin] rounded-[3vmin] shadow-2xl cursor-pointer border-[1vmin] border-gray-100 text-[4vmin] font-bold" onclick="showTrainAnswer(this)">แตะดูเฉลย</div>`;
+            else if (lsIdx === 2) c.innerHTML = `<div class="w-full h-full flex items-center justify-center">${renderTrain('พ่อ', 'ขี่', 'ม้า', 'scale-[2]')}</div>`;
+            else if (lsIdx === 3) c.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ', 'ขี่', 'ม้า', 'scale-[1.8]')}<div class="grid grid-cols-2 gap-[10vmin] mt-[10vmin] w-full max-w-[90vw]"><div class="bg-blue-100 p-[2vmin] rounded-[3vmin] text-blue-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-blue-300">ภาคประธาน (ใคร)</div><div class="bg-red-100 p-[2vmin] rounded-[3vmin] text-red-800 font-bold text-[5vmin] text-center border-[0.5vmin] border-red-300">ภาคแสดง (ทำอะไร)</div></div></div>`;
+            else if (lsIdx === 4) c.innerHTML = `<h2 class="text-[6vmin] font-bold mb-[4vmin]">รถไฟมี 2 แบบ</h2><div class="flex flex-col gap-[4vmin] w-full max-w-[95vw]"><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-purple-600">1. ขบวนสั้น</h3></div>${renderTrain('', '', null, 'scale-[1.2]')}</div><div class="bg-white p-[2vmin] rounded-[3vmin] shadow-xl flex items-center justify-between px-[4vmin]"><div class="flex flex-col"><h3 class="text-[5vmin] font-bold text-orange-600">2. ขบวนยาว</h3></div>${renderTrain('', '', '', 'scale-[1.2]')}</div></div>`;
+            else if (lsIdx === 5) c.innerHTML = `<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น</h2><div class="w-full h-full flex items-center justify-center">${renderTrain('นก', 'บิน', null, 'scale-[2.2]')}</div>`;
+            else if (lsIdx === 6) c.innerHTML = `<h2 class="text-[6vmin] font-bold mb-[2vmin] text-purple-700">ขบวนสั้น</h2><div class="w-full h-full flex items-center justify-center">${renderTrain('ฝน', 'ตก', null, 'scale-[2.2]')}</div>`;
+            else if (lsIdx === 7) c.innerHTML = `<h2 class="text-[6vmin] font-bold mb-[4vmin] text-purple-800">สรุปขบวนสั้น</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน', 'กริยา', null, 'scale-[2]')}</div><div class="text-[5vmin] bg-purple-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-purple-300 font-bold text-purple-900">ใคร + ทำอะไร</div>`;
+            else if (lsIdx === 8) c.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('ฉัน', 'กิน', '<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'ข้าว\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: กินอะไร?</p></div>`;
+            else if (lsIdx === 9) c.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('แมว', 'ไล่', '<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'หนู\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ไล่อะไร?</p></div>`;
+            else if (lsIdx === 10) c.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center">${renderTrain('พ่อ', 'ล้าง', '<span class="cursor-pointer text-yellow-300" onclick="revealWord(this, \'รถ\')">?</span>', 'scale-[2]')}<p class="mt-[12vmin] text-[5vmin] font-bold text-orange-700">ขบวนยาว: ล้างอะไร?</p></div>`;
+            else if (lsIdx === 11) c.innerHTML = `<h2 class="text-[6vmin] font-bold mb-[4vmin] text-orange-800">สรุปขบวนยาว</h2><div class="w-full flex-1 flex items-center justify-center">${renderTrain('ประธาน', 'กริยา', 'กรรม', 'scale-[1.8]')}</div><div class="text-[4vmin] bg-orange-100 px-[6vmin] py-[2vmin] rounded-full mb-[4vmin] border-[1vmin] border-orange-300 font-bold text-orange-900 text-center">ใคร + ทำอะไร + (ทำกับอะไร)</div>`;
+            else if (lsIdx === 12) c.innerHTML = `<h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1><div class="text-[12vmin] font-extrabold text-blue-600 mb-[8vmin] drop-shadow-md">ฉัน ดีใจ</div><div class="flex gap-[4vmin]"><button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนสั้น</button><button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนยาว</button></div>`;
+            else if (lsIdx === 13) c.innerHTML = `<h1 class="text-[6vmin] font-bold mb-[6vmin]">ขบวนสั้น หรือ ขบวนยาว?</h1><div class="text-[12vmin] font-extrabold text-red-600 mb-[8vmin] drop-shadow-md">หมา ไล่ แมว</div><div class="flex gap-[4vmin]"><button class="bg-gray-200 text-gray-600 px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-gray-400 active:scale-95" onclick="checkTrainAnswer(false, this)">ขบวนสั้น</button><button class="bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95" onclick="checkTrainAnswer(true, this)">ขบวนยาว</button></div>`;
         }
         function showTrainAnswer(el) { el.innerHTML = '<h2 class="text-green-600 font-bold text-[6vmin]">รถไฟ! ✅</h2>'; playSound('s-correct'); }
-        function revealWord(el, word) { el.className = 'car body-car-2'; el.style.padding='0.4em'; el.innerHTML = `<div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${word}`; playSound('s-click'); }
+        function revealWord(el, word) { el.className = 'car body-car-2'; el.style.padding = '0.4em'; el.innerHTML = `<div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${word}`; playSound('s-click'); }
         function checkTrainAnswer(isCorrect, btn) {
-            if(isCorrect) { 
-                showFeedback('correct'); 
-                if(btn.classList.contains('bg-gray-200')) {
+            if (isCorrect) {
+                showFeedback('correct');
+                if (btn.classList.contains('bg-gray-200')) {
                     btn.className = 'bg-green-500 text-white px-[6vmin] py-[3vmin] rounded-[2vmin] text-[5vmin] font-bold shadow-2xl border-b-[1vmin] border-green-700 active:scale-95';
                 }
-            }
-            else { showFeedback('wrong'); }
+            } else { showFeedback('wrong'); }
         }
-        function lessonNext(){ if(lsIdx<13){lsIdx++; renderLesson(); playSound('s-click');} else navigate(1); }
-        function lessonPrev(){ if(lsIdx>1){lsIdx--; renderLesson(); playSound('s-click');} else navigate(-1); }
+        function lessonNext() { if (lsIdx < 13) { lsIdx++; renderLesson(); playSound('s-click'); } else navigate(1); }
+        function lessonPrev() { if (lsIdx > 1) { lsIdx--; renderLesson(); playSound('s-click'); } else navigate(-1); }
 
-        // --- Swap (Animation with FLIP) ---
-        let swIdx = 2; 
-        
+        // --- Swap ---
+        let swIdx = 2;
         const swapData = {
-            2: [
-                {text: 'ภูผา', col: 'bg-blue-500'}, 
-                {text: 'ไปหา', col: 'bg-red-500'}, 
-                {text: 'แม่', col: 'bg-green-500'}
-            ],
-            3: [
-                {text: 'ครู', col: 'bg-blue-500'}, 
-                {text: 'รัก', col: 'bg-red-500'}, 
-                {text: 'เด็กๆ', col: 'bg-green-500'}
-            ],
-            4: [
-                {text: 'พ่อ', col: 'bg-blue-500'}, 
-                {text: 'ไป', col: 'bg-red-500'}, 
-                {text: 'ป่า', col: 'bg-green-500'}
-            ]
+            2: [{ text: 'ภูผา', col: 'bg-blue-500' }, { text: 'ไปหา', col: 'bg-red-500' }, { text: 'แม่', col: 'bg-green-500' }],
+            3: [{ text: 'ครู', col: 'bg-blue-500' }, { text: 'รัก', col: 'bg-red-500' }, { text: 'เด็กๆ', col: 'bg-green-500' }],
+            4: [{ text: 'พ่อ', col: 'bg-blue-500' }, { text: 'ไป', col: 'bg-red-500' }, { text: 'ป่า', col: 'bg-green-500' }]
         };
-
-        // Track current permutation
         let currentPermutations = { 2: [], 3: [], 4: [] };
 
         function shuffleArray(array) {
@@ -524,20 +906,14 @@
 
         function renderSwap(updateOnly = false) {
             const c = document.getElementById('swap-content');
-            document.getElementById('swap-indicator').innerText = `${swIdx-1}/3`;
-            
-            if(currentPermutations[swIdx].length === 0) {
-                currentPermutations[swIdx] = [...swapData[swIdx]];
-            }
-
-            const box = (item) => `<div class="word-card ${item.col} text-white text-[8vmin] px-[5vmin] py-[2vmin] m-[1vmin] rounded-[2vmin] shadow-xl">${item.text}</div>`; 
+            document.getElementById('swap-indicator').innerText = `${swIdx - 1}/3`;
+            if (currentPermutations[swIdx].length === 0) currentPermutations[swIdx] = [...swapData[swIdx]];
+            const box = (item) => `<div class="word-card ${item.col} text-white text-[8vmin] px-[5vmin] py-[2vmin] m-[1vmin] rounded-[2vmin] shadow-xl">${item.text}</div>`;
             const containerClass = "flex flex-wrap justify-center content-center w-full h-[60vh] gap-[2vmin]";
-            
             const contentHtml = currentPermutations[swIdx].map(item => box(item)).join('');
-            
-            if(updateOnly) {
+            if (updateOnly) {
                 const container = document.getElementById(`swap-container-${swIdx}`);
-                if(container) container.innerHTML = contentHtml;
+                if (container) container.innerHTML = contentHtml;
             } else {
                 c.innerHTML = `<div id="swap-container-${swIdx}" class="${containerClass}">${contentHtml}</div><button class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700 active:scale-95" onclick="performSwap(${swIdx})">🔀 สุ่มตำแหน่ง</button>`;
             }
@@ -545,50 +921,32 @@
 
         function performSwap(id) {
             playSound('s-click');
-            
-            // 1. Get Old Positions
             const container = document.getElementById(`swap-container-${id}`);
             const oldElements = Array.from(container.children);
             const positions = new Map();
-            
             oldElements.forEach(el => {
                 const rect = el.getBoundingClientRect();
                 positions.set(el.innerText.trim(), rect);
             });
-
-            // 2. Logic: Shuffle
             const originalJson = JSON.stringify(currentPermutations[id]);
             let newArr = [...currentPermutations[id]];
-            
-            // Try to find a new permutation (limit attempts to avoid infinite loop on small sets)
             let attempts = 0;
             do {
                 shuffleArray(newArr);
                 attempts++;
             } while (JSON.stringify(newArr) === originalJson && newArr.length > 1 && attempts < 10);
-            
             currentPermutations[id] = newArr;
-
-            // 3. Render New DOM
             renderSwap(true);
-
-            // 4. FLIP Animation
             const newElements = Array.from(container.children);
-            
             newElements.forEach(newEl => {
                 const text = newEl.innerText.trim();
                 const oldRect = positions.get(text);
-                
                 if (oldRect) {
                     const newRect = newEl.getBoundingClientRect();
                     const dx = oldRect.left - newRect.left;
                     const dy = oldRect.top - newRect.top;
-
-                    // Invert
                     newEl.style.transition = 'none';
                     newEl.style.transform = `translate(${dx}px, ${dy}px)`;
-
-                    // Play
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                             newEl.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
@@ -599,59 +957,55 @@
             });
         }
 
-        function swapNext(){ if(swIdx<4){swIdx++; renderSwap(); playSound('s-click');} else navigate(1); }
-        function swapPrev(){ if(swIdx>2){swIdx--; renderSwap(); playSound('s-click');} else navigate(-1); }
+        function swapNext() { if (swIdx < 4) { swIdx++; renderSwap(); playSound('s-click'); } else navigate(1); }
+        function swapPrev() { if (swIdx > 2) { swIdx--; renderSwap(); playSound('s-click'); } else navigate(-1); }
 
-        // --- Game 2 (ยังคงใช้ .png จาก Root) ---
+        // --- Game 2 ---
         const g2Qs = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
         let g2Idx = 0;
-        let g2Scores = {1:0, 2:0, 3:0};
-        function loadG2Q() { 
-            document.getElementById('g2-img').src = g2Qs[g2Idx]; 
-            document.getElementById('g2-q-num').innerText = `ข้อ ${g2Idx+1}/10`;
+        let g2Scores = { 1: 0, 2: 0, 3: 0 };
+        function loadG2Q() {
+            document.getElementById('g2-img').src = g2Qs[g2Idx];
+            document.getElementById('g2-q-num').innerText = `ข้อ ${g2Idx + 1}/10`;
         }
-        function addScore(g){ g2Scores[g]++; document.getElementById(`s-g${g}`).innerText = g2Scores[g]; playSound('s-click'); }
-        function g2NextQ(){ if(g2Idx<9){ g2Idx++; loadG2Q(); } else { g2Finish(); } }
-        function g2Finish(){ 
-            document.getElementById('g2-interface').style.display='none'; 
-            document.getElementById('g2-podium').style.display='flex';
+        function addScore(g) { g2Scores[g]++; document.getElementById(`s-g${g}`).innerText = g2Scores[g]; playSound('s-click'); }
+        function g2NextQ() { if (g2Idx < 9) { g2Idx++; loadG2Q(); } else { g2Finish(); } }
+        function g2Finish() {
+            document.getElementById('g2-interface').style.display = 'none';
+            document.getElementById('g2-podium').style.display = 'flex';
             playSound('s-success'); createConfetti();
             const hScale = 5;
             document.getElementById('podium-bars').innerHTML = `
-                <div class="w-[15vmin] bg-green-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-green-300" style="height: ${g2Scores[2]*hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div>
-                <div class="w-[15vmin] bg-red-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-red-300 z-10" style="height: ${g2Scores[1]*hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div>
-                <div class="w-[15vmin] bg-blue-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-blue-300" style="height: ${g2Scores[3]*hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>
+                <div class="w-[15vmin] bg-green-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-green-300" style="height: ${g2Scores[2] * hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div>
+                <div class="w-[15vmin] bg-red-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-red-300 z-10" style="height: ${g2Scores[1] * hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div>
+                <div class="w-[15vmin] bg-blue-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-blue-300" style="height: ${g2Scores[3] * hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>
             `;
         }
-        function g2BackToGame(){ document.getElementById('g2-interface').style.display='flex'; document.getElementById('g2-podium').style.display='none'; }
+        function g2BackToGame() { document.getElementById('g2-interface').style.display = 'flex'; document.getElementById('g2-podium').style.display = 'none'; }
 
-        // --- Picker (แก้ไข: ใช้ .jpg ตามที่ขอ) ---
+        // --- Picker ---
         function startPicker() {
             playSound('s-shuffle');
             document.getElementById('picker-placeholder').classList.add('hidden');
             const img = document.getElementById('picker-img');
             img.classList.remove('hidden');
-            document.getElementById('picker-btn').disabled=true;
-            
-            // จุดแก้ไข 3: ใช้ s/xx.jpg
-            const fastInterval = setInterval(()=>{ const r = Math.floor(Math.random()*13)+1; img.src = `s/${String(r).padStart(2,'0')}.jpg`; }, 50);
-
-            setTimeout(()=>{ 
+            document.getElementById('picker-btn').disabled = true;
+            const fastInterval = setInterval(() => { const r = Math.floor(Math.random() * 13) + 1; img.src = `s/${String(r).padStart(2, '0')}.jpg`; }, 50);
+            setTimeout(() => {
                 clearInterval(fastInterval);
                 let slowCount = 0;
                 const slowInterval = setInterval(() => {
-                    const r = Math.floor(Math.random()*13)+1; 
-                    // จุดแก้ไข 4: ใช้ s/xx.jpg
-                    img.src = `s/${String(r).padStart(2,'0')}.jpg`;
+                    const r = Math.floor(Math.random() * 13) + 1;
+                    img.src = `s/${String(r).padStart(2, '0')}.jpg`;
                     slowCount++;
-                    if(slowCount >= 3) {
+                    if (slowCount >= 3) {
                         clearInterval(slowInterval);
-                        document.getElementById('s-shuffle').pause(); 
+                        document.getElementById('s-shuffle').pause();
                         playSound('s-success');
                         createConfetti();
-                        createFireworks(); 
+                        createFireworks();
                         img.classList.add('zoom-in-out');
-                        document.getElementById('picker-btn').disabled=false; 
+                        document.getElementById('picker-btn').disabled = false;
                     }
                 }, 1000);
             }, 7000);
@@ -661,45 +1015,57 @@
         const cvs = document.getElementById('drawing-canvas');
         const cx = cvs.getContext('2d');
         let isDraw = false, drawMode = false;
-        function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; cx.strokeStyle="#ef4444"; cx.lineWidth=5; cx.lineCap="round"; }
+        function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; cx.strokeStyle = "#ef4444"; cx.lineWidth = 5; cx.lineCap = "round"; }
         window.addEventListener('resize', resizeCvs); resizeCvs();
+
         function toggleDrawing() {
+            playSound('s-click');
             drawMode = !drawMode;
             document.getElementById('toggle-draw-btn').classList.toggle('bg-yellow-100');
             cvs.classList.toggle('drawing-active');
             document.getElementById('clear-draw-btn').classList.toggle('hidden');
         }
-        function clearCanvas() { cx.clearRect(0,0,cvs.width, cvs.height); }
-        function startD(e) { if(!drawMode) return; isDraw=true; drawD(e); }
-        function endD() { isDraw=false; cx.beginPath(); }
+        function clearCanvas() {
+            playSound('s-click');
+            cx.clearRect(0, 0, cvs.width, cvs.height);
+        }
+
+        function startD(e) {
+            if (!drawMode) return;
+            isDraw = true;
+            // Playing click sound as drawing sound (missing specific file)
+            playSound('s-click');
+            drawD(e);
+        }
+        function endD() { isDraw = false; cx.beginPath(); }
         function drawD(e) {
-            if(!isDraw || !drawMode) return;
+            if (!isDraw || !drawMode) return;
             e.preventDefault();
             let x, y;
-            if(e.type.includes('touch')) { x=e.touches[0].clientX; y=e.touches[0].clientY; }
-            else { x=e.clientX; y=e.clientY; }
-            cx.lineTo(x,y); cx.stroke(); cx.beginPath(); cx.moveTo(x,y);
+            if (e.type.includes('touch')) { x = e.touches[0].clientX; y = e.touches[0].clientY; }
+            else { x = e.clientX; y = e.clientY; }
+            cx.lineTo(x, y); cx.stroke(); cx.beginPath(); cx.moveTo(x, y);
         }
         cvs.addEventListener('mousedown', startD); cvs.addEventListener('mouseup', endD); cvs.addEventListener('mousemove', drawD);
-        cvs.addEventListener('touchstart', startD, {passive:false}); cvs.addEventListener('touchend', endD); cvs.addEventListener('touchmove', drawD, {passive:false});
+        cvs.addEventListener('touchstart', startD, { passive: false }); cvs.addEventListener('touchend', endD); cvs.addEventListener('touchmove', drawD, { passive: false });
 
         function createConfetti() {
             const c = ['#FFD700', '#FF4500', '#32CD32', '#1E90FF', '#FF69B4'];
-            for(let i=0; i<100; i++) {
+            for (let i = 0; i < 100; i++) {
                 const el = document.createElement('div');
                 el.className = 'confetti';
-                el.style.left = Math.random()*100+'vw';
-                el.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
-                el.style.animationDuration = (Math.random()*2+2)+'s';
-                el.style.width = Math.random()*1.5+0.5+'vmin';
-                el.style.height = Math.random()*1.5+0.5+'vmin';
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.backgroundColor = c[Math.floor(Math.random() * c.length)];
+                el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                el.style.width = Math.random() * 1.5 + 0.5 + 'vmin';
+                el.style.height = Math.random() * 1.5 + 0.5 + 'vmin';
                 document.body.appendChild(el);
             }
         }
 
         function createFireworks() {
             const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-            for(let i=0; i<20; i++) {
+            for (let i = 0; i < 20; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
                     el.className = 'firework';
@@ -712,44 +1078,40 @@
             }
         }
 
-        // --- Global Random Student (แก้ไข: ใช้ .jpg) ---
+        // --- Global Random Student ---
         const globalStudentImages = [];
-        // จุดแก้ไข 5: สร้าง Array รูปนามสกุล .jpg
-        for(let i=1; i<=13; i++) globalStudentImages.push(`s/${String(i).padStart(2,'0')}.jpg`);
-        
+        for (let i = 1; i <= 13; i++) globalStudentImages.push(`s/${String(i).padStart(2, '0')}.jpg`);
+
         let globalInterval = null;
         let globalTimeouts = [];
 
         function startGlobalRandom() {
+            playSound('s-click');
             const modal = document.getElementById('global-random-modal');
             const img = document.getElementById('global-student-img');
             modal.style.display = 'flex';
             playSound('s-shuffle');
 
-            // Reset logic
-            if(globalInterval) clearInterval(globalInterval);
+            if (globalInterval) clearInterval(globalInterval);
             globalTimeouts.forEach(t => clearTimeout(t));
             globalTimeouts = [];
 
-            // Phase 1: Fast Shuffle (10 seconds)
             const startTime = Date.now();
             globalInterval = setInterval(() => {
                 const r = Math.floor(Math.random() * globalStudentImages.length);
                 img.src = globalStudentImages[r];
-                
-                if (Date.now() - startTime >= 10000) { // 10s
+                if (Date.now() - startTime >= 10000) {
                     clearInterval(globalInterval);
                     startGlobalSlowPhase(img);
                 }
-            }, 50); // very fast
+            }, 50);
         }
 
         function startGlobalSlowPhase(imgElement) {
             let count = 0;
             const totalSlow = 4;
-            const duration = 3000; // 3s total
+            const duration = 3000;
             const step = duration / totalSlow;
-
             function next() {
                 if (count < totalSlow) {
                     const r = Math.floor(Math.random() * globalStudentImages.length);
@@ -758,7 +1120,6 @@
                     const t = setTimeout(next, step);
                     globalTimeouts.push(t);
                 } else {
-                    // Stop & Effect
                     document.getElementById('s-shuffle').pause();
                     playSound('s-success');
                     createConfetti();
@@ -768,12 +1129,128 @@
         }
 
         function closeGlobalRandom() {
+            playSound('s-click');
             const modal = document.getElementById('global-random-modal');
             modal.style.display = 'none';
-            if(globalInterval) clearInterval(globalInterval);
+            if (globalInterval) clearInterval(globalInterval);
             globalTimeouts.forEach(t => clearTimeout(t));
             document.getElementById('s-shuffle').pause();
         }
+
+        // --- Timer Logic (Draggable & Resizable) ---
+        let timerInterval;
+        let totalSeconds = 0;
+
+        function toggleTimer() {
+            playSound('s-click');
+            const popup = document.getElementById('timer-popup');
+            if (popup.style.display === 'flex') {
+                popup.style.display = 'none';
+            } else {
+                popup.style.display = 'flex';
+            }
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            document.getElementById('timer-display').innerText =
+                `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            playSound('s-click');
+            clearInterval(timerInterval);
+            const minInput = parseInt(document.getElementById('t-min').value) || 0;
+            const secInput = parseInt(document.getElementById('t-sec').value) || 0;
+
+            if (totalSeconds === 0) {
+                totalSeconds = (minInput * 60) + secInput;
+            }
+
+            updateTimerDisplay();
+
+            if (totalSeconds > 0) {
+                timerInterval = setInterval(() => {
+                    if (totalSeconds > 0) {
+                        totalSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        playSound('s-alarm');
+                        alert("หมดเวลา!");
+                    }
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            playSound('s-click');
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            playSound('s-click');
+            stopTimer();
+            totalSeconds = 0;
+            document.getElementById('timer-display').innerText = "00:00";
+        }
+
+        // Drag Logic for Timer
+        const timerPopup = document.getElementById('timer-popup');
+        const timerHeader = document.getElementById('timer-header');
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        timerHeader.addEventListener('mousedown', (e) => {
+            playSound('s-click'); // Play sound on start drag
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialLeft = timerPopup.offsetLeft;
+            initialTop = timerPopup.offsetTop;
+            document.addEventListener('mousemove', dragTimer);
+            document.addEventListener('mouseup', stopDragTimer);
+        });
+
+        // Touch support for drag
+        timerHeader.addEventListener('touchstart', (e) => {
+            playSound('s-click'); // Play sound on start drag
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            initialLeft = timerPopup.offsetLeft;
+            initialTop = timerPopup.offsetTop;
+            document.addEventListener('touchmove', dragTimerTouch, { passive: false });
+            document.addEventListener('touchend', stopDragTimer);
+        });
+
+        function dragTimer(e) {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            timerPopup.style.left = `${initialLeft + dx}px`;
+            timerPopup.style.top = `${initialTop + dy}px`;
+        }
+
+        function dragTimerTouch(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const dx = e.touches[0].clientX - startX;
+            const dy = e.touches[0].clientY - startY;
+            timerPopup.style.left = `${initialLeft + dx}px`;
+            timerPopup.style.top = `${initialTop + dy}px`;
+        }
+
+        function stopDragTimer() {
+            isDragging = false;
+            document.removeEventListener('mousemove', dragTimer);
+            document.removeEventListener('mouseup', stopDragTimer);
+            document.removeEventListener('touchmove', dragTimerTouch);
+            document.removeEventListener('touchend', stopDragTimer);
+        }
+
     </script>
 </body>
+
 </html>
