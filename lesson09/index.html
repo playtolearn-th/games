@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>บทที่ 9 เกือบไป (Final - Preload & Unlock Audio)</title>
+    <title>บทที่ 9 เกือบไป (Final - Home & Navigation)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -23,141 +23,90 @@
             height: 100vh;
         }
 
-        /* Loading / Start Screen Overlay */
+        /* Loading Overlay */
         #start-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #60a5fa, #2563eb);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s;
+            z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s;
         }
-
         .loader {
-            border: 1.5vmin solid #f3f3f3;
-            border-top: 1.5vmin solid #fbbf24;
-            border-radius: 50%;
-            width: 10vmin;
-            height: 10vmin;
-            animation: spin 1s linear infinite;
-            margin-bottom: 4vmin;
+            border: 1.5vmin solid #f3f3f3; border-top: 1.5vmin solid #fbbf24;
+            border-radius: 50%; width: 10vmin; height: 10vmin;
+            animation: spin 1s linear infinite; margin-bottom: 4vmin;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Layout */
         .section {
-            display: none;
-            height: 100%;
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: fadeIn 0.5s;
-            padding: 2vmin;
-            box-sizing: border-box;
-            overflow: hidden;
+            display: none; height: 100%; width: 100%;
+            flex-direction: column; align-items: center; justify-content: center;
+            position: relative; animation: fadeIn 0.5s;
+            padding: 2vmin; box-sizing: border-box; overflow: hidden;
         }
-
         .section.active { display: flex; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* Drawing */
-        #drawing-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 50;
-            pointer-events: none;
+        #drawing-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; }
+        .drawing-active { pointer-events: auto !important; cursor: crosshair; background-color: rgba(0, 0, 0, 0.05); }
+
+        /* Nav & UI */
+        .nav-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 200;
+            align-items: center; justify-content: center;
         }
-
-        .drawing-active {
-            pointer-events: auto !important;
-            cursor: crosshair;
-            background-color: rgba(0, 0, 0, 0.05);
+        .nav-grid {
+            background: white; padding: 4vmin; border-radius: 3vmin;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2vmin;
+            max-width: 90vw;
         }
-
-        /* UI Elements */
-        .nav-btn {
-            font-weight: 800;
-            padding: 1.5vmin 4vmin;
-            border-radius: 999px;
-            box-shadow: 0 1vmin 2vmin rgba(0, 0, 0, 0.2);
-            font-size: 3vmin;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 1vmin;
-            border-bottom: 0.8vmin solid rgba(0, 0, 0, 0.2);
-            justify-content: center;
+        .nav-item {
+            background: #e0f2fe; color: #0369a1; padding: 2vmin;
+            text-align: center; border-radius: 1.5vmin; font-weight: bold;
+            font-size: 3vmin; cursor: pointer; transition: transform 0.1s;
+            border: 0.3vmin solid #bae6fd;
         }
+        .nav-item:active { transform: scale(0.95); background: #bae6fd; }
 
-        .nav-btn:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
-
+        /* Common Styles */
         .word-card {
-            cursor: pointer;
-            background: white;
-            border-bottom: 0.8vmin solid #cbd5e1;
-            padding: 2vmin 4vmin;
-            border-radius: 2vmin;
-            font-weight: 800;
-            font-size: 5vmin;
-            box-shadow: 0 1vmin 2vmin rgba(0, 0, 0, 0.1);
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s;
-            white-space: nowrap;
-            margin: 1vmin;
-            will-change: transform;
+            cursor: pointer; background: white; border-bottom: 0.8vmin solid #cbd5e1;
+            padding: 2vmin 4vmin; border-radius: 2vmin; font-weight: 800; font-size: 5vmin;
+            box-shadow: 0 1vmin 2vmin rgba(0, 0, 0, 0.1); transition: transform 0.5s;
+            white-space: nowrap; margin: 1vmin;
         }
-
         .word-card:active { transform: scale(0.95); border-bottom-width: 0; margin-top: 0.8vmin; }
+        #g1-word-bank .word-card { font-size: 8vmin !important; padding: 3vmin 5vmin; }
+        #g1-drop-zone .word-card { font-size: 9vmin !important; padding: 2.5vmin 5vmin; }
 
-        #g1-word-bank .word-card { font-size: 8vmin !important; padding: 3vmin 5vmin; border-width: 0.6vmin; }
-        #g1-drop-zone .word-card { font-size: 9vmin !important; padding: 2.5vmin 5vmin; border-width: 0.6vmin; }
-
-        /* Animations */
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2vmin); } }
-        .shake { animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-0.5vmin, 0, 0); } 20%, 80% { transform: translate3d(1vmin, 0, 0); } 30%, 50%, 70% { transform: translate3d(-2vmin, 0, 0); } 40%, 60% { transform: translate3d(2vmin, 0, 0); } }
-        .zoom-in-out { animation: zoomEffect 0.5s ease-in-out; }
-        @keyframes zoomEffect { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-        /* Train Styles */
-        .train-wrapper { margin: 2vmin 0; display: flex; justify-content: center; transition: all 0.3s; }
+        .train-wrapper { margin: 2vmin 0; display: flex; justify-content: center; }
         .train-container { display: flex; align-items: flex-end; gap: 0.5em; }
-        .car { padding: 0.8em; border-radius: 1.2em; color: white; font-weight: 800; font-size: 2em; text-align: center; box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.3); position: relative; min-width: 4.5em; min-height: 3.5em; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 0.15em solid rgba(255, 255, 255, 0.4); }
-        .car:not(:last-child)::after { content: ''; position: absolute; right: -0.8em; bottom: 1.2em; width: 0.8em; height: 0.4em; background: #333; z-index: -1; border-radius: 0.1em; }
-        .car-wheels { position: absolute; bottom: -0.8em; left: 50%; transform: translateX(-50%); width: 100%; height: 1.6em; pointer-events: none; }
-        .wheel { width: 1.6em; height: 1.6em; background: #2d2d2d; border-radius: 50%; border: 0.25em solid #555; position: absolute; bottom: 0; box-shadow: 0.1em 0.1em 0.3em rgba(0, 0, 0, 0.4); }
-        .wheel-left { left: 0.4em; }
-        .wheel-right { right: 0.4em; }
+        .car { padding: 0.8em; border-radius: 1.2em; color: white; font-weight: 800; font-size: 2em; text-align: center; box-shadow: 0 0.5em 1em rgba(0,0,0,0.3); position: relative; min-width: 4.5em; min-height: 3.5em; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 0.15em solid rgba(255,255,255,0.4); }
         .head-car { background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 2.5em 0.8em 0.8em 0.8em; border-bottom: 0.4em solid #1e3a8a; }
         .body-car-1 { background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); border-bottom: 0.4em solid #7f1d1d; }
         .body-car-2 { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); border-bottom: 0.4em solid #14532d; }
-        .chimney { position: absolute; top: -1.2em; left: 0.8em; width: 0.8em; height: 1.6em; background: #333; border-top: 0.25em solid #777; }
+        .car-wheels { position: absolute; bottom: -0.8em; left: 50%; transform: translateX(-50%); width: 100%; height: 1.6em; }
+        .wheel { width: 1.6em; height: 1.6em; background: #2d2d2d; border-radius: 50%; border: 0.25em solid #555; position: absolute; bottom: 0; }
+        .wheel-left { left: 0.4em; } .wheel-right { right: 0.4em; }
+        .chimney { position: absolute; top: -1.2em; left: 0.8em; width: 0.8em; height: 1.6em; background: #333; }
         .smoke { animation: floatUp 2s infinite; position: absolute; top: -2.5em; left: 0.4em; opacity: 0; font-size: 1.6em; }
         @keyframes floatUp { 0% { transform: translateY(0) scale(0.5); opacity: 0.8; } 100% { transform: translateY(-1.5em) scale(2); opacity: 0; } }
 
-        /* Effects */
         .confetti { position: absolute; width: 1.5vmin; height: 1.5vmin; animation: confetti-fall linear forwards; z-index: 999; pointer-events: none; }
         @keyframes confetti-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
-        .firework { position: absolute; width: 2vmin; height: 2vmin; border-radius: 50%; animation: firework-pop ease-out forwards; z-index: 1000; pointer-events: none; }
-        @keyframes firework-pop { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(6); opacity: 0; box-shadow: 0 0 20px 10px currentColor; } }
+        
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-0.5vmin, 0, 0); } 20%, 80% { transform: translate3d(1vmin, 0, 0); } 30%, 50%, 70% { transform: translate3d(-2vmin, 0, 0); } 40%, 60% { transform: translate3d(2vmin, 0, 0); } }
+        
+        .zoom-in-out { animation: zoomEffect 0.5s ease-in-out; }
+        @keyframes zoomEffect { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
         #feedback-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 90; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
         #feedback-content { font-size: 25vmin; }
 
-        /* Timer Popup Styles */
+        /* Timer Popup */
         #timer-popup { resize: both; overflow: hidden; min-width: 25vmin; min-height: 15vmin; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); border: 2px solid #f97316; background: white; border-radius: 2vmin; display: none; flex-direction: column; position: fixed; top: 20%; left: 30%; z-index: 100; }
         #timer-header { background: #f97316; color: white; padding: 1vmin; cursor: move; font-weight: bold; font-size: 2.5vmin; display: flex; justify-content: space-between; align-items: center; }
         #timer-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1vmin; background: #fff7ed; }
@@ -185,22 +134,46 @@
     <canvas id="drawing-canvas"></canvas>
 
     <div class="ui-controls fixed top-[2vmin] left-[2vmin] z-[90] flex flex-col gap-[2vmin]">
-        <button onclick="toggleTimer()"
-            class="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-orange-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
+        
+        <button onclick="goHome()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-blue-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
+            🏠
+        </button>
+
+        <button onclick="toggleNav()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-indigo-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
+            ☰
+        </button>
+
+        <button onclick="toggleTimer()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-orange-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95">
             ⏳
         </button>
-        <button onclick="startGlobalRandom()"
-            class="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">
+
+        <button onclick="startGlobalRandom()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-amber-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center transform hover:scale-110 active:scale-95 animate-pulse">
             🎲
         </button>
-        <button id="toggle-draw-btn" onclick="toggleDrawing()"
-            class="bg-white hover:bg-yellow-100 text-gray-700 font-bold rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center">
+
+        <button id="toggle-draw-btn" onclick="toggleDrawing()" class="bg-white hover:bg-yellow-100 text-gray-700 font-bold rounded-full shadow-lg border-[0.5vmin] border-gray-300 transition text-[4vmin] w-[10vmin] h-[10vmin] flex items-center justify-center">
             ✏️
         </button>
-        <button id="clear-draw-btn" onclick="clearCanvas()"
-            class="hidden bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[4vmin] w-[10vmin] h-[10vmin] items-center justify-center">
+        <button id="clear-draw-btn" onclick="clearCanvas()" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg border-[0.5vmin] border-red-300 transition text-[4vmin] w-[10vmin] h-[10vmin] items-center justify-center">
             🗑️
         </button>
+    </div>
+
+    <div id="nav-modal" class="nav-modal">
+        <div class="relative nav-grid animate-float">
+            <button onclick="toggleNav()" class="absolute top-[-2vmin] right-[-2vmin] bg-red-500 text-white rounded-full w-[8vmin] h-[8vmin] font-bold text-[4vmin] border border-white shadow-xl">✕</button>
+            <h2 class="col-span-3 text-center text-[4vmin] font-bold mb-[2vmin] text-gray-700">ไปยังหน้า...</h2>
+            
+            <div class="nav-item" onclick="jumpTo(0)">🏠 หน้าแรก</div>
+            <div class="nav-item" onclick="jumpTo(1)">🧠 Brain Gym</div>
+            <div class="nav-item" onclick="jumpTo(2)">🎮 เรียงประโยค</div>
+            <div class="nav-item" onclick="jumpTo(3)">🚂 บทเรียน</div>
+            <div class="nav-item" onclick="jumpTo(4)">🔀 สลับคำ</div>
+            <div class="nav-item" onclick="jumpTo(5)">🖼️ ทายภาพ</div>
+            <div class="nav-item" onclick="jumpTo(6)">📝 จดบันทึก</div>
+            <div class="nav-item" onclick="jumpTo(7)">🎰 สุ่มผู้โชคดี</div>
+            <div class="nav-item" onclick="jumpTo(8)">🏆 สรุปจบ</div>
+        </div>
     </div>
 
     <div id="timer-popup">
@@ -226,9 +199,7 @@
         หน้า <span id="page-indicator-top">1</span>
     </div>
 
-    <div id="feedback-overlay">
-        <div id="feedback-content" class="animate-bounce drop-shadow-2xl"></div>
-    </div>
+    <div id="feedback-overlay"><div id="feedback-content" class="animate-bounce drop-shadow-2xl"></div></div>
 
     <div id="global-random-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/95 z-[200] flex-col items-center justify-center">
         <button onclick="closeGlobalRandom()" class="absolute top-[3vmin] right-[3vmin] text-white text-[5vmin] font-bold hover:text-red-500 transition z-[201]">✖</button>
@@ -243,9 +214,7 @@
             <h2 class="text-[15vmin] font-extrabold text-red-600 drop-shadow-2xl animate-float leading-tight mb-[4vmin]">เกือบไป</h2>
             <div class="bg-white/90 backdrop-blur-sm p-[4vmin] rounded-[4vmin] shadow-2xl border-[1vmin] border-white flex flex-col items-center max-w-[80vw]">
                 <img src="01.png" alt="เกือบไป" class="h-[30vh] w-auto object-contain drop-shadow-xl rounded-2xl mb-[4vmin]">
-                <button onclick="navigate(1)" class="bg-green-500 hover:bg-green-600 text-white text-[5vmin] font-bold py-[2vmin] px-[8vmin] rounded-full shadow-2xl transform hover:scale-105 transition animate-pulse border-b-[1vmin] border-green-800">
-                    เข้าสู่บทเรียน ▶
-                </button>
+                <button onclick="navigate(1)" class="bg-green-500 hover:bg-green-600 text-white text-[5vmin] font-bold py-[2vmin] px-[8vmin] rounded-full shadow-2xl transform hover:scale-105 transition animate-pulse border-b-[1vmin] border-green-800">เข้าสู่บทเรียน ▶</button>
             </div>
         </div>
     </div>
@@ -274,9 +243,7 @@
             </div>
         </div>
         <div class="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto px-[2vmin]">
-            <div id="g1-drop-zone" class="w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner">
-                <span class="text-gray-300 text-[5vmin] pointer-events-none font-bold">วางคำตอบที่นี่</span>
-            </div>
+            <div id="g1-drop-zone" class="w-[90vw] min-h-[30vh] bg-white border-[0.8vmin] border-dashed border-indigo-300 rounded-[3vmin] mb-[4vmin] flex flex-wrap justify-center items-center p-[2vmin] gap-[2vmin] transition-all duration-300 shadow-inner"><span class="text-gray-300 text-[5vmin] pointer-events-none font-bold">วางคำตอบที่นี่</span></div>
             <div id="g1-word-bank" class="flex justify-center gap-[2vmin] mb-[4vmin] flex-wrap w-full px-[2vmin]"></div>
         </div>
         <div class="w-full h-[15vh] px-[4vmin] flex justify-between items-center bg-indigo-100/90 backdrop-blur z-20 shrink-0 mb-[2vmin]">
@@ -384,66 +351,33 @@
     <script>
         // --- 1. Audio Unlocking & Preload Logic ---
         const audioIds = ['s-click', 's-correct', 's-wrong', 's-shuffle', 's-success', 's-alarm'];
-        let isAudioUnlocked = false;
-
-        // Force browser to load files immediately
         window.addEventListener('load', () => {
             const btn = document.getElementById('start-btn');
             const loader = document.querySelector('.loader');
-            
-            // Check if all audios are ready (basic check)
             let loadedCount = 0;
             audioIds.forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
-                    el.load(); // Request load
+                    el.load();
                     if(el.readyState >= 3) loadedCount++;
                     else el.oncanplaythrough = () => { loadedCount++; checkLoad(); };
                 }
             });
-
-            // If loading takes too long, show button anyway
-            setTimeout(() => {
-                 loader.style.display = 'none';
-                 btn.classList.remove('hidden');
-            }, 1000);
-
-            function checkLoad() {
-                if(loadedCount >= audioIds.length) {
-                    loader.style.display = 'none';
-                    btn.classList.remove('hidden');
-                }
-            }
+            setTimeout(() => { loader.style.display = 'none'; btn.classList.remove('hidden'); }, 1000);
+            function checkLoad() { if(loadedCount >= audioIds.length) { loader.style.display = 'none'; btn.classList.remove('hidden'); } }
         });
 
         function unlockAudioAndStart() {
-            // "Wake up" all audio contexts
             audioIds.forEach(id => {
                 const s = document.getElementById(id);
-                if(s) {
-                    s.muted = true;
-                    const p = s.play();
-                    if(p !== undefined) {
-                        p.then(() => { s.pause(); s.currentTime = 0; s.muted = false; })
-                         .catch(e => console.log(e));
-                    }
-                }
+                if(s) { s.muted = true; const p = s.play(); if(p !== undefined) { p.then(() => { s.pause(); s.currentTime = 0; s.muted = false; }).catch(e => {}); } }
             });
-            isAudioUnlocked = true;
-            
-            // Fade out overlay
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; playSound('s-click'); }, 500);
         }
 
-        function playSound(id) { 
-            const s = document.getElementById(id); 
-            if (s) { 
-                s.currentTime = 0; 
-                s.play().catch(() => {}); 
-            } 
-        }
+        function playSound(id) { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(() => {}); } }
 
         // --- Navigation ---
         const sections = [
@@ -455,11 +389,17 @@
         function navigate(dir) {
             playSound('s-click');
             let next = curSec + dir;
+            updateSection(next);
+        }
+
+        function updateSection(next) {
             if (next >= 0 && next < sections.length) {
                 document.getElementById(sections[curSec]).classList.remove('active');
                 curSec = next;
                 document.getElementById(sections[curSec]).classList.add('active');
                 document.getElementById('page-indicator-top').innerText = curSec + 1;
+                
+                // Initialize specific section logic
                 if (sections[curSec] === 'sec-braingym') renderBgCard();
                 if (sections[curSec] === 'sec-game1') loadG1Q();
                 if (sections[curSec] === 'sec-lesson') renderLesson();
@@ -469,24 +409,36 @@
             }
         }
 
+        // --- New: Home & Jump Nav ---
+        function goHome() {
+            playSound('s-click');
+            updateSection(0);
+        }
+
+        function toggleNav() {
+            playSound('s-click');
+            const m = document.getElementById('nav-modal');
+            if(m.style.display === 'flex') m.style.display = 'none';
+            else m.style.display = 'flex';
+        }
+
+        function jumpTo(index) {
+            playSound('s-click');
+            document.getElementById('nav-modal').style.display = 'none';
+            updateSection(index);
+        }
+
+        // --- Existing Logic ---
         function showFeedback(type) {
             const overlay = document.getElementById('feedback-overlay');
             const content = document.getElementById('feedback-content');
             overlay.style.display = 'flex';
-            if (type === 'correct') {
-                content.innerHTML = '✅';
-                playSound('s-correct');
-                createConfetti();
-            } else {
-                content.innerHTML = '<span class="text-red-600 text-[20vmin]">❌</span>';
-                playSound('s-wrong');
-                document.body.classList.add('shake');
-                setTimeout(() => document.body.classList.remove('shake'), 500);
-            }
+            if (type === 'correct') { content.innerHTML = '✅'; playSound('s-correct'); createConfetti(); } 
+            else { content.innerHTML = '<span class="text-red-600 text-[20vmin]">❌</span>'; playSound('s-wrong'); document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500); }
             setTimeout(() => { overlay.style.display = 'none'; }, 1000);
         }
 
-        // --- Brain Gym ---
+        // Brain Gym
         const bgCards = [
             { icon: "<img src='l/01.png' class='h-full w-full object-contain'>", word: "เกาะ", sound: "", color: "text-amber-700" },
             { icon: "<img src='l/02.png' class='h-full w-full object-contain'>", word: "ขวาง", sound: "หยุดนะ!", color: "text-red-600" },
@@ -512,7 +464,7 @@
         function bgNext() { if (bgIndex < bgCards.length - 1) { bgIndex++; renderBgCard(); playSound('s-click'); } else navigate(1); }
         function bgPrev() { if (bgIndex > 0) { bgIndex--; renderBgCard(); playSound('s-click'); } else navigate(-1); }
 
-        // --- Game 1 ---
+        // Game 1
         const g1Qs = [
             { a: [["ฝน", "ตก", "หนัก"]], s: ["หนัก", "ฝน", "ตก"] },
             { a: [["พ่อ", "ลาก", "ต้นไม้"]], s: ["ต้นไม้", "พ่อ", "ลาก"] },
@@ -571,24 +523,16 @@
         function g1Next() { if (g1Idx < 9) { g1Idx++; loadG1Q(); } else navigate(1); }
         function g1Prev() { if (g1Idx > 0) { g1Idx--; loadG1Q(); } else navigate(-1); }
 
-        // --- Lesson ---
+        // Lesson
         let lsIdx = 1;
         function renderLesson() {
             const c = document.getElementById('lesson-content');
             document.getElementById('lesson-page-indicator').innerText = `${lsIdx}/13`;
-
             const renderTrain = (t1, t2, t3 = null, scaleClass = '') => {
                 const style = scaleClass ? '' : 'font-size: 1.8vmin;';
                 const wrapperClass = scaleClass ? `train-wrapper transform origin-center ${scaleClass}` : 'train-wrapper';
                 const padding = scaleClass ? '0.4em' : '1em';
-                return `
-                <div class="${wrapperClass}" style="${style}">
-                    <div class="train-container">
-                        <div class="car head-car" style="padding: ${padding};"><div class="chimney"></div><div class="smoke">💨</div><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t1}</div>
-                        <div class="car body-car-1" style="padding: ${padding};"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t2}</div>
-                        ${t3 !== null ? `<div class="car body-car-2" style="padding: ${padding};"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t3}</div>` : ''}
-                    </div>
-                </div>`;
+                return `<div class="${wrapperClass}" style="${style}"><div class="train-container"><div class="car head-car" style="padding: ${padding};"><div class="chimney"></div><div class="smoke">💨</div><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t1}</div><div class="car body-car-1" style="padding: ${padding};"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t2}</div>${t3 !== null ? `<div class="car body-car-2" style="padding: ${padding};"><div class="car-wheels"><div class="wheel wheel-left"></div><div class="wheel wheel-right"></div></div>${t3}</div>` : ''}</div></div>`;
             }
             if (lsIdx === 1) c.innerHTML = `${renderTrain('', '', '')}<h1 class="text-[6vmin] font-bold mb-[4vmin] mt-[4vmin]">นี่คือรูปอะไรครับเด็กๆ?</h1><div class="bg-white px-[6vmin] py-[2vmin] rounded-[3vmin] shadow-2xl cursor-pointer border-[1vmin] border-gray-100 text-[4vmin] font-bold" onclick="showTrainAnswer(this)">แตะดูเฉลย</div>`;
             else if (lsIdx === 2) c.innerHTML = `<div class="w-full h-full flex items-center justify-center">${renderTrain('พ่อ', 'ขี่', 'ม้า', 'scale-[2]')}</div>`;
@@ -617,7 +561,7 @@
         function lessonNext() { if (lsIdx < 13) { lsIdx++; renderLesson(); playSound('s-click'); } else navigate(1); }
         function lessonPrev() { if (lsIdx > 1) { lsIdx--; renderLesson(); playSound('s-click'); } else navigate(-1); }
 
-        // --- Swap ---
+        // Swap
         let swIdx = 2;
         const swapData = {
             2: [ { text: 'ภูผา', col: 'bg-blue-500' }, { text: 'ไปหา', col: 'bg-red-500' }, { text: 'แม่', col: 'bg-green-500' } ],
@@ -625,15 +569,7 @@
             4: [ { text: 'พ่อ', col: 'bg-blue-500' }, { text: 'ไป', col: 'bg-red-500' }, { text: 'ป่า', col: 'bg-green-500' } ]
         };
         let currentPermutations = { 2: [], 3: [], 4: [] };
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
+        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         function renderSwap(updateOnly = false) {
             const c = document.getElementById('swap-content');
             document.getElementById('swap-indicator').innerText = `${swIdx - 1}/3`;
@@ -641,30 +577,18 @@
             const box = (item) => `<div class="word-card ${item.col} text-white text-[8vmin] px-[5vmin] py-[2vmin] m-[1vmin] rounded-[2vmin] shadow-xl">${item.text}</div>`;
             const containerClass = "flex flex-wrap justify-center content-center w-full h-[60vh] gap-[2vmin]";
             const contentHtml = currentPermutations[swIdx].map(item => box(item)).join('');
-            if (updateOnly) {
-                const container = document.getElementById(`swap-container-${swIdx}`);
-                if (container) container.innerHTML = contentHtml;
-            } else {
-                c.innerHTML = `<div id="swap-container-${swIdx}" class="${containerClass}">${contentHtml}</div><button class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700 active:scale-95" onclick="performSwap(${swIdx})">🔀 สุ่มตำแหน่ง</button>`;
-            }
+            if (updateOnly) { const container = document.getElementById(`swap-container-${swIdx}`); if (container) container.innerHTML = contentHtml; } else { c.innerHTML = `<div id="swap-container-${swIdx}" class="${containerClass}">${contentHtml}</div><button class="mt-[2vmin] bg-pink-500 text-white px-[8vmin] py-[2vmin] rounded-full text-[4vmin] font-bold shadow-2xl border-b-[1vmin] border-pink-700 active:scale-95" onclick="performSwap(${swIdx})">🔀 สุ่มตำแหน่ง</button>`; }
         }
-
         function performSwap(id) {
             playSound('s-click');
             const container = document.getElementById(`swap-container-${id}`);
             const oldElements = Array.from(container.children);
             const positions = new Map();
-            oldElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                positions.set(el.innerText.trim(), rect);
-            });
+            oldElements.forEach(el => { const rect = el.getBoundingClientRect(); positions.set(el.innerText.trim(), rect); });
             const originalJson = JSON.stringify(currentPermutations[id]);
             let newArr = [...currentPermutations[id]];
             let attempts = 0;
-            do {
-                shuffleArray(newArr);
-                attempts++;
-            } while (JSON.stringify(newArr) === originalJson && newArr.length > 1 && attempts < 10);
+            do { shuffleArray(newArr); attempts++; } while (JSON.stringify(newArr) === originalJson && newArr.length > 1 && attempts < 10);
             currentPermutations[id] = newArr;
             renderSwap(true);
             const newElements = Array.from(container.children);
@@ -677,27 +601,18 @@
                     const dy = oldRect.top - newRect.top;
                     newEl.style.transition = 'none';
                     newEl.style.transform = `translate(${dx}px, ${dy}px)`;
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            newEl.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-                            newEl.style.transform = 'translate(0, 0)';
-                        });
-                    });
+                    requestAnimationFrame(() => { requestAnimationFrame(() => { newEl.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)'; newEl.style.transform = 'translate(0, 0)'; }); });
                 }
             });
         }
-
         function swapNext() { if (swIdx < 4) { swIdx++; renderSwap(); playSound('s-click'); } else navigate(1); }
         function swapPrev() { if (swIdx > 2) { swIdx--; renderSwap(); playSound('s-click'); } else navigate(-1); }
 
-        // --- Game 2 ---
+        // Game 2
         const g2Qs = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
         let g2Idx = 0;
         let g2Scores = { 1: 0, 2: 0, 3: 0 };
-        function loadG2Q() {
-            document.getElementById('g2-img').src = g2Qs[g2Idx];
-            document.getElementById('g2-q-num').innerText = `ข้อ ${g2Idx + 1}/10`;
-        }
+        function loadG2Q() { document.getElementById('g2-img').src = g2Qs[g2Idx]; document.getElementById('g2-q-num').innerText = `ข้อ ${g2Idx + 1}/10`; }
         function addScore(g) { g2Scores[g]++; document.getElementById(`s-g${g}`).innerText = g2Scores[g]; playSound('s-click'); }
         function g2NextQ() { if (g2Idx < 9) { g2Idx++; loadG2Q(); } else { g2Finish(); } }
         function g2Finish() {
@@ -705,15 +620,11 @@
             document.getElementById('g2-podium').style.display = 'flex';
             playSound('s-success'); createConfetti();
             const hScale = 5;
-            document.getElementById('podium-bars').innerHTML = `
-                <div class="w-[15vmin] bg-green-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-green-300" style="height: ${g2Scores[2] * hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div>
-                <div class="w-[15vmin] bg-red-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-red-300 z-10" style="height: ${g2Scores[1] * hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div>
-                <div class="w-[15vmin] bg-blue-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-blue-300" style="height: ${g2Scores[3] * hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>
-            `;
+            document.getElementById('podium-bars').innerHTML = `<div class="w-[15vmin] bg-green-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-green-300" style="height: ${g2Scores[2] * hScale + 15}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥈</span><span class="text-[4vmin] font-black">${g2Scores[2]}</span></div><div class="w-[15vmin] bg-red-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-red-300 z-10" style="height: ${g2Scores[1] * hScale + 25}vmin"><span class="text-[6vmin] font-bold mb-[1vmin] animate-bounce">👑</span><span class="text-[5vmin] font-black">${g2Scores[1]}</span></div><div class="w-[15vmin] bg-blue-500 text-white text-center rounded-t-[3vmin] flex flex-col justify-end pb-[2vmin] shadow-2xl border-[0.5vmin] border-blue-300" style="height: ${g2Scores[3] * hScale + 10}vmin"><span class="text-[5vmin] font-bold mb-[1vmin]">🥉</span><span class="text-[4vmin] font-black">${g2Scores[3]}</span></div>`;
         }
         function g2BackToGame() { document.getElementById('g2-interface').style.display = 'flex'; document.getElementById('g2-podium').style.display = 'none'; }
 
-        // --- Picker ---
+        // Picker
         function startPicker() {
             playSound('s-shuffle');
             document.getElementById('picker-placeholder').classList.add('hidden');
@@ -728,259 +639,50 @@
                     const r = Math.floor(Math.random() * 13) + 1;
                     img.src = `s/${String(r).padStart(2, '0')}.jpg`;
                     slowCount++;
-                    if (slowCount >= 3) {
-                        clearInterval(slowInterval);
-                        document.getElementById('s-shuffle').pause();
-                        playSound('s-success');
-                        createConfetti();
-                        createFireworks();
-                        img.classList.add('zoom-in-out');
-                        document.getElementById('picker-btn').disabled = false;
-                    }
+                    if (slowCount >= 3) { clearInterval(slowInterval); document.getElementById('s-shuffle').pause(); playSound('s-success'); createConfetti(); createFireworks(); img.classList.add('zoom-in-out'); document.getElementById('picker-btn').disabled = false; }
                 }, 1000);
             }, 7000);
         }
 
-        // --- Drawing & Effects ---
+        // Drawing
         const cvs = document.getElementById('drawing-canvas');
         const cx = cvs.getContext('2d');
         let isDraw = false, drawMode = false;
         function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; cx.strokeStyle = "#ef4444"; cx.lineWidth = 5; cx.lineCap = "round"; }
         window.addEventListener('resize', resizeCvs); resizeCvs();
-        
-        function toggleDrawing() {
-            playSound('s-click');
-            drawMode = !drawMode;
-            document.getElementById('toggle-draw-btn').classList.toggle('bg-yellow-100');
-            cvs.classList.toggle('drawing-active');
-            document.getElementById('clear-draw-btn').classList.toggle('hidden');
-        }
-        function clearCanvas() { 
-            playSound('s-click'); 
-            cx.clearRect(0, 0, cvs.width, cvs.height); 
-        }
-        
-        function startD(e) { 
-            if (!drawMode) return; 
-            isDraw = true; 
-            // Playing click sound as drawing sound (missing specific file)
-            playSound('s-click'); 
-            drawD(e); 
-        }
+        function toggleDrawing() { playSound('s-click'); drawMode = !drawMode; document.getElementById('toggle-draw-btn').classList.toggle('bg-yellow-100'); cvs.classList.toggle('drawing-active'); document.getElementById('clear-draw-btn').classList.toggle('hidden'); }
+        function clearCanvas() { playSound('s-click'); cx.clearRect(0, 0, cvs.width, cvs.height); }
+        function startD(e) { if (!drawMode) return; isDraw = true; playSound('s-click'); drawD(e); }
         function endD() { isDraw = false; cx.beginPath(); }
-        function drawD(e) {
-            if (!isDraw || !drawMode) return;
-            e.preventDefault();
-            let x, y;
-            if (e.type.includes('touch')) { x = e.touches[0].clientX; y = e.touches[0].clientY; }
-            else { x = e.clientX; y = e.clientY; }
-            cx.lineTo(x, y); cx.stroke(); cx.beginPath(); cx.moveTo(x, y);
-        }
+        function drawD(e) { if (!isDraw || !drawMode) return; e.preventDefault(); let x, y; if (e.type.includes('touch')) { x = e.touches[0].clientX; y = e.touches[0].clientY; } else { x = e.clientX; y = e.clientY; } cx.lineTo(x, y); cx.stroke(); cx.beginPath(); cx.moveTo(x, y); }
         cvs.addEventListener('mousedown', startD); cvs.addEventListener('mouseup', endD); cvs.addEventListener('mousemove', drawD);
         cvs.addEventListener('touchstart', startD, { passive: false }); cvs.addEventListener('touchend', endD); cvs.addEventListener('touchmove', drawD, { passive: false });
 
-        function createConfetti() {
-            const c = ['#FFD700', '#FF4500', '#32CD32', '#1E90FF', '#FF69B4'];
-            for (let i = 0; i < 100; i++) {
-                const el = document.createElement('div');
-                el.className = 'confetti';
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.backgroundColor = c[Math.floor(Math.random() * c.length)];
-                el.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                el.style.width = Math.random() * 1.5 + 0.5 + 'vmin';
-                el.style.height = Math.random() * 1.5 + 0.5 + 'vmin';
-                document.body.appendChild(el);
-            }
-        }
+        function createConfetti() { const c = ['#FFD700', '#FF4500', '#32CD32', '#1E90FF', '#FF69B4']; for (let i = 0; i < 100; i++) { const el = document.createElement('div'); el.className = 'confetti'; el.style.left = Math.random() * 100 + 'vw'; el.style.backgroundColor = c[Math.floor(Math.random() * c.length)]; el.style.animationDuration = (Math.random() * 2 + 2) + 's'; el.style.width = Math.random() * 1.5 + 0.5 + 'vmin'; el.style.height = Math.random() * 1.5 + 0.5 + 'vmin'; document.body.appendChild(el); } }
+        function createFireworks() { const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']; for (let i = 0; i < 20; i++) { setTimeout(() => { const el = document.createElement('div'); el.className = 'firework'; el.style.left = (Math.random() * 80 + 10) + 'vw'; el.style.top = (Math.random() * 80 + 10) + 'vh'; el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; document.body.appendChild(el); setTimeout(() => el.remove(), 1000); }, i * 200); } }
 
-        function createFireworks() {
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-            for (let i = 0; i < 20; i++) {
-                setTimeout(() => {
-                    const el = document.createElement('div');
-                    el.className = 'firework';
-                    el.style.left = (Math.random() * 80 + 10) + 'vw';
-                    el.style.top = (Math.random() * 80 + 10) + 'vh';
-                    el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    document.body.appendChild(el);
-                    setTimeout(() => el.remove(), 1000);
-                }, i * 200);
-            }
-        }
+        // Global Random
+        const globalStudentImages = []; for (let i = 1; i <= 13; i++) globalStudentImages.push(`s/${String(i).padStart(2, '0')}.jpg`);
+        let globalInterval = null; let globalTimeouts = [];
+        function startGlobalRandom() { playSound('s-click'); const modal = document.getElementById('global-random-modal'); const img = document.getElementById('global-student-img'); modal.style.display = 'flex'; playSound('s-shuffle'); if (globalInterval) clearInterval(globalInterval); globalTimeouts.forEach(t => clearTimeout(t)); globalTimeouts = []; const startTime = Date.now(); globalInterval = setInterval(() => { const r = Math.floor(Math.random() * globalStudentImages.length); img.src = globalStudentImages[r]; if (Date.now() - startTime >= 10000) { clearInterval(globalInterval); startGlobalSlowPhase(img); } }, 50); }
+        function startGlobalSlowPhase(imgElement) { let count = 0; const totalSlow = 4; const duration = 3000; const step = duration / totalSlow; function next() { if (count < totalSlow) { const r = Math.floor(Math.random() * globalStudentImages.length); imgElement.src = globalStudentImages[r]; count++; const t = setTimeout(next, step); globalTimeouts.push(t); } else { document.getElementById('s-shuffle').pause(); playSound('s-success'); createConfetti(); } } next(); }
+        function closeGlobalRandom() { playSound('s-click'); const modal = document.getElementById('global-random-modal'); modal.style.display = 'none'; if (globalInterval) clearInterval(globalInterval); globalTimeouts.forEach(t => clearTimeout(t)); document.getElementById('s-shuffle').pause(); }
 
-        // --- Global Random Student ---
-        const globalStudentImages = [];
-        for (let i = 1; i <= 13; i++) globalStudentImages.push(`s/${String(i).padStart(2, '0')}.jpg`);
-
-        let globalInterval = null;
-        let globalTimeouts = [];
-
-        function startGlobalRandom() {
-            playSound('s-click');
-            const modal = document.getElementById('global-random-modal');
-            const img = document.getElementById('global-student-img');
-            modal.style.display = 'flex';
-            playSound('s-shuffle');
-
-            if (globalInterval) clearInterval(globalInterval);
-            globalTimeouts.forEach(t => clearTimeout(t));
-            globalTimeouts = [];
-
-            const startTime = Date.now();
-            globalInterval = setInterval(() => {
-                const r = Math.floor(Math.random() * globalStudentImages.length);
-                img.src = globalStudentImages[r];
-                if (Date.now() - startTime >= 10000) {
-                    clearInterval(globalInterval);
-                    startGlobalSlowPhase(img);
-                }
-            }, 50);
-        }
-
-        function startGlobalSlowPhase(imgElement) {
-            let count = 0;
-            const totalSlow = 4;
-            const duration = 3000;
-            const step = duration / totalSlow;
-            function next() {
-                if (count < totalSlow) {
-                    const r = Math.floor(Math.random() * globalStudentImages.length);
-                    imgElement.src = globalStudentImages[r];
-                    count++;
-                    const t = setTimeout(next, step);
-                    globalTimeouts.push(t);
-                } else {
-                    document.getElementById('s-shuffle').pause();
-                    playSound('s-success');
-                    createConfetti();
-                }
-            }
-            next();
-        }
-
-        function closeGlobalRandom() {
-            playSound('s-click');
-            const modal = document.getElementById('global-random-modal');
-            modal.style.display = 'none';
-            if (globalInterval) clearInterval(globalInterval);
-            globalTimeouts.forEach(t => clearTimeout(t));
-            document.getElementById('s-shuffle').pause();
-        }
-
-        // --- Timer Logic (Draggable & Resizable) ---
-        let timerInterval;
-        let totalSeconds = 0;
-
-        function toggleTimer() {
-            playSound('s-click');
-            const popup = document.getElementById('timer-popup');
-            if (popup.style.display === 'flex') {
-                popup.style.display = 'none';
-            } else {
-                popup.style.display = 'flex';
-            }
-        }
-
-        function updateTimerDisplay() {
-            const m = Math.floor(totalSeconds / 60);
-            const s = totalSeconds % 60;
-            document.getElementById('timer-display').innerText =
-                `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        function startTimer() {
-            playSound('s-click');
-            clearInterval(timerInterval);
-            const minInput = parseInt(document.getElementById('t-min').value) || 0;
-            const secInput = parseInt(document.getElementById('t-sec').value) || 0;
-
-            if (totalSeconds === 0) {
-                totalSeconds = (minInput * 60) + secInput;
-            }
-
-            updateTimerDisplay();
-
-            if (totalSeconds > 0) {
-                timerInterval = setInterval(() => {
-                    if (totalSeconds > 0) {
-                        totalSeconds--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        playSound('s-alarm');
-                        alert("หมดเวลา!");
-                    }
-                }, 1000);
-            }
-        }
-
-        function stopTimer() {
-            playSound('s-click');
-            clearInterval(timerInterval);
-        }
-
-        function resetTimer() {
-            playSound('s-click');
-            stopTimer();
-            totalSeconds = 0;
-            document.getElementById('timer-display').innerText = "00:00";
-        }
-
-        // Drag Logic for Timer
-        const timerPopup = document.getElementById('timer-popup');
-        const timerHeader = document.getElementById('timer-header');
-        let isDragging = false;
-        let startX, startY, initialLeft, initialTop;
-
-        timerHeader.addEventListener('mousedown', (e) => {
-            playSound('s-click'); // Play sound on start drag
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            initialLeft = timerPopup.offsetLeft;
-            initialTop = timerPopup.offsetTop;
-            document.addEventListener('mousemove', dragTimer);
-            document.addEventListener('mouseup', stopDragTimer);
-        });
-
-        // Touch support for drag
-        timerHeader.addEventListener('touchstart', (e) => {
-            playSound('s-click'); // Play sound on start drag
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            initialLeft = timerPopup.offsetLeft;
-            initialTop = timerPopup.offsetTop;
-            document.addEventListener('touchmove', dragTimerTouch, { passive: false });
-            document.addEventListener('touchend', stopDragTimer);
-        });
-
-        function dragTimer(e) {
-            if (!isDragging) return;
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            timerPopup.style.left = `${initialLeft + dx}px`;
-            timerPopup.style.top = `${initialTop + dy}px`;
-        }
-
-        function dragTimerTouch(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            const dx = e.touches[0].clientX - startX;
-            const dy = e.touches[0].clientY - startY;
-            timerPopup.style.left = `${initialLeft + dx}px`;
-            timerPopup.style.top = `${initialTop + dy}px`;
-        }
-
-        function stopDragTimer() {
-            isDragging = false;
-            document.removeEventListener('mousemove', dragTimer);
-            document.removeEventListener('mouseup', stopDragTimer);
-            document.removeEventListener('touchmove', dragTimerTouch);
-            document.removeEventListener('touchend', stopDragTimer);
-        }
+        // Timer
+        let timerInterval; let totalSeconds = 0;
+        function toggleTimer() { playSound('s-click'); const popup = document.getElementById('timer-popup'); if (popup.style.display === 'flex') { popup.style.display = 'none'; } else { popup.style.display = 'flex'; } }
+        function updateTimerDisplay() { const m = Math.floor(totalSeconds / 60); const s = totalSeconds % 60; document.getElementById('timer-display').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
+        function startTimer() { playSound('s-click'); clearInterval(timerInterval); const minInput = parseInt(document.getElementById('t-min').value) || 0; const secInput = parseInt(document.getElementById('t-sec').value) || 0; if (totalSeconds === 0) { totalSeconds = (minInput * 60) + secInput; } updateTimerDisplay(); if (totalSeconds > 0) { timerInterval = setInterval(() => { if (totalSeconds > 0) { totalSeconds--; updateTimerDisplay(); } else { clearInterval(timerInterval); playSound('s-alarm'); alert("หมดเวลา!"); } }, 1000); } }
+        function stopTimer() { playSound('s-click'); clearInterval(timerInterval); }
+        function resetTimer() { playSound('s-click'); stopTimer(); totalSeconds = 0; document.getElementById('timer-display').innerText = "00:00"; }
+        
+        const timerPopup = document.getElementById('timer-popup'); const timerHeader = document.getElementById('timer-header'); let isDragging = false; let startX, startY, initialLeft, initialTop;
+        timerHeader.addEventListener('mousedown', (e) => { playSound('s-click'); isDragging = true; startX = e.clientX; startY = e.clientY; initialLeft = timerPopup.offsetLeft; initialTop = timerPopup.offsetTop; document.addEventListener('mousemove', dragTimer); document.addEventListener('mouseup', stopDragTimer); });
+        timerHeader.addEventListener('touchstart', (e) => { playSound('s-click'); isDragging = true; startX = e.touches[0].clientX; startY = e.touches[0].clientY; initialLeft = timerPopup.offsetLeft; initialTop = timerPopup.offsetTop; document.addEventListener('touchmove', dragTimerTouch, { passive: false }); document.addEventListener('touchend', stopDragTimer); });
+        function dragTimer(e) { if (!isDragging) return; const dx = e.clientX - startX; const dy = e.clientY - startY; timerPopup.style.left = `${initialLeft + dx}px`; timerPopup.style.top = `${initialTop + dy}px`; }
+        function dragTimerTouch(e) { if (!isDragging) return; e.preventDefault(); const dx = e.touches[0].clientX - startX; const dy = e.touches[0].clientY - startY; timerPopup.style.left = `${initialLeft + dx}px`; timerPopup.style.top = `${initialTop + dy}px`; }
+        function stopDragTimer() { isDragging = false; document.removeEventListener('mousemove', dragTimer); document.removeEventListener('mouseup', stopDragTimer); document.removeEventListener('touchmove', dragTimerTouch); document.removeEventListener('touchend', stopDragTimer); }
 
     </script>
 </body>
-
 </html>
