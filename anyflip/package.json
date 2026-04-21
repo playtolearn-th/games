@@ -1,0 +1,110 @@
+```javascript
+const express = require('express');
+const cors = require('cors');
+const puppeteer = require('puppeteer');
+const axios = require('axios');
+const PDFDocument = require('pdfkit');
+const path = require('path');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// เสิร์ฟไฟล์ Frontend (index.html) หน้าแรก
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/api/convert', async (req, res) => {
+    const { url } = req.body;
+
+    if (!url || !url.includes('anyflip.com')) {
+        return res.status(400).json({ error: 'ลิงก์ไม่ถูกต้อง' });
+    }
+
+    let browser;
+    try {
+        console.log(`[1/4] เริ่มกระบวนการสำหรับ: ${url}`);
+        
+        // การตั้งค่า Puppeteer สำหรับรันบน Cloud (Render.com)
+        browser = await puppeteer.launch({ 
+            headless: 'new',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+        });
+        
+        const page = await browser.newPage();
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+
+        const urlParts = url.split('/').filter(p => p);
+        const bookId = urlParts[urlParts.length - 1];
+        const userId = urlParts[urlParts.length - 2];
+        
+        console.log(`[2/4] วิเคราะห์ข้อมูลหนังสือ - User: ${userId}, Book: ${bookId}`);
+
+        const baseImageUrl = `https://online.anyflip.com/${userId}/${bookId}/files/large/`;
+
+        const doc = new PDFDocument({ autoFirstPage: false });
+        
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="AnyFlip_${bookId}.pdf"`);
+        
+        doc.pipe(res);
+
+        console.log(`[3/4] กำลังดึงรูปภาพและสร้าง PDF...`);
+        let pageNum = 1;
+        let hasMorePages = true;
+        let blankPagesCount = 0; // ตัวนับหน้าว่าง ป้องกันกรณีหน้าสุดท้าย Error แปลกๆ
+
+        while (hasMorePages && blankPagesCount < 3) {
+            const imageUrl = `${baseImageUrl}${pageNum}.jpg`;
+            try {
+                const response = await axios.get(imageUrl, { 
+                    responseType: 'arraybuffer',
+                    timeout: 10000 // กำหนด Timeout ให้การโหลดภาพ
+                });
+                
+                const imageBuffer = Buffer.from(response.data, 'binary');
+
+                doc.addPage({ size: 'A4' });
+                doc.image(imageBuffer, 0, 0, {
+                    width: doc.page.width,
+                    height: doc.page.height,
+                    align: 'center',
+                    valign: 'center'
+                });
+
+                console.log(`- โหลดหน้า ${pageNum} สำเร็จ`);
+                pageNum++;
+                blankPagesCount = 0;
+            } catch (err) {
+                console.log(`- ไม่พบหน้า ${pageNum} (หรือเกิดข้อผิดพลาด)`);
+                blankPagesCount++;
+                pageNum++;
+                if (blankPagesCount >= 3) {
+                     console.log(`- สิ้นสุดการค้นหาหน้า`);
+                     hasMorePages = false;
+                }
+            }
+
+            if (pageNum > 200) break; // จำกัดหน้าสูงสุดป้องกัน Cloud Timeout
+        }
+
+        console.log(`[4/4] สร้างไฟล์ PDF เสร็จสมบูรณ์!`);
+        doc.end();
+
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาด:', error.message);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'ไม่สามารถดึงข้อมูลและแปลงไฟล์ได้ โปรดลองอีกครั้ง' });
+        }
+    } finally {
+        if (browser) await browser.close();
+    }
+});
+
+// ใช้ Port จากระบบ Cloud (process.env.PORT) หรือ 3000 กรณี Local
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 เซิร์ฟเวอร์ทำงานที่พอร์ต ${PORT}`);
+});
+
+
+```
