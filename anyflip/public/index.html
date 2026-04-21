@@ -1,0 +1,151 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyFlip to PDF Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #ff7e5f; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .toast-enter { animation: slideInRight 0.3s ease-out forwards; }
+        .toast-leave { animation: fadeOut 0.3s ease-in forwards; }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 overflow-x-hidden">
+
+    <div class="glass-effect w-full max-w-lg p-8 transform transition-all duration-300 hover:shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-3xl">
+                <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <h1 class="text-3xl font-semibold text-gray-800 mb-2">ดาวน์โหลด AnyFlip เป็น PDF</h1>
+            <p class="text-gray-500 text-sm">วางลิงก์ AnyFlip ของคุณด้านล่างเพื่อแปลงเป็นไฟล์ PDF</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-focus-within:text-orange-500 transition-colors">
+                    <i class="fa-solid fa-link"></i>
+                </div>
+                <input type="url" id="urlInput" class="bg-white border-2 border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-0 focus:border-orange-500 block w-full pl-12 pr-24 py-4 transition-colors shadow-sm outline-none" placeholder="ตัวอย่าง: https://anyflip.com/amjfl/wkyh/" required>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 space-x-1">
+                    <button type="button" onclick="pasteUrl()" class="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-all focus:outline-none"><i class="fa-solid fa-clipboard text-lg"></i></button>
+                    <button type="button" id="clearBtn" onclick="clearUrl()" class="hidden p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all focus:outline-none"><i class="fa-solid fa-circle-xmark text-lg"></i></button>
+                </div>
+            </div>
+
+            <button id="downloadBtn" onclick="startDownload()" class="w-full text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-xl text-lg px-5 py-4 text-center transition-all duration-300 shadow-md flex justify-center items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-down" id="btnIcon"></i>
+                <span id="btnText">เริ่มการแปลงไฟล์</span>
+            </button>
+        </div>
+
+        <div id="statusContainer" class="hidden mt-6 text-center">
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2 overflow-hidden">
+                <div id="progressBar" class="bg-orange-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p id="statusText" class="text-sm text-gray-600 font-medium">กำลังเตรียมการ...</p>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        const statusContainer = document.getElementById('statusContainer');
+        const progressBar = document.getElementById('progressBar');
+        const statusText = document.getElementById('statusText');
+
+        urlInput.addEventListener('input', function() { toggleClearButton(this.value); });
+
+        function toggleClearButton(value) { clearBtn.classList.toggle('hidden', value.trim().length === 0); }
+
+        async function pasteUrl() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) { urlInput.value = text; toggleClearButton(text); urlInput.focus(); showToast('วางลิงก์เรียบร้อยแล้ว', 'success'); }
+            } catch (err) { showToast('กรุณากดวางด้วยตนเอง', 'warning'); }
+        }
+
+        function clearUrl() { urlInput.value = ''; toggleClearButton(''); urlInput.focus(); }
+
+        async function startDownload() {
+            const url = urlInput.value.trim();
+            if (!url) { showToast('กรุณากรอกลิงก์ AnyFlip', 'warning'); return; }
+            if (!url.includes('anyflip.com')) { showToast('ลิงก์ไม่ถูกต้อง', 'error'); return; }
+
+            downloadBtn.disabled = true; downloadBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            btnIcon.className = 'loader'; btnText.innerText = 'กำลังประมวลผล...';
+            statusContainer.classList.remove('hidden'); progressBar.style.width = '10%';
+            statusText.innerText = 'กำลังเชื่อมต่อเซิร์ฟเวอร์... (ใช้เวลาสักครู่)';
+
+            try {
+                // เรียก API เป็นแบบ Relative Path เพื่อให้ทำงานได้ทั้งบน Local และ Cloud
+                const response = await fetch('/api/convert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                if (!response.ok) throw new Error('การดึงข้อมูลล้มเหลว');
+
+                progressBar.style.width = '80%'; statusText.innerText = 'กำลังดาวน์โหลด PDF...';
+
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl; a.download = 'AnyFlip_Document.pdf';
+                document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(downloadUrl);
+                
+                progressBar.style.width = '100%'; statusText.innerText = 'สำเร็จ!';
+                statusText.classList.replace('text-gray-600', 'text-green-600'); progressBar.classList.replace('bg-orange-500', 'bg-green-500');
+                btnIcon.className = 'fa-solid fa-check'; btnText.innerText = 'ดาวน์โหลดสำเร็จ';
+                showToast('แปลงไฟล์สำเร็จ!', 'success');
+
+            } catch (error) {
+                statusText.innerText = 'เกิดข้อผิดพลาด โปรดลองใหม่';
+                statusText.classList.replace('text-gray-600', 'text-red-600'); progressBar.classList.replace('bg-orange-500', 'bg-red-500');
+                showToast('ระบบขัดข้อง', 'error');
+            } finally {
+                setTimeout(() => resetUI(), 4000);
+            }
+        }
+
+        function resetUI() {
+            downloadBtn.disabled = false; downloadBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            btnIcon.className = 'fa-solid fa-cloud-arrow-down'; btnText.innerText = 'เริ่มการแปลงไฟล์';
+            statusContainer.classList.add('hidden');
+            progressBar.classList.replace('bg-green-500', 'bg-orange-500'); progressBar.classList.replace('bg-red-500', 'bg-orange-500');
+            statusText.classList.replace('text-green-600', 'text-gray-600'); statusText.classList.replace('text-red-600', 'text-gray-600');
+            clearUrl();
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const colors = { success: 'bg-green-100 border-green-500 text-green-800', error: 'bg-red-100 border-red-500 text-red-800', warning: 'bg-yellow-100 border-yellow-500 text-yellow-800' };
+            const icons = { success: 'fa-circle-check text-green-500', error: 'fa-circle-xmark text-red-500', warning: 'fa-triangle-exclamation text-yellow-500' };
+            
+            const toast = document.createElement('div');
+            toast.className = `flex items-center p-4 space-x-3 border-l-4 rounded shadow-lg toast-enter ${colors[type] || colors.success}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.success} text-xl"></i><div class="text-sm font-medium">${message}</div>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.replace('toast-enter', 'toast-leave'); toast.addEventListener('animationend', () => toast.remove()); }, 3000);
+        }
+    </script>
+</body>
+</html>
+
+```
